@@ -56,7 +56,9 @@ We need to limit the number of PW to the smallest number that represents our sys
      ```
      gnuplot> plot "Etot_vs_Ecut.dat" w l
      ```
-     A possible (but tight) threshold is 1meV/atom; 10meV/atom is quite reasonable. An example file and image (png & pdf) are given in the Ref folder. 
+     To the eye, the total energy looks well converged at 30 Ry. This is misleading however, as it simply depends on the energy range of your plot. The right threshold to use depends on what quantity (observable) you want to compute: a bond length, a lattice parameter, an energy gap, a binding energy, a vibrational frequency...and to what precision you want!
+     As a rough guide, a possible (but tight) threshold on the total energy is 1mRy/atom; 10mRy/atom is quite reasonable. 
+     An example file and image (png & pdf) are given in the Ref folder. 
 
      ![Total energy vs kinetic energy cutoff](Ref/Etot_vs_Ecut.png?raw=true "Total energy vs kinetic energy cutoff")
 
