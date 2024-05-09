@@ -14,8 +14,8 @@ set out
 set xlabel "Smearing (Ry)"
 set ylabel "E_{tot} (Ry)
 Emin=-22.15272303
-thres_1meV_per_atom=0.0068
-thres_10meV_per_atom=0.068
+thres_1mRy_per_atom=0.001*2
+thres_10mRy_per_atom=0.01*2
 list="3x3x1 6x6x1 9x9x1 12x12x1"
 item(n) = word(list,n)
 
@@ -45,7 +45,7 @@ pause -1
 set term pngcairo enhanced size 900,500
 set output "${SAVE}.png"
 set multiplot layout 1,2
-set object 1 rectangle from 0,Emin-thres_1meV_per_atom to 0.2,Emin+thres_1meV_per_atom fc "light-blue" fs transparent solid 0.4 noborder
+set object 1 rectangle from 0,Emin-thres_1mRy_per_atom to 0.2,Emin+thres_1mRy_per_atom fc "light-blue" fs transparent solid 0.4 noborder
 set title "Smearing: gaussian"
 plot for [p=1:4] "Etot_vs_kgrid-script.dat_gaussian" index p-1 u 1:5 w lp title item(p)
 set title "Smearing: m-v"

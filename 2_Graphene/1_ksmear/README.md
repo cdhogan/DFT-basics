@@ -62,7 +62,7 @@ Convergence with k-points is more complicated for graphene than for bulk Si for 
       A complete set of data is also provided in the Ref folder.
      ![Smearing in graphene](Ref/smearing.png?raw=true "Smearing")
       
-      In principle we are converging the calculation with k-points for each value of degauss. At higher smearing (>0.1Ry), it is clear the data is not converged with k-points. Of course, it depends on the precision required. The blue box in the figure indicates +/-1meV/atom range about the converged value.
+      In principle we are converging the calculation with k-points for each value of degauss. At higher smearing (>0.1Ry), it is clear the data is not converged with k-points. Of course, it depends on the precision required. The blue box in the figure indicates +/-1mRy/atom range about the converged value.
 
       Graphene is something of a special case. The convergence is quite different for a true metal like Al. In that case, one cannot  reduce the smearing too much: the energy levels must have some overlap, or else the advantage of broadening is lost.
 
