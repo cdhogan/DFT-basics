@@ -31,7 +31,7 @@ ecutwfc = 20
 
      ![Total energy vs kinetic energy cutoff](Ref/Etot_vs_Ecut.png?raw=true "Total energy vs kinetic energy cutoff")
 
-     You will notice that a much higher cutoff is needed for C than for Si, for the same pseudopotential: we say C is "harder" than Si.     For the sake of this tutorial, however, let's keep a low cutoff of 20 Ry.
+     You will notice that a much higher cutoff is needed for C than for Si, for the same family of pseudopotential (norm-conserving): we say C is "harder" than Si.     For the sake of this tutorial, however, let's keep a (dangerously?) low cutoff of 20 Ry.
   6. ADVANCED USERS: The shell scripts 'run_ecut' and 'run_plots' in the 'Script' directory will do everything automatically from step 3 to 5 (explained using comments inside the script). You may first have to modify the ENVIRONMENT_VARIABLES file in the root directory. The scripts must be run from the main 0_cutoff directory (or copied there). Hit 'q' to cycle through plot windows as they appear. Inspect the PDFs or PNGs that are created.
       ```
       ./Script/run_ecut
