@@ -57,9 +57,17 @@ We need to limit the number of PW to the smallest number that represents our sys
      gnuplot> plot "Etot_vs_Ecut.dat" w l
      ```
      To the eye, the total energy looks well converged at 30 Ry. This is misleading however, as it simply depends on the energy range of your plot - see the logscale plot on the right. The correct threshold to use depends on what quantity (observable) you want to compute: a bond length, a lattice parameter, an energy gap, a binding energy, a vibrational frequency...and to what precision you want!
-     As a rough guide, a possible (but tight) threshold on the total energy is 1mRy/atom; 10mRy/atom can give reasonable results. 
-     An example file and image (png & pdf) are given in the Ref folder. 
 
+     Here are some general guidelines on convergence:
+     * Total energy: 1 mRy/atom = 1.36 meV/atom (good); 10 mRy/atom (can be ok)
+     * Bond length: 0.001-0.002 Å
+     * Cell parameters: 0.01 Å
+     * Energy differences: 0.37 mRy/atom = 5 meV/atom
+     * Forces: 10 meV/Å
+     
+     _NB: you must ALWAYS perform convergence tests yourself for your system!!_
+
+     
      ![Total energy vs kinetic energy cutoff](Ref/Etot_vs_Ecut.png?raw=true "Total energy vs kinetic energy cutoff")
 
      If the plot doesn't look right, make sure you have used the right cutoff in the appropriate input and output files:
@@ -70,7 +78,7 @@ We need to limit the number of PW to the smallest number that represents our sys
      ecutwfc   = 25,
      ```
 
-  5. Use grep on each file to extract the eigenvalues of the highest occupied and lowest unoccupied bands, and compute the band gap using the 'bc -l' program
+  6. Use grep on each file to extract the eigenvalues of the highest occupied and lowest unoccupied bands, and compute the band gap using the 'bc -l' program
       ```
       % grep -e 'highest' *out*Ry 
       si.scf.out_5Ry:     highest occupied, lowest unoccupied level (ev):     6.0229    7.5083
@@ -85,7 +93,7 @@ We need to limit the number of PW to the smallest number that represents our sys
       ```
      Save the energies in a 4 column file (Ecut, VBM, CBM, gap) called 'Gap_vs_Ecut.dat' and plot them versus the cutoff. How does the convergence compare with the value expected from the total energy run?
      ![Eigenvalues and gap vs kinetic energy cutoff](Ref/Gap_vs_Ecut.png?raw=true "Gap vs kinetic energy cutoff")
-  6. ADVANCED USERS: The shell scripts 'run_ecut' and 'run_plots' in the 'Script' directory will do everything automatically from step 3 to 5 (explained using comments inside the script). You may first have to modify the ENVIRONMENT_VARIABLES file in the root directory. The scripts must be run from the main 0_cutoff directory (or copied there). Hit 'q' to cycle through plot windows as they appear. Inspect the PDFs or PNGs that are created.
+  7. ADVANCED USERS: The shell scripts 'run_ecut' and 'run_plots' in the 'Script' directory will do everything automatically from step 3 to 5 (explained using comments inside the script). You may first have to modify the ENVIRONMENT_VARIABLES file in the root directory. The scripts must be run from the main 0_cutoff directory (or copied there). Hit 'q' to cycle through plot windows as they appear. Inspect the PDFs or PNGs that are created.
       ```
       ./Script/run_ecut
       ./Script/run_plots
