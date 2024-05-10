@@ -56,13 +56,13 @@ We need to limit the number of PW to the smallest number that represents our sys
      ```
      gnuplot> plot "Etot_vs_Ecut.dat" w l
      ```
-     To the eye, the total energy looks well converged at 30 Ry. This is misleading however, as it simply depends on the energy range of your plot - see the logscale plot on the right. The correct threshold to use depends on what quantity (observable) you want to compute: a bond length, a lattice parameter, an energy gap, a binding energy, a vibrational frequency...and to what precision you want!
+     To the eye, the total energy looks well converged at 30 Ry. This is misleading however, as it simply depends on the energy range of your plot - see the logscale plot on the right. The correct threshold to use depends on what quantity (observable) you want to compute: a bond length, a lattice parameter, an energy gap, a binding energy, an STM image, a vibrational frequency...and to what precision you want!
 
-     Here are some general guidelines on convergence:
-     * Total energy: 1 mRy/atom = 1.36 meV/atom (good); 10 mRy/atom (can be ok)
-     * Bond length: 0.001-0.002 Å
+     Here are some rough guidelines on convergence (not for production/publication!):
+     * Total energy: 1 mRy/atom = 13.6 meV/atom (0.1 mRy/atom is better)
+     * Bond length: 0.002 Å
      * Cell parameters: 0.01 Å
-     * Energy differences: 0.37 mRy/atom = 5 meV/atom
+     * Energy differences: 0.37 mRy/atom = 5 meV/atom (0.1 mRy/atom is better)
      * Forces: 10 meV/Å
      
      _NB: you must ALWAYS perform convergence tests yourself for your system!!_
