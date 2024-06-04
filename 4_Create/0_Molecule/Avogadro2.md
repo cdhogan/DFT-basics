@@ -8,8 +8,9 @@ The below tutorial works with the second version of Avogadro, at https://two.avo
 
 ![Pyrrole structure](Ref/pyrrole01.png?raw=true "pyrrole")
 
-  1. Launch Avogadro2. There are detailed Documentation on their website at https://two.avogadro.cc/docs/getting-started/drawing-molecules.html   
+  1. Launch Avogadro2. There is detailed Documentation on their website at https://two.avogadro.cc/docs/getting-started/drawing-molecules.html  Since (of 2024) it is in beta, the menu style/options depends on the exact version installed.
     ![Avogadro menu](Ref/avogadro2_menu.png?raw=true "menu")
+    ![Avogadro menu](Ref/avogadro2_1.99_menu.png?raw=true "menu")
   - If you like, first play with the menu options: Draw: add/delete atoms and bonds, change bond order; Move/Manipulate: move atoms; etc. When finished, clear the window by hitting CMD-X or CTRL-X on your keyboard.
   - Now using the first "Draw" tab, create the pyrrole molecule.
   - Relax the molecule using a simple force-field optimization: click "Extensions > Open Babel > Optimize Geometry"
