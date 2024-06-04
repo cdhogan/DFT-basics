@@ -3,7 +3,7 @@ In this tutorial we will use Avogadro to create the pyrrole molecule, relax the 
 
 The below tutorial works with the original version of Avogadro, at https://avogadro.cc/
 
-**If you are using Avogadro2, which has slightly different menus, follow instead this tutorial**
+**If you are using Avogadro2 (at https://two.avogadro.cc/), which has slightly different menus, follow instead this tutorial**
 
 ![Pyrrole structure](Ref/pyrrole01.png?raw=true "pyrrole")
 
