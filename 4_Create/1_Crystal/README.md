@@ -6,6 +6,9 @@ In this tutorial we will create and optimize a crystal structure for a known mat
   2. The easiest way to create an initial structure is by searching a materials database such as https://materialsproject.org. 
      After registering, search the database for GaAs, and find the entry that corresponds to this space group: it should have the index mp-8883. You might be able to find the link directly by searching e.g. "https://materialsproject.org GaAs wurtzite". The direct link is in fact: https://materialsproject.org/materials/mp-8883/
   3. Browse the page and confirm this is what you are looking for. Download the geometry in the CIF format, e.g. in the conventional cell.
+
+![GaAs on materials project](Ref/gaas_matproj.png?raw=true "GaAs")
+
   4. METHOD 1: At this point you can construct the PWscf input using the data in the CIF file:
      ```
      ibrav=4
