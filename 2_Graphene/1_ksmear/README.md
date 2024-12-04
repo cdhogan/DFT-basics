@@ -38,7 +38,7 @@ Convergence with k-points is more complicated for graphene than for bulk Si for 
       ```
       The convergence with k-points depends on the smearing. However, the final results should not depend on the smearing. Hence we must test convergence on k-points and smearing simultaneously. 
       
-      First let's test gaussian smearing. Set degauss to 0.1 Ry, and modify the input file to use 3x3x1, 6x6x1, 9x9x1, and 12x12x1 k-point grids. Then lower the smearing to 0.05, 0.01, and 0.003, repeating the convergence with k each time.
+      First let's test gaussian smearing. Set degauss to 0.1 Ry, and modify the input file to use 3x3x1, 6x6x1, 9x9x1, and 12x12x1 k-point grids. Then lower the smearing to 0.05, 0.01, and 0.003, repeating the convergence with k each time. The idea is to fix the smearing and converge with k-points for that smearing value. 
       ```
       % pw.x < graphene.scf.in > graphene.scf.out_g0.1_3x3x1_gaussian
       % pw.x < graphene.scf.in > graphene.scf.out_g0.1_6x6x1_gaussian
@@ -47,15 +47,15 @@ Convergence with k-points is more complicated for graphene than for bulk Si for 
       ```
       When you've finished, collect the data in file called `Etot_vs_kgrid.dat_gaussian` for plotting:
       ```
-      # Sigma N       	      NxNxN           NKTOT            energy(Ry)
-      0.003   3               3x3x1           3               -22.10194804
-      0.01    3               3x3x1           3               -22.10370330
-      0.05    3               3x3x1           3               -22.11373333
-      0.1     3               3x3x1           3               -22.12628303
+      # Sigma N               NxNxN           NKTOT            energy(Ry)
+      0.003   3               3x3x1           3               -22.10194806
+      0.003   6               6x6x1           7               -22.14608519
+      0.003   9               9x9x1           12              -22.15240245
+      0.003   12              12x12x1         19              -22.15279104
  
  
-      0.003   6               6x6x1           7               -22.14608533
-      0.01    6               6x6x1           7               -22.14652414
+      0.01    3               3x3x1           3               -22.10370332
+      0.01    6               6x6x1           7               -22.14652400
       ...
       ```
       Last, repeat the exercise for `marzari-vanderbilt` smearing. Plot the total energy as a function of smearing and k-point grid.
