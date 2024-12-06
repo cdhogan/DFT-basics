@@ -29,12 +29,12 @@ As always, the documentation is found at https://www.quantum-espresso.org/Doc/IN
      Further on, for every band and k-point each state is written as a sum over projections, using the indices in the atomic table above.
 
       ```
-==== e(   5) =    -8.34315 eV ====
-     psi = 0.540*[#   1]+0.345*[#   3]+0.074*[#  19]+ ...
-    |psi|^2 = 0.989
-==== e(   6) =    -1.30749 eV ====
-     psi = 0.284*[#   2]+0.284*[#   4]+0.103*[#  18]+0.103*[#  20]+ ...
-    |psi|^2 = 0.997
+      ==== e(   5) =    -8.34315 eV ====
+      psi = 0.540*[#   1]+0.345*[#   3]+0.074*[#  19]+ ...
+      |psi|^2 = 0.989
+      ==== e(   6) =    -1.30749 eV ====
+      psi = 0.284*[#   2]+0.284*[#   4]+0.103*[#  18]+0.103*[#  20]+ ...
+      |psi|^2 = 0.997
       ```
      Are the projections consistent with the HOMO and LUMO plotted in a previous step?
 
