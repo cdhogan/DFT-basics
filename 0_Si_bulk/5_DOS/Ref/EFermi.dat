@@ -1,0 +1,8 @@
+SCF calculation
+K-points: 60       Band edges   6.1282   6.8758 Gap   0.7476
+NSCF calculation
+K-points: 8        Band edges   6.2142   6.8554 Gap   0.6412
+K-points: 29       Band edges   6.2142   6.7611 Gap   0.5469
+K-points: 145      Band edges   6.2142   6.7196 Gap   0.5054
+K-points: 413      Band edges   6.2142   6.7150 Gap   0.5008
+DOS tetra, EFermi= 6.214

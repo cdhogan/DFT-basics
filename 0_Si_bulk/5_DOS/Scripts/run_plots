@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+SAVE=DOS-script
+SAVE2="DOS-tetra-script"
+
+cat > plot-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set term x11 enhanced
+
+set title "DOS using Gaussian smearing (0.1eV)"
+set xlabel "Energy (eV)"
+set ylabel "DOS (states/eV)"
+set key top left
+EFermi=6.214
+set yrange [0:3]
+set arrow 1 from EFermi,graph 0 to EFermi, graph 1 nohead
+
+plot \
+	'si_script.dos-kgrid4.dat' u 1:2 title "4x4x4" w l lt 0 lc rgb "black",\
+	'si_script.dos-kgrid8.dat' u 1:2 title "8x8x8" w l lt 1 lc rgb "forest-green",\
+	'si_script.dos-kgrid16.dat' u 1:2 title "16x16x16" w l lt 1 lc rgb "red",\
+	'si_script.dos-kgrid24.dat' u 1:2 title "24x24x24" w l lt 1  lw 2 lc rgb "black"
+
+pause -1
+set term pdfcairo enhanced
+set output "${SAVE}.pdf"
+replot
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+replot
+EOF
+
+/opt/local/bin/gnuplot plot-script.gnu
+
+
+
+cat > plot-script-tetra.gnu <<EOF
+#!/opt/local/bin/gnuplot
+
+set term x11 enhanced
+
+set title "DOS using tetrahedron method"
+set xlabel "Energy (eV)"
+set ylabel "DOS (states/eV)"
+set key top left
+EFermi=6.214
+set yrange [0:3]
+set arrow 1 from EFermi,graph 0 to EFermi, graph 1 nohead
+
+plot \
+	'si_script.dos-tetra-kgrid4.dat' u 1:2 title "4x4x4" w l lt 0 lc rgb "black",\
+	'si_script.dos-tetra-kgrid8.dat' u 1:2 title "8x8x8" w l lt 1 lc rgb "forest-green",\
+	'si_script.dos-tetra-kgrid16.dat' u 1:2 title "16x16x16" w l lt 1 lc rgb "red",\
+	'si_script.dos-tetra-kgrid24.dat' u 1:2 title "24x24x24" w l lt 1  lw 2 lc rgb "black"
+
+pause -1
+set term pdfcairo enhanced
+set output "${SAVE2}.pdf"
+replot
+set term pngcairo enhanced size 800,400
+set output "${SAVE2}.png"
+replot
+EOF
+
+#/opt/local/bin/gnuplot plot-script-tetra.gnu
+gnuplot plot-script-tetra.gnu
+
+
+exit
+
+
+
+
