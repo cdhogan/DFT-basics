@@ -1,7 +1,9 @@
 # Density of states calculation
 In the context of DFT, the density of states (DOS) is a measure of how many energy levels are available for electrons at a given energy (or in a given energy range). It is a key concept in understanding a material's electronic structures as it determines the magnetism, conductivity, and so on. The DOS D(E) at a specific energy E is defined as
 
-![DOS equation](Ref/DOS_equation.png?raw=true "DOS equation")
+<img src="Ref/DOS_equation.png" height="80"/>
+
+<!-- ![DOS equation](Ref/DOS_equation.png?raw=true "DOS equation") -->
 
 i.e. it involves an integral over the Brillouin zone of a Dirac delta function that picks out the contribution of electronic states ε<sub>k</sub> at energy E. 
 
@@ -12,7 +14,8 @@ Calculation of the DOS is straightforward with quantum-ESPRESSO, and involves th
 
 In practice the integral is replaced by a sum over (special) k-points:
 
-![DOS as a sum](Ref/DOS_sum.png?raw=true "DOS as a sum")
+<img src="Ref/DOS_qe_sum.png" height="80"/>
+<!-- ![DOS as a sum](Ref/DOS_qe_sum.png?raw=true "DOS as a sum") -->
 
 In this tutorial we will examine two ways of performing the integration.
 
@@ -55,55 +58,61 @@ In this tutorial we will examine two ways of performing the integration.
       ```
       The last line determines the range over which D(E) is computed, and on what energy intervals (in eV).
       
-      By specifying `degauss` we indicate that the Dirac delta function above is replaced by a _Gaussian_. In this way we smooth out any sharp singularities appearing in the delta function, which will aid numerical stability. Here we use a gaussian broadening of 0.01 Ry = 0.13eV (NB: Ry, not eV). This parameter (sigma) determines how many neighboring eigenvalues will contribute to the DOS at a given E. 
+      By specifying `degauss` we indicate that the Dirac delta function above is replaced by a _Gaussian_ g<sub>σ</sub>. In this way we smooth out any sharp singularities appearing in the delta function, which will aid numerical stability. Here we use a gaussian broadening of 0.01 Ry = 0.13eV (NB: Ry, not eV). This parameter (σ) determines how many neighboring eigenvalues will contribute to the DOS at a given E. The integration is then approximated as a sum over (special) k-points.  
 
-      ![DOS gaussian](Ref/DOS_gaussian_short.png?raw=true "DOS gaussian")
-      ![DOS gaussian](Ref/DOS_gaussian.png?raw=true "DOS gaussian")
+      <img src="Ref/DOS_gaussian_short.png" height="80"/>
+      <img src="Ref/DOS_gaussian.png" height="80"/>
       
+      Run the `dos.x` executable (also in parallel)
       ```
       % dos.x < si.dos.in > si.dos.out
       ```
-      The output file `si.dos.dat` can be plotted. Note the format:
+      The output file `si.dos.dat` can be plotted.
+
+      ![DOS integration scheme](Ref/DOS-comparison.png?raw=true "DOS integration scheme")
+
+      Note the format of the `si.dos.dat` file:
       ```
       % head si.dos.dat 
       #  E (eV)   dos(E)     Int dos(E) EFermi =    6.214 eV
       -10.000  0.1148E-84  0.1148E-85
       -9.900  0.1148E-84  0.2295E-85
       ```
-      i.e., the file contains the DOS and the integrated DOS.
+      i.e., the file contains both the DOS and the integrated DOS N(E).
 
-      ![Integrated DOS](Ref/intdos_equation.png?raw=true "Integrated DOS")
+      <img src="Ref/intdos_equation.png" height="80"/>
 
       What values do the DOS and the integrated DOS have at the Fermi level? Why?
 
       Note: the NSCF run recalculates the Fermi level.
 
-  4.  Clearly, the DOS distribution is not a smooth curve. Can you understand why this is by looking at the formulae above? We need to improve the integration by increasing the number of k-points. First, however, lets try to use an improved integration algorithm, the tetrahedron method. In this scheme the Brillouin zone is divided into small meshes that are further divided into tetrahedra. Within each tetrahedron, the eigenvalues e(k) (and if present, the matrix elements M(k)) are linearly or quadratically interpolated and as a result, the BZ integration can be done analytically. 
 
-  ![Tetrahedron method](Ref/tetra.png?raw=true "Tetrahedron method")
 
-To use this method, you just need to modify the input file slightly:
+  5.  Clearly, the DOS distribution is not a smooth curve. Can you understand why this is by looking at the formulae above? We need to improve the integration by increasing the number of k-points. First, however, lets try to use an improved integration algorithm, the tetrahedron method. In this scheme the Brillouin zone is divided into small meshes that are further divided into tetrahedra. Within each tetrahedron, the eigenvalues ε<sub>k</sub> (and if present, the matrix elements M(k); for the DOS M(k)=1) are linearly or quadratically interpolated and as a result, the BZ integration can be done analytically. 
+
+      ![Tetrahedron method](Ref/tetra.png?raw=true "Tetrahedron method")
+
+      To use this method, you just need to modify the input file slightly:
       ```
       % cat si.dos-tetra.in
       &dos
       outdir='./tmp'
       prefix='Si'
-      **bz_sum='tetrahedra'**
+      bz_sum='tetrahedra'
       fildos='si.dos-tetra.dat',
       Emin=-10.0, Emax=20.0, DeltaE=0.1
       /
       ```
+      
       Note there is no definition now of a smearing energy, but a new variable `bz_sum='tetrahedra'` (Other options are available). 
       
-      Run `dos.x < si.dos-tetra.in > si.dos-tetra.out` again and compare with the previous plot. 
-
-      ![DOS integration scheme](Ref/DOS-comparison.png?raw=true "DOS integration scheme")
+      Run `dos.x < si.dos-tetra.in > si.dos-tetra.out` again and compare with the previous plot (see above). 
 
       Clearly the tetrahedron method is better for obtaining a smooth DOS distribution (spectrum). This is generally true, but may not be adequate for metals with a complicated Fermi surface.
 
       Note: in principle, or at least in older versions of QE, one should also perform the nscf calculation using the tetrahedron method.
  
-  4.  Let's now perform a convergence test with k-points. Increase the density of the k-point mesh in the NSCF run, using grids of size 8x8x8, 16x16x16 and 24x24x24. Save the output si.dos.dat file with an appropriate name in each case. There should be no need to rerun the SCF calculation. For instance,
+  6.  Let's now perform a convergence test with k-points. Increase the density of the k-point mesh in the NSCF run, using grids of size 8x8x8, 16x16x16 and 24x24x24. Save the output file `si.dos.dat` file with an appropriate name in each case. There should be no need to rerun the SCF calculation. For instance,
       ```
       sed 's/8 8 8/16 16 16/' si.nscf.in > si.nscf.in_k16
       pw.x < si.scf.in_k16 > si.scf.out_k16
@@ -116,9 +125,20 @@ To use this method, you just need to modify the input file slightly:
 
       Question: why do we need such a large density of k-points for computing the DOS, while a smaller grid is fine for the charge density?
 
-  5. ADVANCED: Try changing the values of the gaussian smearing and energy interval DeltaE, and observe the effect on the computed DOS.
+  7.  Finally, compare the converged DOS with the band structure computed in the previous tutorial. Take care to align the top of the valence band in each case, as the Fermi level is defined differently, as you have seen above. You should also invert the columns (to have Energy on the vertical axis). In gnuplot:
       
-  5. ADVANCED: You can also use the scripts 'run_dos' and 'run_plots' which will automate all the steps above. Look also at the 'EFermi.dat' file, which collects some information about the Fermi level and band edges. 
+      ```
+      gnuplot> VBM=6.214
+      gnuplot> plot "DOS_converged.dat" u 2:($1-VBM) with filledcurves y1 linecolor "red" fillcolor "red"
+      ```
+      Plotting more than one panel with gnuplot, is however, tricky. You can have a look at `Ref/Si_bands_DOS.gnuplot`.   
+
+      ![Bands vs DOS](Ref/Sibands_DOS.png?raw=true "Bands vs DOS")
+  
+
+  8. ADVANCED: Try changing the values of the gaussian smearing and energy interval DeltaE, and observe the effect on the computed DOS. Try also `bz_sum='tetrahedra_opt'` and see which is more efficient.
+      
+  9. ADVANCED: You can also use the scripts 'run_dos' and 'run_plots' which will automate all the steps above. Look also at the 'EFermi.dat' file, which collects some information about the Fermi level and band edges. 
       ```
       % ./Scripts/run_dos
       % cat EFermi.dat
