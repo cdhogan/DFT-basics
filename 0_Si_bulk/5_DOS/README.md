@@ -39,6 +39,7 @@ In this tutorial we will examine two ways of performing the integration.
       K_POINTS {automatic}
       8 8 8 0 0 0
       ```
+      
       We thus request several empty bands (6) in addition to the filled (4) ones, like for the band structure calculation. In practice, the number of bands defines the range over which the DOS is computed, so typically one wants to include several eV above the CBM. 
       ```
       % pw.x < si.nscf.in > si.nscf.out
@@ -135,7 +136,6 @@ In this tutorial we will examine two ways of performing the integration.
 
       ![Bands vs DOS](Ref/Sibands_DOS.png?raw=true "Bands vs DOS")
   
-
   8. ADVANCED: Try changing the values of the gaussian smearing and energy interval DeltaE, and observe the effect on the computed DOS. Try also `bz_sum='tetrahedra_opt'` and see which is more efficient.
       
   9. ADVANCED: You can also use the scripts 'run_dos' and 'run_plots' which will automate all the steps above. Look also at the 'EFermi.dat' file, which collects some information about the Fermi level and band edges. 
