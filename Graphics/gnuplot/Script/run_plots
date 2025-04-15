@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+
+
+##################################################
+#Make a gnuplot script to plot a simple function
+SAVE=gnuplot1
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+
+# Plot results on screen.
+# x11 should always work, but for nicer plots
+# try try wxt (ubuntu) or aqua (mac) 
+set terminal x11 enhanced
+set title "My first plot"
+plot x**3,x**2
+
+# Save the plot as a png (I prefer "pngcairo")
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+replot
+EOF
+
+#Run the gnuplot script to make the plot of the total energy
+gnuplot ${SAVE}.gnu
+
+##################################################
+#Print a gnuplot script to plot the 2 column files
+SAVE=gnuplot2
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+set term x11 enhanced
+set out
+set title "Basic functions and styles"
+set encoding utf8
+set xlabel "X-axis label"
+set ylabel "Y-axis label"
+set y2label "Second Y-axis label "
+
+set yrange [-5:10]
+set ytics 4 nomirror
+set y2range [-20:20]
+set xrange [-10:5]
+set mxtics 5
+
+# User defined variables and functions
+my_variable=-3
+f(x)=x
+set key top left
+plot sin(x)+exp(x) title "sine+exp" with lines dashtype 2,\\
+	x**2 t "x^2" w lp lt 1 linewidth 2 linecolor "red",\\
+	f(x-2),\\
+	my_variable 
+
+pause -1
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+replot
+
+EOF
+
+#Run the gnuplot script to make the plot of the total energy
+gnuplot ${SAVE}.gnu
+
+##################################################
+#Print a gnuplot script to plot datafiles
+
+SAVE=gnuplot3
+cat > ${SAVE}.dat <<EOF
+#A comment ignored by gnuplot starts with '#'
+0 0 0.5
+1 1 0.5
+2 3 1.0
+4 -1 0.2 # another comment
+3 1 0.2
+EOF
+
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set term x11 enhanced
+set out
+##START##
+FILENAME="${SAVE}.dat"
+
+set title "Plotting datafiles"
+set xlabel "Default number style: 1 or 1.5"
+
+plot "gnuplot3.dat" with lines,\\
+	"gnuplot3.dat" using 3:1,\\
+	"" u 1:2:(\$3*3) with points pointsize variable pointtype 6,\\
+	FILENAME u 1:(\$2*2+0.2*\$1) w lp pt 7 ps 2.0
+##END##
+
+pause -1
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+replot
+
+EOF
+
+#Run the gnuplot script to make the plot 
+gnuplot ${SAVE}.gnu
+
+##################################################
+# Labels, key, font
+SAVE=gnuplot4
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+set term x11 enhanced
+set xlabel "Label with Times,16pt font" font "Times,20"
+set ylabel "Label with Helvetica,12pt font" font "Helvetica,12"
+set label 1 "Rotated\n text" at 3,2 rotate by 30
+set label 2 "UTF8 special chars (Å,±,ρ)" at 1,-5
+set label 3 "Hide me!"
+unset label 3
+set arrow 1 from -2.5,-2.5 to screen 0.25,0.75 lc "red" lw 2
+min=-10
+max=10
+set yrange [min:max]
+set xtics 2.5
+set arrow 10 from 0,min to 0,max nohead
+set label 4 "Vertical line" at -0.5,(max+min)/2 rotate by 90 
+set format x "%4.1f"
+set format y "%g"
+set key above Right 
+set key box samplen 10 
+plot x t "f(x)=x" dt 5 lw 2
+
+pause -1
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+replot
+
+EOF
+
+#Run the gnuplot script to make the plot 
+gnuplot ${SAVE}.gnu
+
+##################################################
+# Fitting, smoothing, shading, objects, index
+SAVE=gnuplot5
+cat > ${SAVE}.dat <<EOF
+#A comment ignored by gnuplot starts with '#'
+#First set of data (index 0)
+0 0 0.5
+1 1 0.5
+2 3 1.0
+
+#Second part of first set 
+3 1
+4 2
+5 3
+
+
+#Second set of data follows two empty lines (index 1)
+0 -1
+1 -2
+2 -1
+3 -2
+4.5 -3
+EOF
+
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+set term x11 enhanced
+
+set xtics 1 out nomirror
+set grid x
+set mxtics 2
+set ytics 1 in nomirror
+set mytics 4
+set border 3
+set yrange [-4:4]
+#Tics style
+#labels
+#tic format
+#variable pointsize
+#index
+FILENAME="${SAVE}.dat"
+plot FILENAME index 0 using 1:2 with lp lc "black" pt 6 ps 2.0,\\
+	"" i 1 with filledcurves y=-1 fillstyle lc "red" fillcolor "forest-green",\\
+	"" i 0 u 1:(\$1 <= 1 ? \$2 : 1/0) with filledcurve x1 fillstyle transparent solid 0.5 fillcolor "orange"
+
+
+#"" i 1 u 1:2:(\$3) w lp pointsize variable pt 6
+
+pause -1
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+replot
+
+EOF
+
+#Run the gnuplot script to make the plot 
+gnuplot ${SAVE}.gnu
+
+##################################################
+SAVE=gnuplot6
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+set term x11 enhanced
+set out
+test
+pause -1
+set term pngcairo enhanced size 600,400
+set output "${SAVE}.png"
+test
+set term png enhanced size 600,400
+set output "${SAVE}normal.png"
+test
+EOF
+#Run the gnuplot script to make the plot 
+gnuplot ${SAVE}.gnu
+
+exit
+
+##################################################
+
+replot
+set term
+cat > ${SAVE}.dat <<EOF
+#A comment ignored by gnuplot starts with '#'
+exit
+
+
+exit
+
+multigrid
+- add sketpch of borders and margins
+bar charts
+3D plots
+axes x1y2
+filledcurve
+
+###
+contour plotsa?
+
+###########3
+saving images
+
+
+#Print a gnuplot script to plot the 4 column files
+cat > plot-gap-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set xlabel "E_{cut} (Ry)"
+set ylabel "E (eV)
+
+# Generate a PDF image
+set term pdfcairo enhanced
+set output "${GAP}.pdf"
+set multiplot layout 1,2
+plot \
+	'$GAP'  u 1:3 w lp pt 7 lw 2  lc rgb "red" title "CBM",\
+	'$GAP'  u 1:2 w lp pt 6 lw 2  lc rgb "blue" title "VBM"
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+set nomulti
+
+# Generate a PNG image (useful for GitHub)
+set term pngcairo enhanced size 800,400
+set output "${GAP}.png"
+set multiplot layout 1,2
+plot \
+	'$GAP'  u 1:3 w lp pt 7 lw 2  lc rgb "red" title "CBM",\
+	'$GAP'  u 1:2 w lp pt 6 lw 2  lc rgb "blue" title "VBM"
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+set nomulti
+replot
+
+# Plot onscreen just the gap.
+# x11 should work on most system. Try wxt (ubuntu) or aqua (mac) for nicer plots.
+set term x11 enhanced
+set out
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+replot
+pause -1
+EOF
+
+#Run the gnuplot script to make the plot
+gnuplot plot-gap-script.gnu
+
+exit
+

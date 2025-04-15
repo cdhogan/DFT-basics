@@ -1,0 +1,1 @@
+awk '/##START##/,/##END##/' run_plots | grep -v #

@@ -1,0 +1,18 @@
+#A comment ignored by gnuplot starts with '#'
+#First set of data (index 0)
+0 0 0.5
+1 1 0.5
+2 3 1.0
+
+#Second part of first set 
+3 1
+4 2
+5 3
+
+
+#Second set of data follows two empty lines (index 1)
+0 -1
+1 -2
+2 -1
+3 -2
+4.5 -3
