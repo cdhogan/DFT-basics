@@ -10,20 +10,25 @@ We adopt the kinetic energy cutoff, k-point mesh, and lattice parameter determin
       ```
       % pp.x < charge.in > charge.out
       ```
-     A description of the input files for the pp.x code can be found at [Link](http://https://www.quantum-espresso.org/Doc/INPUT_PP.html) or by opening the file PP/Docs/INPUT_PP.html in QE's source folder
+     A description of the input files for the pp.x code can be found at [Link to INPUT_PP.html](http://https://www.quantum-espresso.org/Doc/INPUT_PP.html) or by opening the file PP/Docs/INPUT_PP.html in QE's source folder
   3. Plot the output file 'charge.xsf' using XCrySDen
       ```
       % xcrysden --xsf charge.xsf
       ```
   4. Open the menu: `Tools` -> `Data Grid` and select `ok`
+
   5. Input an `isovalue` of about 1/10th of the `maximum grid value` and click `submit`. What are you looking at?
      (If you use a laptop with a small monitor: xcrysden has some bugs and the `submit` buttom could be out of your monitor size.
       Try clicking on `Plane #1` which should make the `submit` button visible)
      ![charge density](Ref/charge1.png?raw=true "charge density")
+
   6. Now try a much higher value, 90-95% near the maximum. What are you looking at now?
      ![charge density](Ref/charge2.png?raw=true "charge density")
-  7. ADVANCED: The `pp.x` tool can plot a lot of useful physical quantities. Modify `charge.in` to plot the 'Electron Localization Function' for bulk silicon. Note the isovalue for ELF is defined between 0 and 1. Have a look at [1] to understand the results.
+
+  7. ADVANCED: The `pp.x` tool can plot a lot of useful physical quantities. For example, to know more about the electronic bonding in bulk Si, we can plot the so-called _electron localization function_ (ELF) by putting `plot_num=8`. The ELF is derived from the probability of finding two electrons with the same spin near each other — something Pauli exclusion makes less likely in localized regions. It is defined between 0 and 1, where 1.0 corresponds to regions of high pair density (e.g. lone pairs, covalent bonds); 0.5 corresponds to metallic or electron gas behaviour; and 0.0 indicates low electron density. Have a look at [1] to understand the results. 
      ![ELF](Ref/elf.png?raw=true "ELF")
+
+     Alternatively, we can plot the _charge density minus superposition of atomic densities_ with `plot_num=9.` This gives an indication of how the electronic charge redistributes when atoms couple together. (NB: take care with the meaning of the atomic reference state).
 
 ## Bibliography
 1. Koumpouras and Andreas Larsson, J. Phys.: Condens. Matter 32 (2020) 315502 (12pp) [Link](https://doi.org/10.1088/1361-648X/ab7fd8)
