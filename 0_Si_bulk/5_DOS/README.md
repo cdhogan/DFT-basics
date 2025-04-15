@@ -8,9 +8,9 @@ In the context of DFT, the density of states (DOS) is a measure of how many ener
 i.e. it involves an integral over the Brillouin zone of a Dirac delta function that picks out the contribution of electronic states ε<sub>k</sub> at energy E. 
 
 Calculation of the DOS is straightforward with quantum-ESPRESSO, and involves three distinct steps: 
-1. The ground state electronic charge density is computed with `pw.x` self-consistently (SCF), as before, on a sufficiently dense k-point grid. 
-2. A non-self-consistent (NSCF) calculation is performed using `pw.x` over a much denser k-point grid and over a larger range of bands (to cover the energy range we are interested in). 
-3. The DOS is computed using the `dos.x` code by carefully integrating the above expression. 
+1. SCF calculation with `pw.x`. The ground state electronic charge density is computed with `pw.x` self-consistently, as before, on a sufficiently dense k-point grid. 
+2. NSCF calculation with `pw.x`. A non-self-consistent (NSCF) calculation is performed using `pw.x` over a much denser k-point grid and over a larger range of bands (to cover the energy range we are interested in). 
+3. DOS calculation with `dos.x`. The DOS is computed using the `dos.x` code by carefully integrating the above expression. 
 
 In practice the integral is replaced by a sum over (special) k-points:
 
@@ -19,7 +19,7 @@ In practice the integral is replaced by a sum over (special) k-points:
 
 In this tutorial we will examine two ways of performing the integration.
 
-  1. Run the self-consistent calculation using the provided input 'si.scf.in' to generate the ground state electronic charge density. As before, we use an automatically 
+  1. Run the self-consistent calculation using the provided input `si.scf.in` to generate the ground state electronic charge density. As before, we use an automatically 
   generated, regularly spaced, shifted k-point grid:
       ```
       % tail -2 si.scf.in 
@@ -31,7 +31,7 @@ In this tutorial we will examine two ways of performing the integration.
       As this is a SCF run, we set `calculation = 'scf'` in the input file.
       We have chosen 5 bands as before, with 4 being filled.
 
-  2.  Run the non-self-consistent (NSCF) calculation using the provided input 'si.nscf.in' to generate a set of eigenvalues and eigenfunctions on specific k-points of the Brillouin zone. There are two important changes to the input file:
+  2.  Run the non-self-consistent (NSCF) calculation using the provided input `si.nscf.in` to generate a set of eigenvalues and eigenfunctions on specific k-points of the Brillouin zone. There are two important changes to the input file:
       ```
       calculation = 'nscf'
       nbnd        = 10
@@ -44,6 +44,8 @@ In this tutorial we will examine two ways of performing the integration.
       ```
       % pw.x < si.nscf.in > si.nscf.out
       ```
+      Look quickly at the last eigenvalue for a few k-points: it is about 14 eV. 
+
       Note that we also specify an 8x8x8 _unshifted_ grid. Shifted grids were more efficient before. Why choose an unshifted one now?
       Since we want to compare and align the DOS with the band structure, it will be useful to ensure the gamma point is included in our grid.
   
@@ -84,12 +86,11 @@ In this tutorial we will examine two ways of performing the integration.
       <img src="Ref/intdos_equation.png" height="80"/>
 
       What values do the DOS and the integrated DOS have at the Fermi level? Why?
+      Understand the difference between Emax=20.0 and the value of the highest eigenvalue, and the effect of the choice of nbnd.
 
       Note: the NSCF run recalculates the Fermi level.
 
-
-
-  5.  Clearly, the DOS distribution is not a smooth curve. Can you understand why this is by looking at the formulae above? We need to improve the integration by increasing the number of k-points. First, however, lets try to use an improved integration algorithm, the tetrahedron method. In this scheme the Brillouin zone is divided into small meshes that are further divided into tetrahedra. Within each tetrahedron, the eigenvalues ε<sub>k</sub> (and if present, the matrix elements M(k); for the DOS M(k)=1) are linearly or quadratically interpolated and as a result, the BZ integration can be done analytically. 
+  5.  Clearly, the computed DOS distribution (in black) is not a smooth curve. Can you understand why this is by looking at the formulae above? We need to improve the integration by increasing the number of k-points. First, however, lets try to use an improved integration algorithm, the tetrahedron method. In this scheme the Brillouin zone is divided into small meshes that are further divided into tetrahedra. Within each tetrahedron, the eigenvalues ε<sub>k</sub> (and if present, the matrix elements M(k); for the DOS M(k)=1) are linearly or quadratically interpolated and as a result, the BZ integration can be done analytically. 
 
       ![Tetrahedron method](Ref/tetra.png?raw=true "Tetrahedron method")
 
