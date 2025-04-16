@@ -85,8 +85,9 @@ In this tutorial we will examine two ways of performing the integration.
 
       <img src="Ref/intdos_equation.png" height="80"/>
 
-      What values do the DOS and the integrated DOS have at the Fermi level? Why?
-      Understand the difference between Emax=20.0 and the value of the highest eigenvalue, and the effect of the choice of nbnd.
+      Question: What values do the DOS and the integrated DOS have at the Fermi level? Why?
+
+      Understand the difference between `Emax=20.0` and the value of the highest eigenvalue, and the effect of the choice of `nbnd`.
 
       Note: the NSCF run recalculates the Fermi level.
 
@@ -114,16 +115,20 @@ In this tutorial we will examine two ways of performing the integration.
 
       Note: in principle, or at least in older versions of QE, one should also perform the nscf calculation using the tetrahedron method.
  
-  6.  Let's now perform a convergence test with k-points. Increase the density of the k-point mesh in the NSCF run, using grids of size 8x8x8, 16x16x16 and 24x24x24. Save the output file `si.dos.dat` file with an appropriate name in each case. There should be no need to rerun the SCF calculation. For instance,
+  6.  Let's now perform a convergence test with k-points. Increase the density of the k-point mesh in the NSCF run, using grids of size 8x8x8, 16x16x16 and 24x24x24. Save the created datafile `si.dos.dat` file with an appropriate name in each case. There should be no need to rerun the SCF calculation. For instance,
       ```
       sed 's/8 8 8/16 16 16/' si.nscf.in > si.nscf.in_k16
-      pw.x < si.scf.in_k16 > si.scf.out_k16
-      dos.x < si.dos.in > si.dos.out
-      mv si.dos.dat si.dos.dat_k16
+      pw.x < si.nscf.in_k16 > si.nscf.out_k16
+      dos.x < si.dos.in > si.dos.out                     <- creates a datafile si.dos.dat
+      mv si.dos.dat si.dos.dat_k16                       <- saves the datafile (otherwise will be overwritten)
       ```
       Note that for larger grids, you should run in parallel, e.g. `mpirun -np 2 pw.x` and `mpirun -np 2 dos.x`  
 
-      Repeat using the tetrahedron method, and satisfy yourself you have a well converged spectrum.
+      ![DOS normal integration](Ref/DOS.png?raw=true "DOS")
+
+
+      Repeat using the tetrahedron method, and satisfy yourself you have a well converged spectrum. Copy the best one to 'DOS_converged.dat'.
+     ![DOS tetrahedron integration](Ref/DOS-tetra.png?raw=true "DOS")
 
       Question: why do we need such a large density of k-points for computing the DOS, while a smaller grid is fine for the charge density?
 
@@ -133,7 +138,7 @@ In this tutorial we will examine two ways of performing the integration.
       gnuplot> VBM=6.214
       gnuplot> plot "DOS_converged.dat" u 2:($1-VBM) with filledcurves y1 linecolor "red" fillcolor "red"
       ```
-      Plotting more than one panel with gnuplot, is however, tricky. You can have a look at `Ref/Si_bands_DOS.gnuplot`.   
+      Plotting more than one panel with gnuplot, is however, tricky. You can have a look at `Ref/Si_bands_DOS.gnuplot`. `xmgrace` is better/easier for making such "multiplots".  
 
       ![Bands vs DOS](Ref/Sibands_DOS.png?raw=true "Bands vs DOS")
   
