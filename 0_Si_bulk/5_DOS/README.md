@@ -70,7 +70,7 @@ In this tutorial we will examine two ways of performing the integration.
       ```
       % dos.x < si.dos.in > si.dos.out
       ```
-      The output file `si.dos.dat` can be plotted.
+      The output file `si.dos.dat` can be plotted - see the black curve in the figure.
 
       ![DOS integration scheme](Ref/DOS-comparison.png?raw=true "DOS integration scheme")
 
