@@ -12,6 +12,12 @@ In this tutorial we show how to perform calculations for (1) metallic/semi-metal
     - Test convergence with respect to the cell size/vacuum spacing.
   - [3_alat](3_alat)
     - Determine the theoretical lattice parameter
+  - [4_bands](4_bands)
+    - Compute the band structure
   - [4_spin](4_spin)
     - Investigate spin-polarization in a graphene nanoribbon.
+  - [5_DOS](5_DOS)
+    - Compute the density of states.
+  - [7_projwfc](7_projwfc)
+    - Project the DOS onto atomic orbitals.
 
