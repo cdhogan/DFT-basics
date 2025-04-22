@@ -25,10 +25,11 @@ Example on how to run basic DFT calculations on a well known system: bulk silico
   2. Look at the input file '0_Si_bulk/0_cutoff/si.scf.in'.
      The comments denoted by ! explain the input cards used which are found in almost any pw.x input
   3. Input files for quantum-ESPRESSO are described in 
-     - [INPUT_PW](http://https://www.quantum-espresso.org/Doc/INPUT_PW.html) 
-     - [INPUT_PP](http://https://www.quantum-espresso.org/Doc/INPUT_PP.html) 
-     - [INPUT_BANDS](http://https://www.quantum-espresso.org/Doc/INPUT_BANDS.html) 
-     - [INPUT_PROJWFC](http://https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html)
+     - [INPUT_PW](https://www.quantum-espresso.org/Doc/INPUT_PW.html) 
+     - [INPUT_PP](https://www.quantum-espresso.org/Doc/INPUT_PP.html) 
+     - [INPUT_BANDS](https://www.quantum-espresso.org/Doc/INPUT_BANDS.html)
+     - [INPUT_DOS](https://www.quantum-espresso.org/Doc/INPUT_DOS.html) 
+     - [INPUT_PROJWFC](https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html)
      - [everything else](https://www.quantum-espresso.org/resources/users-manual/input-data-description)
 
   4. Look at the files Docs/*.pdf for some more descriptive slides.
