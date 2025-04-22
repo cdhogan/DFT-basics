@@ -7,5 +7,5 @@
 &plot
   iflag=3
   output_format=5
-  fileout="charge.xsf"
+  fileout="charge_plot3D.xsf"
 /
