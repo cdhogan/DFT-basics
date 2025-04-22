@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=EFermi-script.dat
+#DEGAUSS=.0073498 # 0.1eV
+DEGAUSS=.014699 # 0.2eV
+
+#-------------------------------------------------#
+# self-consistent calculation
+#-------------------------------------------------#
+
+IN=graphene_script.scf.in
+OUT=graphene_script.scf.out
+
+cat > $IN << EOF
+&CONTROL
+    calculation       = 'scf'
+    restart_mode      = 'from_scratch'
+    prefix            = 'graphene'
+    tstress           = .true.
+    tprnfor           = .true.
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+    verbosity         = 'high'
+    disk_io = 'minimal'
+    wf_collect        = .true.
+/
+&SYSTEM
+                       ibrav = 4,
+                   celldm(1) = 4.635,
+                   celldm(3) = 6,
+                         nat = 2,
+                        ntyp = 1,
+                     ecutwfc = 40 ,
+                        nbnd = 16,
+                 occupations = 'smearing' ,
+                     degauss = $DEGAUSS ,
+                    smearing = 'gaussian' ,
+/
+&ELECTRONS
+                 mixing_beta = 0.7 ,
+/
+ATOMIC_SPECIES
+    C   12.01100  C.pz-vbc.UPF 
+ATOMIC_POSITIONS crystal 
+    C      0.000000000    0.000000000    0.000000000    
+    C      0.333333333    0.666666667    0.000000000    
+K_POINTS {automatic}
+ 12 12 1	0 0 0
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+# Check the VBM/CBM
+echo "SCF calculation" > $SAVE
+awk '/number of k points/{kpt=$5} /ermi/{printf("K-points: %-8i Fermi level %8.4f\n", kpt, $5)}' $OUT >> $SAVE
+
+echo "NSCF calculation" >> $SAVE
+
+#-------------------------------------------------#
+# Non-self-consistent run, regular k-grid
+#-------------------------------------------------#
+
+for grid in 12 24 48 72; do
+
+# Use unshifted, odd grid to capture K point
+klist="$grid $grid 1 0 0 0"
+#klist="$grid $grid 1 1 1 0"
+echo $klist
+
+IN=graphene_script.nscf.in
+OUT=graphene_script.nscf.out_k${grid}
+
+cat > $IN << EOF
+&CONTROL
+    calculation       = 'nscf'
+    restart_mode      = 'from_scratch'
+    prefix            = 'graphene'
+    tstress           = .true.
+    tprnfor           = .true.
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+    verbosity         = 'high'
+    disk_io = 'minimal'
+    wf_collect        = .true.
+/
+&SYSTEM
+                       ibrav = 4,
+                   celldm(1) = 4.635,
+                   celldm(3) = 6,
+                         nat = 2,
+                        ntyp = 1,
+                     ecutwfc = 40 ,
+                        nbnd = 16,
+                 occupations = 'smearing' ,
+                     degauss = $DEGAUSS ,
+                    smearing = 'gaussian' ,
+/
+&ELECTRONS
+                 mixing_beta = 0.7 ,
+/
+ATOMIC_SPECIES
+    C   12.01100  C.pz-vbc.UPF 
+ATOMIC_POSITIONS {crystal}
+    C      0.000000000    0.000000000    0.000000000    
+    C      0.333333333    0.666666667    0.000000000    
+K_POINTS {automatic}
+$klist
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+# Check the VBM/CBM
+awk '/number of k points/{kpt=$5} /ermi/{printf("K-points: %-8i Fermi level %8.4f\n", kpt, $5)}' $OUT >> $SAVE
+
+#-------------------------------------------------#
+# DOS calculation, regular k-grid and Gaussian smearing
+#-------------------------------------------------#
+
+IN=graphene_script.dos.in
+OUT=graphene_script.dos.out
+FILDOS=graphene_script.dos-kgrid${grid}.dat
+
+# DOS without tetrahedra
+cat > $IN << EOF
+ &dos
+   outdir='./tmp'
+   prefix='graphene'
+   fildos="$FILDOS",
+   degauss=$DEGAUSS
+   Emin=-25.0, Emax=15.0, DeltaE=0.05
+ /
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+#awk '/EFermi/{print "DOS,       EFermi= "$9}' $FILDOS >> $SAVE
+
+#-------------------------------------------------#
+# DOS calculation, with tetrahedra
+#-------------------------------------------------#
+
+IN=graphene_script.dos-tetra.in
+OUT=graphene_script.dos-tetra.out
+FILDOS=graphene_script.dos-tetra-kgrid${grid}.dat
+
+# DOS with tetrahedra
+cat > $IN << EOF
+ &dos
+   outdir='./tmp'
+   prefix='graphene'
+   bz_sum="tetrahedra_opt"
+   fildos="$FILDOS",
+   Emin=-25.0, Emax=15.0, DeltaE=0.05
+ /
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+#awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
+
+done
+awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
+
+echo "Run completed at: " `date`
+
+echo "Now launch the run_plots script."
+
+exit
+
+
+
+

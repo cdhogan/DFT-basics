@@ -1,0 +1,7 @@
+&PROJWFC
+  prefix       = "graphene",
+  outdir       = "./tmp",
+  degauss = .0146997
+  lsym=.true.
+  filproj='graphene.proj'
+/

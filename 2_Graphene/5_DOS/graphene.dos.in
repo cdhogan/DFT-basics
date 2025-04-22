@@ -1,0 +1,7 @@
+ &dos
+   outdir='./tmp'
+   prefix='graphene'
+   fildos="graphene.dos.dat",
+   degauss=.03
+   Emin=-25.0, Emax=15.0, DeltaE=0.05
+ /
