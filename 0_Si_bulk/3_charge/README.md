@@ -2,7 +2,8 @@
 This exercise demonstrates the post-processing of data from a previous self-consistent result. For example, we can ask to visualize the electronic charge density, or the electrostatic potential, or to look at a particular wavefunction in real space.
 
 Most (but not all) post-processing can be performed using the `pp.x` code. 
-A description of the input files for the pp.x code can be found at [Link to INPUT_PP.html](http://https://www.quantum-espresso.org/Doc/INPUT_PP.html) or by opening the file PP/Docs/INPUT_PP.html in QE's source folder.
+
+A description of the input files for the pp.x code can be found at [INPUT_PP.html](http://https://www.quantum-espresso.org/Doc/INPUT_PP.html) or by opening the file PP/Docs/INPUT_PP.html in QE's source folder.
 
 Here we will compute the electronic charge density and write it into files that can be plotted in 1D or visualized in 3D using `XCrySDen`. 
 
@@ -42,9 +43,10 @@ We adopt the kinetic energy cutoff, k-point mesh, and lattice parameter determin
       gnuplot> plot "charge_plot1D.dat" w l
       ```
       ![charge density](Ref/charge_plot1D.png?raw=true "charge density")
+
       Is it what you expect?
   
-  3. Now let's look at the charge density throughout the cell using a 3D analysis. Run the code again with `charge3D.in` and plot the output file 'charge_plot3D.xsf' using XCrySDen
+  4. Now let's look at the charge density throughout the cell using a 3D analysis. Run the code again with `charge3D.in` and plot the output file 'charge_plot3D.xsf' using XCrySDen
       ```
       % cat charge3D.in
       [...]
@@ -59,21 +61,21 @@ We adopt the kinetic energy cutoff, k-point mesh, and lattice parameter determin
       % pp.x < charge3D.in > charge3D.out
       % xcrysden --xsf charge_plot_3D.xsf
       ```
-  4. Open the menu: `Tools` -> `Data Grid` and select `ok` until the Isosurface window opens.
+  5. Open the menu: `Tools` -> `Data Grid` and select `ok` until the Isosurface window opens.
 
-  5. Input an `isovalue` of about 1/10th of the `maximum grid value` and click `submit`. What are you looking at? Is it what you expect?
+  6. Input an `isovalue` of about 1/10th of the `maximum grid value` and click `submit`. What are you looking at? Is it what you expect?
      (If you use a laptop with a small monitor: xcrysden has some bugs and the `submit` buttom could be out of your monitor size.
       Try clicking on `Plane #1` which should make the `submit` button visible)
      ![charge density](Ref/charge1.png?raw=true "charge density")
 
      To see the isosurface better, try increasing the number of cells drawn. From the main XCrysDen menu select `View` -> `Number of units drawn` and make a 3x3x3 cell. In the Isosurface window you will need to select `Expand to whole surface` and Submit again to refresh the plot. 
 
-  6. Now try a much higher value, 90-95% near the maximum. What are you looking at now? How does it relate to the 1D plot you did first?
+  7. Now try a much higher value, 90-95% near the maximum. What are you looking at now? How does it relate to the 1D plot you did first?
      ![charge density](Ref/charge2.png?raw=true "charge density")
 
      A key message here is: be very careful when interpreting data from 3D isosurface plots! It is easy to trick yourself. The isovalue must be chosen carefully.
   
-  7. Instead of XCrysDen, you can view geometries, isosurfaces, planes, etc with other packages such as VESTA. VESTA can read both the .xsf format data or the more common .cube format. Let's generate also a .cube format file.
+  8. Instead of XCrysDen, you can view geometries, isosurfaces, planes, etc with other packages such as VESTA. VESTA can read both the .xsf format data or the more common .cube format. Let's generate also a .cube format file.
 
       ```
       % pp.x < charge3D_cube.in > charge3D_cube.out
@@ -81,7 +83,7 @@ We adopt the kinetic energy cutoff, k-point mesh, and lattice parameter determin
       % VESTA charge_plot3D.cube
       ```
 
-  8. ADVANCED: The `pp.x` tool can plot a lot of useful physical quantities. For example, to know more about the electronic bonding in bulk Si, we can plot the so-called _electron localization function_ (ELF) by putting `plot_num=8`. The ELF is derived from the probability of finding two electrons with the same spin near each other — something Pauli exclusion makes less likely in localized regions. It is defined between 0 and 1, where 1.0 corresponds to regions of high pair density (e.g. lone pairs, covalent bonds); 0.5 corresponds to metallic or electron gas behaviour; and 0.0 indicates low electron density. Have a look at [1] to understand the results. 
+  9. ADVANCED: The `pp.x` tool can plot a lot of useful physical quantities. For example, to know more about the electronic bonding in bulk Si, we can plot the so-called _electron localization function_ (ELF) by putting `plot_num=8`. The ELF is derived from the probability of finding two electrons with the same spin near each other — something Pauli exclusion makes less likely in localized regions. It is defined between 0 and 1, where 1.0 corresponds to regions of high pair density (e.g. lone pairs, covalent bonds); 0.5 corresponds to metallic or electron gas behaviour; and 0.0 indicates low electron density. Have a look at [1] to understand the results. 
      ![ELF](Ref/elf.png?raw=true "ELF")
 
      Alternatively, we can plot the _charge density minus superposition of atomic densities_ with `plot_num=9.` This gives an indication of how the electronic charge redistributes when atoms couple together. (NB: take care with the meaning of the atomic reference state).
