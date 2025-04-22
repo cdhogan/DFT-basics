@@ -71,9 +71,9 @@ We can obtain more information about the density of states and band structure by
 
   6. ADVANCED USERS: The shell scripts 'run_pdos' and 'run_plots' in the 'Script' directory will do everything automatically.
       ```
-      ./Script/run_ecut
+      ./Script/run_pdos
       ./Script/run_plots
       ```
       NB: Do not use the scripts for your own projects unless you understand well how they work!
       
-### When you have completed this tutorial, you can move on to [1_ksmear: Convergence with k-points and smearing](../1_ksmear)
+### When you have completed this tutorial, you can move on to another system [3_CO: Carbon monoxide molecule](../../3_CO)
