@@ -1,0 +1,14 @@
+# From scan over a values at constant volume
+20 Ry 	MIN ENERGY= -22.17709831 alat= 4.90
+40 Ry    MIN ENERGY= -22.68633315 alat= 4.66
+60 Ry	MIN ENERGY= -22.77725655 alat= 4.61
+80 Ry	MIN ENERGY= -22.79247577 alat= 4.61
+100 Ry	MIN ENERGY= -22.79585863 alat= 4.61
+
+
+# From vc-relax
+20 Ry  4.44
+40 Ry  4.53
+60 Ry  4.59
+80 Ry  4.61
+100 Ry 4.61

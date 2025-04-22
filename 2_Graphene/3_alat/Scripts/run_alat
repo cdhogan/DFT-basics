@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Etot_vs_alat-script.dat
+MINENERGY=999999
+MINALAT=0
+echo -e "# a \t c/a \t energy(Ry)" > $SAVE
+#                  celldm(1) = 4.635,
+#                  celldm(3) = 6,
+
+# Loop over a
+for a in 4.0 4.1 4.2 4.3 4.4 4.5 4.55 4.58 4.59 4.6 4.61 4.62 4.63 4.64 4.65 4.66 4.67 4.68 4.69 4.7 4.75 4.8 4.90 5.0 5.1 5.2 5.3 5.4 5.5 5.6; do
+
+# Constant volume or constant c?
+#Rescale CELLDM3=(3)=c/a for c=6*4.635 = 27.810 = constant
+#Rescale c/a for constant volume V = c*a*a*sqrt(3)/2 = 517.4056
+
+#c/a = 2*V/(a^3*sqrt(3))
+#ca=`echo "27.810/$a" | bc -l --scale=3`
+ca=`echo "517.4056*2/($a^3*sqrt(3))" | bc -l --scale=5`
+c=`echo "$ca*$a" | bc -l --scale=5`
+
+echo "Running a = $a and c/a= $ca and c=$c"
+
+IN=gr_script.scf.in
+OUT=gr_script.scf.out_a${a}_ca${ca}
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+    calculation       = 'scf'
+    restart_mode      = 'from_scratch'
+    prefix            = 'graphene'
+    tstress           = .true.
+    tprnfor           = .true.
+    pseudo_dir        = '../../Pseudo'
+    outdir            = './'
+    verbosity         = 'high'
+    disk_io = 'minimal'
+    wf_collect        = .true.
+/
+&SYSTEM
+                       ibrav = 4,
+                   celldm(1) = $a,
+                   celldm(3) = $ca,
+                         nat = 2,
+                        ntyp = 1,
+                     ecutwfc = 20 ,
+                        nbnd = 8,
+                 occupations = 'smearing' ,
+!                    degauss = 0.03 ,
+!                   smearing = 'gaussian' ,
+                      degauss = 0.01 ,
+                     smearing = 'm-v' ,
+/
+&ELECTRONS
+                 mixing_beta = 0.7 ,
+/
+ATOMIC_SPECIES
+    C   12.01100  C.pz-vbc.UPF 
+ATOMIC_POSITIONS crystal 
+    C      0.000000000    0.000000000    0.500000000    
+    C      0.333333333    0.666666667    0.500000000    
+K_POINTS {automatic}
+12 12 1 0 0 0
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+grep volume $OUT
+
+is_less=`echo "$ENERGY < $MINENERGY" | bc`
+if [ "$is_less" -eq 1 ]; then
+   MINENERGY=$ENERGY
+   MINALAT=$a
+fi
+
+echo -e "$a\t$ca\t$ENERGY" >> $SAVE
+
+#echo -e " " >> $SAVE
+done
+echo "Run completed at: " `date`
+echo "MIN ENERGY= $MINENERGY alat= $MINALAT"
+#echo "Now launch the run_plots script."
+
+exit
+
+
+
+
