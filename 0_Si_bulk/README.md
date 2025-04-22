@@ -15,8 +15,10 @@ Example on how to run basic DFT calculations on a well known system: bulk silico
     - Calculate a charge density and visualize it using XCrySDen
   - [4_bandstructure](4_bandstructure)
     - Calculate a band structure using a non-self-consistent calculation
+  - [5_DOS](5_DOS)
+    - Calculate the density of states (DOS) using different BZ integration schemes 
   - [6_DOS_opt_scripting](6_DOS_opt_scripting)
-    - Calculate the density of states(DOS) and optical properties (independent particle approximation) and show the convergence over the number of k_points and empty bands used
+    - Calculate the DOS and optical properties within  the independent particle approximation (Older tutorial)
 
 ## Documentation
   1. Follow the detailed instructions in the README files
