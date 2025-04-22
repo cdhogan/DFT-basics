@@ -1,6 +1,8 @@
 # Density of states (DOS)
 
-Like in the bulk silicon case we compute the density of states using `DOS.x`. The input file variables are defined at [LINK]. 
+Like in the bulk silicon case we compute the density of states using `DOS.x`. 
+The input file variables are defined at [INPUT_DOS](https://www.quantum-espresso.org/Doc/INPUT_DOS.html).
+     
 See the Si tutorial for a more detailed explanation of the DOS calculation (equations and algorithms).
 
   1. Let's start with a small grid. As noted before, it is enough that the grid is unshifted and is a multiple of 3 to contain both the Gamma and K points.
@@ -42,12 +44,19 @@ See the Si tutorial for a more detailed explanation of the DOS calculation (equa
      And these are the results, also compared with the band structure.
      ![DOS](Ref/DOS-script.png?raw=true "DOS")
      ![DOS](Ref/DOS-tetra-script.png?raw=true "DOS")
-     ![DOS](Ref/graphene_bands_DOS.png?raw=true "DOS")
 
      Note that the tetrahedron method produces some spurious spikes in the DOS. This is probably due to using a method designed for a 3D system in a 2D system!
 
+     Finally, we can align the DOS and band structure. We confirm a zero DOS at the Fermi level, where the Dirac cones meet.
+
+
+
+     ![DOS](Ref/graphene_bands_DOS.png?raw=true "DOS")
+
+
+
       NB: Do not use the scripts for your own projects unless you understand well how they work!
 
- 4.   ADVANCED: Try plotting the k-grids in cartesian coordinates, and see how they fill or demarcate the Brillouin zone.
-      
+ 5.   ADVANCED: Try plotting the k-grids in cartesian coordinates, and see how they fill or demarcate the Brillouin zone.
+
 ### When you have completed this tutorial, you can move on to [7_projwfc: Projected DOS](../7_projwfc)
