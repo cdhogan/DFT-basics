@@ -65,6 +65,16 @@ The main difference is in the choice of k-point path. Here you want select a pat
      ```
      % echo "16 49" > eigenvalues.dat       
      % awk '/End of band structure calculation/{ f = 1; next } /Writing output data file/{ f = 0 } f' graphene.bands.out >> eigenvalues.dat
+     % cat eigenvalues.dat
+     16 49
+
+               k = 0.0000 0.0000 0.0000 (  2239 PWs)   bands (ev):
+
+        -21.4078  -9.7076  -4.8997  -4.8997   1.4307   2.5113   2.9174   4.8931
+          5.7086   6.6108   6.6108   8.9740  10.1312  10.1825  10.9062  14.5371
+
+               k = 0.0312 0.0180 0.0000 (  2243 PWs)   bands (ev):
+     [...]
      ```
      The input file for `plotproj.x` has the following format. Here we choose to sum over all pz orbitals in the system. 
      You will need to play with the threshold parameter.
