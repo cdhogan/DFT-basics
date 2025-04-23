@@ -35,13 +35,30 @@ Recall that to study an isolated 2D graphene sheet we use a supercell full of em
   xcrysden --pwo graphene.vc-relax-2Dxy.out
   ```
 
-  3. The full power of vc-relax can be seen by running the input file graphene.vc-relax-buckled.in. Here, the graphene sheet has a buckled configuration. Show that the vc-relax calculation succeeds in returning to the flat geometry with the correct cell parameter.
+  3. Let's check our result from vc-relax with a loop over alat like we did for bulk Si. This time let's use directly a shell script:
+  ```
+  % ./Scripts/run_alat
+  [...]
+  MIN ENERGY= -22.17709835 alat= 4.90
+  % head Etot_vs_alat-script.dat
+  # a      c/a     energy(Ry)
+  4.0     9.33513 -21.68664642
+  4.1     8.66860 -21.80645159
+  4.2     8.06404 -21.90657313
+  % gnuplot> plot "Etot_vs_alat-script.dat" u 1:3 w lp
+  ```
+  
+  How does the minimum compare with the result from vc-relax?
+
+  Note: there is a subtle issue that arises when varying alat for 2D systems. Should you keep c fixed or the volume fixed?   
+
+  4. The full power of vc-relax can be seen by running the input file graphene.vc-relax-buckled.in. Here, the graphene sheet has a buckled configuration. Show that the vc-relax calculation succeeds in returning to the flat geometry with the correct cell parameter.
   ```
   pw.x < graphene.vc-relax-buckled.in > graphene.vc-relax-buckled.out
   xcrysden --pwo graphene.vc-relax-buckled.out
   ```
   
-  4. Last, let's change slightly the initial positions and cell parameter of the buckled sheet. What happens now?
+  5. Last, let's change slightly the initial positions and cell parameter of the buckled sheet. What happens now?
   ```
   pw.x < graphene.vc-relax-buckled2.in > graphene.vc-relax-buckled2.out
   xcrysden --pwo graphene.vc-relax-buckled2.out
