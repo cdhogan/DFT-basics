@@ -14,7 +14,7 @@ The main difference is in the choice of k-point path. Here you want select a pat
       ```
       By inspecting the output file, we see we have 8 electrons and 4 filled bands, and the Fermi level is at -1.8243 eV.
 
-  2.  Run the non-self-consistent (NSCF/BANDS) calculation using the provided input 'graphene.bands.in'. Since we have 8 electrons and 4 filled bands, we increase the requested bands to 20. We specify 4 points in order to define 3 "symmetry lines" in k-space that contain 16 points per line. 
+  2.  Run the non-self-consistent (BANDS) calculation using the provided input 'graphene.bands.in'. Since we have 8 electrons and 4 filled bands, we increase the requested bands to 20. We specify 4 points in order to define 3 "symmetry lines" in k-space that contain 16 points per line. 
             
       ```
       % tail -8 graphene.bands.in
