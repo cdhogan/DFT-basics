@@ -1,8 +1,10 @@
 # Band structure calculation
-In a periodic solid, the eigenfunctions Ψ(n,**k**) and eigenvalues E(n,**k**) of the system can be characterized by the reciprocal space vector **k** and a band index *n*.
-It is useful to plot E(n,**k**) along high-symmetry paths which usually shows most of the interesting features.
+The procedure for computing the band structure in graphene is very similar to that you followed for bulk silicon.
+The main difference is in the choice of k-point path. Here you want select a path that contains both Gamma and K points. Again, identify the coordinates using XCrysDen or the seek-path app, and prepare the path using `crystal_b` coordinates (see [K_POINTS](http://https://www.quantum-espresso.org/Doc/INPUT_PW.html)).
 
-  1. Run the self-consistent calculation using the provided input 'graphene.scf.in' to generate the ground state electronic charge density. As before, we use an automatically generated, regularly spaced, k-point grid:
+![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
+
+  1. Run the self-consistent (SCF) calculation using the provided input 'graphene.scf.in' to generate the ground state electronic charge density. 
       ```
       % tail -2 graphene.scf.in 
       K_POINTS {automatic}
@@ -10,21 +12,12 @@ It is useful to plot E(n,**k**) along high-symmetry paths which usually shows mo
 
       % pw.x < graphene.scf.in > graphene.scf.out
       ```
-      As this is a SCF run, we set `calculation = 'scf'` in the input file.
-      By inspecting the output file, we see we have 8 electrons and 4 filled bands.
+      By inspecting the output file, we see we have 8 electrons and 4 filled bands, and the Fermi level is at -1.8243 eV.
 
-  2.  Run the non-self-consistent (nscf/bands) calculation using the provided input 'graphene.bands.in' to generate a set of eigenvalues and eigenfunctions on specific k-points of the Brillouin zone. There are two important changes to the input file:
+  2.  Run the non-self-consistent (NSCF/BANDS) calculation using the provided input 'graphene.bands.in'. Since we have 8 electrons and 4 filled bands, we increase the requested bands to 20. We specify 4 points in order to define 3 "symmetry lines" in k-space that contain 16 points per line. 
+            
       ```
-      calculation = 'bands'
-      nbnd        = 10
-      ```
-      We thus request several empty bands (6) in addition to the filled (4) ones. 
-
-      We also specify 4 points that define 3 "symmetry lines" in k-space that contain 8 points per line (or 1 for a line of zero length). 
-      Here we use crystal coordinates [K_POINTS](http://https://www.quantum-espresso.org/Doc/INPUT_PW.html).
-      Note that the k-points are thus along a path in the BZ and do not form a grid like in the SCF calculation.
-      ```
-      % tail -8 graphene.bands.on
+      % tail -8 graphene.bands.in
       K_POINTS {crystal_b}
       4
       0.0000000000     0.0000000000     0.0000000000 16  ! Gamma
@@ -34,20 +27,16 @@ It is useful to plot E(n,**k**) along high-symmetry paths which usually shows mo
 
       % pw.x < graphene.bands.in > graphene.bands.out
       ```
-      Compare the output of the 'si.scf.out' and 'si.bands.out' files: note the difference in the k-point lists and in the SCF/NSCF iteration loops.
-
-  3.  The output from the previous step is not in a human-readable format. To plot an actual bandstructure, you must run the `bands.x` post-processing tool using the provided input 'graphene.bandspp.in'
+  3.  Finally we generate a plottable file with the `bands.x` post-processing tool using the provided input 'graphene.bandspp.in'
       ```
       % bands.x < graphene.bandspp.in > graphene.bandspp.out
       ```
-      This run analyses the symmetries of the eigenfunctions and writes the eigenvalues into a file called 'graphene.bandspp.dat.gnu', as defined in 'graphene.bandspp.in'.
-
-  5.  Finally, plot the bandstructure with gnuplot. Shift the Fermi level to zero.
+      This run analyses the symmetries of the eigenfunctions and writes the eigenvalues into a file called 'graphene.bandspp.dat.gnu' (the filename is defined in 'graphene.bandspp.in'). Plot it, shifting the Fermi level to zero.
       ```
-      gnuplot> EFermi=
+      gnuplot> EFermi=-1.8243
       gnuplot> plot "graphene.bandspp.dat" u 1:($2-EFermi) w l
       ```
-      ![Si bandstructure](Ref/Sibands-nosym.png?raw=true "Si band structure")
+      ![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
 
   6.  The graphene band structure is of much interest due to the Dirac cones at the K points. Let's have a look at the wavefunctions at the top of the valence band at the Gamma and K points. You need to look at the full list of k-points to work out the correct k-point index for the K point.
       ```
