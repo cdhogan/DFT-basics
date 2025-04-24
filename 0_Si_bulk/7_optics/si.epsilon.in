@@ -1,0 +1,12 @@
+&inputpp
+  calculation = "eps"
+  prefix       = "Si",
+  outdir       = "./epsilon_k32",
+/
+&energy_grid
+  smeartype = "gauss"
+  intersmear = 0.1
+  wmin =  0.05
+  wmax = 20.05
+  nw = 201
+/
