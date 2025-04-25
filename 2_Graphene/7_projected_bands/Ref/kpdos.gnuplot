@@ -1,17 +1,35 @@
 #
-set term png enh size 700,500
+set term pngcairo size 1000,500
+set pm3d
+set view 0,0
+#
+f(z)=z**(0.7)  # tune image contrast
+ef=-1.8243
+#
+unset xtics
+set xtics out nomirror ("G" 1,"M" 17,"K" 33, "G" 49)
+set xrange [1:49]
+set label 1 "E-E_F(eV)" at 60,-2 rotate by 90
+set ytics out nomirror
+set yrange [-10:10]
+unset ztics
+unset key
+unset colorbox
+#
 set out 'graphene.kpdos.png'
-set xtics ("{/Symbol G}"0,"M"0.57735,"K"0.91068,"{/Symbol G}"1.57735)
-set grid xtics
-set xra [0:1.57735]
-set yra [-12:5]
-set ylabel "E - E_F (eV)"
-set xzeroaxis
-set key opaque box width 1.0
-set style fill solid noborder
-#radius(proj)=sqrt(proj)/40.
-radius(proj)=proj/30.
-p 'graphene.kpdos_pz_only'  u 2:3:(radius(\$5+\$7+\$8)) w circles lc rgb "green" t "{/Symbol s}",\
-	'graphene.kpdos_pz_only' u 2:3:(radius(\$6)) w circles lc rgb "orange" t "{/Symbol p}"
-
-
+set origin 0,0
+set size 1,1
+set multiplot
+dx=.1 ; dy=.30   # reduce margins
+set title offset 0,-8
+set size 1./3+1.4*dx,1.+2*dy
+set origin 0./3-dx,0-dy
+set title "Total PDOS"
+splot 'graphene.kpdos.pdos_tot' u 1:($2-ef):(f($3)) w pm3d
+set origin 1./3-dx,0-dy
+set title "p_z-only"
+splot 'graphene.kpdos.pdos_atm#1(C)_wfc#2(p)' u 1:($2-ef):(f($4*2)) w pm3d
+set origin 2./3-dx,0-dy
+set title "p_y-only"
+splot 'graphene.kpdos.pdos_atm#1(C)_wfc#2(p)' u 1:($2-ef):(f($5*4)) w pm3d
+unset multiplot
