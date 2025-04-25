@@ -1,6 +1,6 @@
 # Projected band structure calculation
 One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this, although they are all a little tricky to get working.
-![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
+
 
 ## Setup
 
@@ -53,16 +53,16 @@ One way to analyse the band structure is to project it onto specific atoms or at
      The input file for `plotproj.x` has the following format. Here we choose to sum over all pz orbitals in the system. 
      You will need to play with the threshold parameter: if too low, it will plot everything; if too high it will miss the pz bands.
      ```
-     % cat plotproj.in
+     % cat graphene.plotproj.in
      eigenvalues.dat                                 <- The file created above
      graphene.proj.projwfc_up                        <- The projections on the bands (not the DOS!)
      graphene.plotproj.dat_pz_only.dat               <- Output file name
-     0.2                                             <- threshold
+     0.5                                             <- threshold
      2                                               <- number of ranges to sum over (=2)
      2 2                                             <- range 1: from atomic orbital 2 to 2 = pz, atom 1
      6 6                                             <- range 2: from atomic orbital 6 to 6 = pz, atom 2
 
-     % plotproj.x < plotproj.in 
+     % plotproj.x < graphene.plotproj.in 
         Input file > Reading   16 bands at   49 k-points
         Input file > output file > 
      ```
@@ -71,6 +71,8 @@ One way to analyse the band structure is to project it onto specific atoms or at
      ```
      gnuplot> plot "graphene.bandspp.dat.gnu" w l,"graphene.plotproj.dat_pz_only.dat" w p pt 7
      ```
+     ![Graphene proj band](Ref/graphene_plotproj_thres.png?raw=true "graphene proj band")
+     
  ## Using plotband.x
 
 2.   Here we run `projwfc.x` for the eigenvectors along the band structure path.
@@ -120,13 +122,13 @@ One way to analyse the band structure is to project it onto specific atoms or at
      gnuplot> plot "graphene.bandspp.dat.gnu" w l, "graphene.plotband.dat_pz_only" u 1:2:3 with points pointsize variable pointtype 7
      gnuplot> thres=0.9
      gnuplot> plot "graphene.bandspp.dat.gnu" w l, "graphene.plotband.dat_pz_only" u 1:($3 > thres ? $2 : 1/0) w p pt 7
-     
+     ```
+
+![Graphene proj band](Ref/graphene_plotband_size.png?raw=true "graphene proj band")
+![Graphene proj band](Ref/graphene_plotband_thres.png?raw=true "graphene proj band")
 
  ## Using plot_states.awk
 
-  7. ADVANCED: You can also use the script 'run_bands' which will automate all the steps (the k-path need to be put manually when building the script) and also makes use of the `plotband.x` code. The gnuplot script 'bands.gnuplot' will create the image shown above from the 'bands.dat.gnu' file. 
-      ```
-      gnuplot> load "Scripts/bands.gnuplot"
-      ```
+  
 ## Bibliography
 1.  Aroyo et al, Acta Cryst. (2014). A70, 126-137 [Link](https://doi.org/10.1107/S205327331303091X)
