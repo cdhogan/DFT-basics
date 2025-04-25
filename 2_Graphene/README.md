@@ -14,12 +14,12 @@ In this tutorial we show how to perform calculations for (1) metallic/semi-metal
     - Determine the theoretical lattice parameter
   - [4_bands](4_bands)
     - Compute the band structure
-  - [4_projected_bands](4_projected_bands)
-    - Analyse the band structure in terms of atomic orbitals
   - [5_DOS](5_DOS)
     - Compute the density of states.
-  - [7_projected_DOS](7_projected_DOS)
+  - [6_projected_DOS](6_projected_DOS)
     - Project the DOS onto atomic orbitals.
+  - [7_projected_bands](7_projected_bands)
+    - Analyse the band structure in terms of atomic orbitals
   - [8_nanoribbon](8_nanoribbon)
-    - Investigate spin-polarization in a graphene nanoribbon.
+    - Investigate spin-polarization in a graphene nanoribbon (unfinished).
 
