@@ -126,8 +126,9 @@ One way to analyse the band structure is to project it onto specific atoms or at
 ![Graphene proj band](Ref/graphene_plotband_size.png?raw=true "graphene proj band")
 ![Graphene proj band](Ref/graphene_plotband_thres.png?raw=true "graphene proj band")
 
- ## Using projwfc_to_bands.awk 
-2.  The so-called "fatband" plot can be made by resolving the DOS for each band and k-point.
+ ## Using projwfc.x (k-resolved DOS)
+2.  A so-called "fatband" plot can be made by projecting the DOS on each k-point separately, and plotting the resultant spectra together in a colormap.
+ 
    ```
    % cat projwfc_kpdos.in
    &PROJWFC
@@ -148,12 +149,21 @@ One way to analyse the band structure is to project it onto specific atoms or at
     1  -22.008  0.348E-03  0.343E-03
     1  -21.998  0.469E-03  0.461E-03
    ```
+   The 2D dataset can be plotted in gnuplot using an splot colormap. See the script 'Ref/kpdos.gnuplot', which contains commands like
+   ```
+   gnuplot> splot 'graphene.kpdos.pdos_tot' u 1:2:3 w pm3d                      <- total KPDOS
+   gnuplot> splot 'graphene.kpdos.pdos_atm#1(C)_wfc#2(p)' u 1:2:4 w pm3d        <- pz-only, atom 1
+   ```
 
-   Extract a range of projected bands from the 'projwfc_kpdos.out' file using the `projwfc_to_bands.awk` script (on OS/X install `gawk`). Here just pick state 2 (first C, pz):
+   ![Graphene kpdos](Ref/graphene.kpdos.png?raw=true "graphene kpdos")
+
+
+## Using projwfc_to_bands.awk 
+   Follow the steps in the previous section, and instead of plotting the k-resolved DOS files directly, you can extract a range of projected bands from the 'projwfc_kpdos.out' file using the `projwfc_to_bands.awk` script (on OS/X install `gawk`). Here just pick state 2 (first C, pz):
    ```
    awk -v firststate=2 -v laststate=2 -v ef=-1.8243 -f projwfc_to_bands.awk projwfc_kpdos.out > graphene.kpdos_pz_only
    ```
-   The output can be plotted with a density map plot.
+   The output can be plotted with a colormap.
 
  
   
