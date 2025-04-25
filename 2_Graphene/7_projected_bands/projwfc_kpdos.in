@@ -1,0 +1,8 @@
+&PROJWFC
+  prefix       = "graphene",
+  outdir       = "./tmp",
+  degauss = .0146997
+  kresolveddos = .true.
+  lsym=.false.
+  filpdos='graphene.kpdos'
+/
