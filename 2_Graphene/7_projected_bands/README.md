@@ -127,8 +127,36 @@ One way to analyse the band structure is to project it onto specific atoms or at
 ![Graphene proj band](Ref/graphene_plotband_size.png?raw=true "graphene proj band")
 ![Graphene proj band](Ref/graphene_plotband_thres.png?raw=true "graphene proj band")
 
- ## Using plot_states.awk
+ ## Using projwfc_to_bands.awk 
+2.  The so-called "fatband" plot can be made by resolving the DOS for each band and k-point.
+   ```
+   % cat projwfc_kpdos.in
+   &PROJWFC
+     prefix       = "graphene",
+     outdir       = "./tmp",
+     degauss = .0146997
+     kresolveddos = .true.
+     lsym=.false.
+     filpdos='graphene.kpdos'
+   /
+   % projwfc.x < projwfc_kpdos.in > projwfc_kpdos.out
+   ```
+   Note that the PDOS file now has an extra (first column) with the k-point index:
 
+   ```
+   % head graphene.kpdos.pdos_tot
+    # ik    E (eV)  dos(E)    pdos(E)
+    1  -22.008  0.348E-03  0.343E-03
+    1  -21.998  0.469E-03  0.461E-03
+   ```
+
+   Extract a range of projected bands from the 'projwfc_kpdos.out' file using the `projwfc_to_bands.awk` script (on OS/X install `gawk`). Here just pick state 2 (first C, pz):
+   ```
+   awk -v firststate=2 -v laststate=2 -v ef=-1.8243 -f projwfc_to_bands.awk projwfc_kpdos.out > graphene.kpdos_pz_only
+   ```
+   The output can be plotted with a density map plot.
+
+ 
   
 ## Bibliography
 1.  Aroyo et al, Acta Cryst. (2014). A70, 126-137 [Link](https://doi.org/10.1107/S205327331303091X)
