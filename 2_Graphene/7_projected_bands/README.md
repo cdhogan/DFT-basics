@@ -1,6 +1,5 @@
 # Projected band structure calculation
-One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this, although they are all a little tricky to get working.
-
+One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this, although they are all a little tricky to get working. I would tend to recommend the second `plotband.x` approach, which is more flexible.
 
 ## Setup
 
@@ -90,7 +89,7 @@ One way to analyse the band structure is to project it onto specific atoms or at
      % mv graphene.bandspp.dat.rap graphene.bandspp.dat.rap_tmp
      ```
 
-3.   Now we run `plotband.x`. This is an interactive program but you can also redirect a file to it:
+3.   Now we run `plotband.x`. This is an interactive program but you can also redirect a file to it. The required format is hidden inside the `plotband.f90` source file (https://gitlab.com/QEF/q-e/-/blob/develop/PP/src/plotband.f90).
      ```
      % cat graphene.plotband.in 
      graphene.bandspp.dat                 <- FILBAND
