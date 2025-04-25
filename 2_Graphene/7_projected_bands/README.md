@@ -1,5 +1,5 @@
 # Projected band structure calculation
-One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this. 
+One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this, although they are all a little tricky to get working.
 ![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
 
 ## Setup
@@ -8,18 +8,25 @@ One way to analyse the band structure is to project it onto specific atoms or at
       ```
       % pw.x < graphene.scf.in > graphene.scf.out
       % pw.x < graphene.bands.in > graphene.bands.out
+      % cat graphene.bandspp.in    
+      &bands
+         prefix = "graphene",
+         outdir='./tmp'
+         filband='graphene.bandspp.dat'                <- FILBAND DEFINED HERE
+         lsym=.true.
+      /
       % bands.x < graphene.bandspp.in > graphene.bandspp.out
       ```
       Check everything worked by plotting 'graphene.bandspp.dat.gnu' as before.
       ```
       gnuplot> EFermi=-1.8243
-      gnuplot> plot "graphene.bandspp.dat" u 1:($2-EFermi) w l
+      gnuplot> plot "graphene.bandspp.dat.gnu" u 1:($2-EFermi) w l
       ```
 
-## Using plotproj.x     
-  2. Before continuing, you should learn to use `projwfc.x` code (see the 7_projected_DOS tutorial).
+      Before continuing, you should learn to use `projwfc.x` code (see the 7_projected_DOS tutorial).
 
-     Here we run again `projwfc.x` for the eigenvectors along the band structure path.
+## Using plotproj.x     
+  2. Here we run `projwfc.x` for the eigenvectors along the band structure path.
      Note that `lsym = .false.` inside `projwfc.in` (at difference to DOS).
 
      ```
@@ -44,12 +51,12 @@ One way to analyse the band structure is to project it onto specific atoms or at
      [...]
      ```
      The input file for `plotproj.x` has the following format. Here we choose to sum over all pz orbitals in the system. 
-     You will need to play with the threshold parameter.
+     You will need to play with the threshold parameter: if too low, it will plot everything; if too high it will miss the pz bands.
      ```
      % cat plotproj.in
      eigenvalues.dat                                 <- The file created above
      graphene.proj.projwfc_up                        <- The projections on the bands (not the DOS!)
-     graphene.bandspp.proj.pz-only.dat               <- Output file name
+     graphene.plotproj.dat_pz_only.dat               <- Output file name
      0.2                                             <- threshold
      2                                               <- number of ranges to sum over (=2)
      2 2                                             <- range 1: from atomic orbital 2 to 2 = pz, atom 1
@@ -62,9 +69,58 @@ One way to analyse the band structure is to project it onto specific atoms or at
      Finally, we can plot the E(k) datapoints that pass the threshold criterion, on top of the full band structure.
 
      ```
-     gnuplot> plot "graphene.bandspp.dat.gnu" w l,"graphene.bandspp.proj.pz-only.dat" w p pt 7
+     gnuplot> plot "graphene.bandspp.dat.gnu" w l,"graphene.plotproj.dat_pz_only.dat" w p pt 7
      ```
  ## Using plotband.x
+
+2.   Here we run `projwfc.x` for the eigenvectors along the band structure path.
+     Note that `lsym = .false.` inside `projwfc.in` (at difference to DOS).
+     ```
+     % projwfc.x < projwfc.in > projwfc.out
+     ```
+     This creates the `graphene.proj.projwfc_up` file. 
+
+     Now either copy, or make a symbolic link, to a new file 'FILBAND.proj', where FILBAND was defined inside 'graphene.bandspp.in'. 
+     FILBAND is used as a basename for other files (FILBAND.rap, FILBAND.gnu, FILBAND.proj, etc). 
+     Let's also rename the FILBAND.rap symmetry file to skip the symmetry analysis (it generates a lot of files).
+     ```
+     % ln -s graphene.proj.projwfc_up graphene.bandspp.dat.proj
+     % mv graphene.bandspp.dat.rap graphene.bandspp.dat.rap_tmp
+     ```
+
+3.   Now we run `plotband.x`. This is an interactive program but you can also redirect a file to it:
+     ```
+     % cat graphene.plotband.in 
+     graphene.bandspp.dat                 <- FILBAND
+     2 6                                  <- List of orbitals we want to project onto (here: just the two pz orbitals)
+     -21.4080   17.3580                   <- Range of energy to scan over (proposed if you first run interactively)
+     graphene.plotband.dat_pz_only        <- Plottable file with projections
+                                          <- Leave blank unless you want a postscript file
+     graphene.plotband.gnuplot            <- A gnuplot script (that won't work)
+     ```
+     Run the code using this input (but you should also try running the code interactively)
+     ```
+     % plotband.x < graphene.plotband.in
+
+     Input file > Reading   16 bands at     49 k-points
+     List of atomic wavefunctions: Range:  -21.4080   17.3580eV  Emin, Emax, [firstk, lastk] > 
+     high-symmetry point:  0.0000 0.0000 0.0000   x coordinate   0.0000
+     high-symmetry point:  0.5000 0.2887 0.0000   x coordinate   0.5774
+     high-symmetry point:  0.3333 0.5774 0.0000   x coordinate   0.9107
+     high-symmetry point:  0.0000 0.0000 0.0000   x coordinate   1.5773
+     output file (gnuplot/xmgr) > skipping ...
+     output file (ps) > stopping ...
+     output file for projected band (gnuplot script) > run "gnuplot graphene.plotband.dat_pz_only" to get "graphene.plotband.dat_pz_only_projected.ps"
+     and/or run "ps2pdf graphene.plotband.dat_pz_only_projected.ps" to get "graphene.plotband.dat_pz_only_projected.pdf"
+     ```
+     Note the 'x-coordinate' of the high-symmetry points: these are useful for plotting vertical lines.     
+
+4.   The output file now contains the projection (weight) of each (E,k) pair onto the selected list of orbitals in the third column. You can thus use it when plotting for defining a pointsize or for setting a threshold. Here are two possible ways to plot the data with gnuplot.
+     ```
+     gnuplot> plot "graphene.bandspp.dat.gnu" w l, "graphene.plotband.dat_pz_only" u 1:2:3 with points pointsize variable pointtype 7
+     gnuplot> thres=0.9
+     gnuplot> plot "graphene.bandspp.dat.gnu" w l, "graphene.plotband.dat_pz_only" u 1:($3 > thres ? $2 : 1/0) w p pt 7
+     
 
  ## Using plot_states.awk
 
