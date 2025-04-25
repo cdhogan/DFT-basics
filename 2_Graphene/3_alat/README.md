@@ -3,7 +3,7 @@ In this tutorial we investigate how to perform a structural relaxation in which 
 
 Recall that to study an isolated 2D graphene sheet we use a supercell full of empty space. The amount of vacuum (i.e. the distance between the periodically repeating layer replicas) is determined by the cell height. In this case, since we are  using ibrav=4, the cell height is defined by celldm(3)=c/a. Instead, the in-plane lattice constant is given by celldm(1).
 
-## Free relax
+## Unconstrained cell optimization
   1. First view the input file graphene.vc-relax-free.in. There are a few new variables and namelists:
   ```
   calculation='vc-relax'
@@ -21,6 +21,7 @@ Recall that to study an isolated 2D graphene sheet we use a supercell full of em
   ```
   The supercell flattens due to interaction between the layers, and the system ends up in some kind of bulk graphite structure with an AA stacking. Not what we want here!
 
+## Constrained 2D cell optimization
   2. Let's constrain the geometry optimization to keep the vertical cell parameter fixed. Contraints are introduced with the `cell_dofree` variable. Look at graphene.vc-relax-2Dxy.in:
   ```
   &CELL
@@ -35,6 +36,7 @@ Recall that to study an isolated 2D graphene sheet we use a supercell full of em
   xcrysden --pwo graphene.vc-relax-2Dxy.out
   ```
 
+## Manual optimization
   3. Let's check our result from vc-relax with a loop over alat like we did for bulk Si. This time let's use directly a shell script:
   ```
   % ./Scripts/run_alat
@@ -52,6 +54,7 @@ Recall that to study an isolated 2D graphene sheet we use a supercell full of em
 
   Note: there is a subtle issue that arises when varying alat for 2D systems. Should you keep c fixed or the volume fixed?   
 
+## Contrained cell optimization and geometry relaxation
   4. The full power of vc-relax can be seen by running the input file graphene.vc-relax-buckled.in. Here, the graphene sheet has a buckled configuration. Show that the vc-relax calculation succeeds in returning to the flat geometry with the correct cell parameter.
   ```
   pw.x < graphene.vc-relax-buckled.in > graphene.vc-relax-buckled.out
