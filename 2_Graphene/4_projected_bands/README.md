@@ -1,58 +1,25 @@
-# Band structure calculation
-The procedure for computing the band structure in graphene is very similar to that you followed for bulk silicon.
-The main difference is in the choice of k-point path. Here you want select a path that contains both Gamma and K points. Again, identify the coordinates using XCrysDen or the seek-path app, and prepare the path using `crystal_b` coordinates (see [K_POINTS](http://https://www.quantum-espresso.org/Doc/INPUT_PW.html)).
-
+# Projected band structure calculation
+One way to analyse the band structure is to project it onto specific atoms or atomic orbitals. In quantum-ESPRESSO there are a number of ways to do this. 
 ![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
 
-  1. Run the self-consistent (SCF) calculation using the provided input 'graphene.scf.in' to generate the ground state electronic charge density. 
-      ```
-      % tail -2 graphene.scf.in 
-      K_POINTS {automatic}
-      12 12 1 0 0 0
+## Setup
 
+  1. First, let's set up the calculation by computing the band structure again in the usual way: SCF + BANDS + BANDSPP.
+      ```
       % pw.x < graphene.scf.in > graphene.scf.out
-      ```
-      By inspecting the output file, we see we have 8 electrons and 4 filled bands, and the Fermi level is at -1.8243 eV.
-
-  2.  Run the non-self-consistent (BANDS) calculation using the provided input 'graphene.bands.in'. Since we have 8 electrons and 4 filled bands, we increase the requested bands to 20. We specify 4 points in order to define 3 "symmetry lines" in k-space that contain 16 points per line. 
-            
-      ```
-      % tail -8 graphene.bands.in
-      K_POINTS {crystal_b}
-      4
-      0.0000000000     0.0000000000     0.0000000000 16  ! Gamma
-      0.5000000000     0.0000000000     0.0000000000 16  ! M 
-      0.3333333333     0.3333333333     0.0000000000 16  ! K
-      0.0000000000     0.0000000000     0.0000000000 1   ! Gamma
-
       % pw.x < graphene.bands.in > graphene.bands.out
-      ```
-  3.  Finally we generate a plottable file with the `bands.x` post-processing tool using the provided input 'graphene.bandspp.in'
-      ```
       % bands.x < graphene.bandspp.in > graphene.bandspp.out
       ```
-      This run analyses the symmetries of the eigenfunctions and writes the eigenvalues into a file called 'graphene.bandspp.dat.gnu' (the filename is defined in 'graphene.bandspp.in'). Plot it, shifting the Fermi level to zero.
+      Check everything worked by plotting 'graphene.bandspp.dat.gnu' as before.
       ```
       gnuplot> EFermi=-1.8243
       gnuplot> plot "graphene.bandspp.dat" u 1:($2-EFermi) w l
       ```
-      ![Graphene BZ](Ref/graphene-BZ.png?raw=true "graphene BZ")
 
-  6.  The graphene band structure is of much interest due to the Dirac cones at the K points. Let's have a look at the wavefunctions at the top of the valence band at the Gamma and K points. You need to look at the full list of k-points to work out the correct k-point index for the K point.
-      ```
-      % cat graphene.pp-pi.in
-      kpoint       = 33
-      kband        = 4
-      fileout = "psi2_k33_b4.xsf"
-      % pp.x < graphene.pp-pi.in 
-      % pp.x < graphene.pp-sigma.in 
-      % xcrysden --xsf psi2_k33_b4.xsf
-      % xcrysden --xsf psi2_k1_b4.xsf
-      ```
+## Using plotproj.x     
+  2. Before continuing, you should learn to use `projwfc.x` code (see the 7_projected_DOS tutorial).
 
-  6. ADVANCED: If you have learned to use the `projwfc.x` code (see the 7_PROJWFC tutorials) you can also project the bands onto specific orbitals. The process is a little tricky, but worthwhile.
-
-     First, make sure to run the SCF and BANDS calculations. Then run `projwfc.x` for the eigenvectors along the band structure path.
+     Here we run again `projwfc.x` for the eigenvectors along the band structure path.
      Note that `lsym = .false.` inside `projwfc.in` (at difference to DOS).
 
      ```
@@ -97,7 +64,9 @@ The main difference is in the choice of k-point path. Here you want select a pat
      ```
      gnuplot> plot "graphene.bandspp.dat.gnu" w l,"graphene.bandspp.proj.pz-only.dat" w p pt 7
      ```
+ ## Using plotband.x
 
+ ## Using plot_states.awk
 
   7. ADVANCED: You can also use the script 'run_bands' which will automate all the steps (the k-path need to be put manually when building the script) and also makes use of the `plotband.x` code. The gnuplot script 'bands.gnuplot' will create the image shown above from the 'bands.dat.gnu' file. 
       ```
