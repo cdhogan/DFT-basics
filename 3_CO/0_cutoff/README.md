@@ -59,6 +59,6 @@ In this tutorial we consider an isolated system, the carbon monoxide (CO) molecu
      ![Etot vs cutoff](Ref/Etot_vs_Ecut.dat.png?raw=true "Etot vs Ecut")
      ![gap vs cutoff](Ref/Gap_vs_Ecut.dat.png?raw=true "Gap vs Ecut")
 
-     A cutoff of 70Ry seems well converged. In the rest of the tutorial we will use 50Ry to speed things up.
+     A cutoff of 70Ry seems well converged. In the rest of the tutorial we will use 60Ry to speed things up.
 
 
