@@ -107,5 +107,21 @@ We can obtain more information about the density of states and band structure by
       ./Script/run_plots
       ```
       NB: Do not use the scripts for your own projects unless you understand well how they work!
+
+  7.  ADVANCED USERS: An alternative to `sumpdos.x` which may be obsolete is `sum_states.py`. Use at your own risk. The instructions are something like:
+      ```
+      sum_states.py -o ni.dos.out -s ni.pdos_atm#1\(Ni\)_wfc#2\(d\) -t "Example PP/02" -xr -6 2
+
+      -o QE output file name (for grepping Fermi E)
+      -s Selection of atoms for summing the DOSes. "*" for all, *1*Fe*d* for first Fe atom " (def. "*")
+      -p Print output to a file and aditionaly provide an output name (def. no output and "sum_dos.out")
+      -t set title in the head of the graph
+      -xr set min and max x value for the axes in the graph
+      -yr set min and max y value for the axes in the graph
+      -h print this help
+      -v print version
+      Example: sum_states.py --s sys.pdos_atm#4\(Fe2\)_wfc#2\(d\) -t "Wustite LDA+U single Fe" -xr -9 4 
+      '''
+
       
 ### When you have completed this tutorial, you can move on to another system [3_CO: Carbon monoxide molecule](../../3_CO)
