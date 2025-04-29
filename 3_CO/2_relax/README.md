@@ -63,5 +63,13 @@ In this tutorial we will compute the C-O bond length in three ways: by searching
      [...]
      % pw.x < co.relax.in > co.relax.out
      ```
-
-  5. Finally, compare the bond lengths found using the various methods.
+     With grep, you can check the change in the bond length as a function of the iteration step:
+     ```
+     % grep -A1 ATOM co.relax.out
+     ```
+     Best of call, you can view an animation of the geometry optimization with xcrysden. Note the option `--pwo` to mean "PWscf output file".
+     ```
+     % xcrysden --pwo co.relax.out
+     ```
+      
+  6. Finally, compare the bond lengths found using the various methods.
