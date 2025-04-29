@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Etot_vs_bond-script.dat
+echo -e "# bond(A) energy(Ry)" > $SAVE
+
+SAVEFORCE=Force_vs_bond-script.dat
+echo -e "# bond(A) force(Ry/au)" > $SAVEFORCE
+
+# Expt: 1.13
+for bond in  1.0 1.04 1.08 1.1 1.12 1.15 1.2 1.25 1.3;  do
+
+Cx=`echo "$bond + 2.0" | bc -l`
+echo "Running bond = $bond and C(x) = $Cx"
+
+IN=CO_script.scf.in
+OUT=CO_script.scf.out_bond$bond
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "CO",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  etot_conv_thr = 1.0D-4
+  forc_conv_thr = 1.0D-3
+  tstress = .true.
+  tprnfor = .true.
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 2,
+  ntyp      = 2,
+  nbnd      = 6,
+  ecutwfc   = 40
+! occupations ='smearing',
+! degauss     =0.001,
+! nspin      = 2
+! starting_magnetization(1)=0.1
+/
+&ELECTRONS
+  electron_maxstep=200
+  conv_thr    = 1.D-7,
+  mixing_beta = 0.7D0,
+/
+&IONS
+  ion_dynamics = "bfgs"
+/
+CELL_PARAMETERS {angstrom}
+10.0  0.0  0.0
+ 0.0  10.0  0.0
+ 0.0  0.0  10.0
+ATOMIC_SPECIES
+O  1.00  O.pw-mt_fhi.UPF
+C  1.00  C.pw-mt_fhi.UPF
+ATOMIC_POSITIONS {angstrom}
+C  $Cx  2.0  2.0  
+O  2.000  2.0  2.0  
+K_POINTS {Gamma}
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+echo -e "$bond\t\t$ENERGY" >> $SAVE
+
+FORCE=`cat $OUT | grep 'Total force' | awk '{print $4}'`
+echo -e "$bond\t\t$FORCE" >> $SAVEFORCE
+
+done
+
+echo "Run completed at: " `date`
+#echo "Now launch the run_plots script."
