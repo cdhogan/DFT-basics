@@ -41,14 +41,14 @@ In this tutorial we will compute the C-O bond length in three ways: by searching
      r0(parabolic) =  1.1342268874859
      e0(parabolic) =  -42.9927279299405
      ```
-    ![bond vs size](Ref/Etot_vs_bond_fit.png?raw=true "potential vs cell size")
+     ![bond vs size](Ref/Etot_vs_bond_fit.png?raw=true "potential vs cell size")
 
   3. Regarding the forces, a simple plot will identify quickly the minimum:
 
-    ![bond vs size](Ref/Force_vs_bond.dat.png?raw=true "potential vs cell size")
+     ![bond vs size](Ref/Force_vs_bond.dat.png?raw=true "potential vs cell size")
 
      
-   4. Now let's look at the provided 'co.relax.in' file. You will notice a number of changes with respect to the SCF calculation that indicate a structural relaxation run. The calculation type is 'relax'; a force threshold is indicated; a new namelist IONS is present; and the atomic positions are followed by three integers that indicate which atomic components are fixed (0) or free (1) to move. (If nothing is specified, the default is 1 1 1). 
+  4. Now let's look at the provided 'co.relax.in' file. You will notice a number of changes with respect to the SCF calculation that indicate a structural relaxation run. The calculation type is 'relax'; a force threshold is indicated; a new namelist IONS is present; and the atomic positions are followed by three integers that indicate which atomic components are fixed (0) or free (1) to move. (If nothing is specified, the default is 1 1 1). 
      ```
      % cat co.relax.in
      [...]
@@ -64,4 +64,4 @@ In this tutorial we will compute the C-O bond length in three ways: by searching
      % pw.x < co.relax.in > co.relax.out
      ```
 
-   5. Finally, compare the bond lengths found using the various methods.
+  5. Finally, compare the bond lengths found using the various methods.
