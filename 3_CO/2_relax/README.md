@@ -22,7 +22,7 @@ In this tutorial we will compute the C-O bond length in three ways: by searching
      Regarding the total energy, you can try to fit the data near the minimum to a parabola. In gnuplot, the process is quite simple.
      ```
      gnuplot> f(x) = a*x**2 + b*x + c				<-- Define the function
-     gnuplot> fit [1.05:1.25] f(x) SAVE u 1:2 via a, b, c	<-- Fit in range [] 
+     gnuplot> fit [1.05:1.25] f(x) 'Etot_vs_bond.dat' u 1:2 via a, b, c	<-- Fit in range [] 
      [...]
      Final set of parameters            Asymptotic Standard Error
      =======================            ==========================
