@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Etot_vs_cell-script.dat
+echo -e "# cell(A) energy(Ry)" > $SAVE
+
+SAVEFORCE=Force_vs_cell-script.dat
+echo -e "# cell(A) force(Ry/au)" > $SAVEFORCE
+
+GAP=Gap_vs_cell-script.dat
+echo -e "# cell(A)\tHOMO\tLUMO\tGap (eV)" > $GAP
+
+#for size in 5 10 15; do
+for size in 3 4 5 6 7 8 10 12 15; do
+
+IN=co.scf-script.in
+OUT=co.scf-script.out_size$size
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "CO",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  verbosity    = 'high'
+  tstress = .true.
+  tprnfor = .true.
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 2,
+  ntyp      = 2,
+  nbnd      = 6,
+  ecutwfc   = 60
+/
+&ELECTRONS
+  conv_thr    = 1.D-7,
+  mixing_beta = 0.7D0,
+/
+CELL_PARAMETERS {angstrom}
+ $size  0.0  0.0
+ 0.0  $size 0.0
+ 0.0  0.0  $size
+ATOMIC_SPECIES
+O  1.00  O.pw-mt_fhi.UPF
+C  1.00  C.pw-mt_fhi.UPF
+ATOMIC_POSITIONS {angstrom}
+C  3.130  2.0  2.0  
+O  2.000  2.0  2.0  
+K_POINTS {Gamma}
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+echo -e "$size\t\t$ENERGY" >> $SAVE
+
+BANDS=`cat $OUT | grep highest | awk '{print $7,$8,$8-$7}'`
+echo -e "$size\t\t$BANDS" >> $GAP
+
+FORCE=`cat $OUT | grep 'Total force' | awk '{print $4}'`
+echo -e "$size\t\t$FORCE" >> $SAVEFORCE
+
+
+
+
+IN=co.pp-script.in
+OUT=co.pp-script.out
+cat > $IN << EOF
+&INPUTPP
+       prefix = 'CO',
+       outdir = '$TMP_DIR',
+      filplot = 'CO-script.pot',
+     plot_num = 11
+/
+
+&PLOT
+        iflag = 3,
+output_format = 3,
+/
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pp.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+IN=co.avg-script.in
+OUT=co.avg-script.out_size$size
+cat > $IN << EOF
+1
+CO-script.pot
+1.D0
+1000
+1
+1.0
+/
+EOF
+
+echo -e "\tStart: " `date`
+#COMMAND="  $RUN_COMMAND $BIN_DIR/average.x"
+COMMAND="  $BIN_DIR/average.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+# Overwrite the useless output with the actual datafile.
+mv avg.dat $OUT
+
+echo -e "\tEnd: " `date`
+
+done
+

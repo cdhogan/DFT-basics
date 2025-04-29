@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+SAVE=Etot_vs_cell-script.dat
+SAVEFORCE=Force_vs_cell-script.dat
+GAP=Gap_vs_cell-script.dat
+
+Econv=`tail -1 Etot_vs_cell-script.dat | awk '{print $2}'`
+
+#Print a gnuplot script to plot the 2 column files
+cat > plot-energy-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+reset
+set term x11 enhanced
+set out
+
+set xlabel "Cell size (A)"
+set ylabel "E_{tot} (Ry)"
+thres_1mRy_per_atom=0.001
+thres_10mRy_per_atom=0.01
+#set yrange [-43.25:-43.17] # 50Ry
+set yrange [-43.32:-43.23]
+set key bottom right
+
+plot \
+	'$SAVE'  u 1:2 w lp pt 7 lw 2  lc rgb "black" title "Total energy" 
+replot $Econv t "Conv. value" w l lt 4 dt 4 lc "red",\
+        $Econv+thres_1mRy_per_atom w l lt 2 lc "blue" t "Min + 1mRy/atom",\
+        $Econv+thres_10mRy_per_atom w l lt 3 lc "magenta" t "Min + 10mRy/atom"
+
+pause -1
+set term pdfcairo enhanced
+set output "${SAVE}.pdf"
+replot
+
+reset
+set term pngcairo enhanced size 600,400
+set key bottom right
+set output "${SAVE}.png"
+set xlabel "Cell size (A)"
+set ylabel "E_{tot} (Ry)
+thres_1mRy_per_atom=0.001
+thres_10mRy_per_atom=0.01
+#set yrange [-43.3:-43.0]
+set yrange [-43.32:-43.23]
+stats '$SAVE' u 1:2 name 'EN' nooutput
+
+plot \
+	'$SAVE'  u 1:2 w lp pt 7 lw 2  lc rgb "black" title "Total energy",\
+        $Econv t "Min value" w l lt 4 dt 4 lc "red",\
+        $Econv+thres_1mRy_per_atom w l lt 2 lc "blue" t "Min + 1mRy/atom",\
+        $Econv+thres_10mRy_per_atom w l lt 3 lc "magenta" t "Min + 10mRy/atom"
+
+pause -1
+set term x11
+set out
+replot
+pause -1
+
+EOF
+
+
+#Run the gnuplot script to make the plot of the total energy
+gnuplot plot-energy-script.gnu
+
+
+cat > plot-force-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+reset
+reset
+set term pngcairo enhanced size 600,400
+set key bottom right
+set output "${SAVEFORCE}.png"
+set xlabel "Cell size (A)"
+set ylabel "F_{tot} (Ry/au)
+#thres_1mRy_per_atom=0.001
+#thres_10mRy_per_atom=0.01
+#set yrange [-43.3:-43.0]
+#set yrange [-43.32:-43.23]
+#stats '$SAVE' u 1:2 name 'EN' nooutput
+
+plot \
+	'$SAVEFORCE'  u 1:2 w lp pt 7 lw 2  lc rgb "black" title "Total force"
+
+#       $Econv t "Min value" w l lt 4 dt 4 lc "red",\
+#       $Econv+thres_1mRy_per_atom w l lt 2 lc "blue" t "Min + 1mRy/atom",\
+#       $Econv+thres_10mRy_per_atom w l lt 3 lc "magenta" t "Min + 10mRy/atom"
+
+pause -1
+set term x11
+set out
+replot
+pause -1
+
+EOF
+gnuplot plot-force-script.gnu
+
+#Print a gnuplot script to plot the 4 column files
+cat > plot-gap-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set xlabel "Cell size (A)"
+set ylabel "E (eV)
+
+# Generate a PDF image
+set term pdfcairo enhanced
+set output "${GAP}.pdf"
+set multiplot layout 1,2
+plot \
+	'$GAP'  u 1:3 w lp pt 7 lw 2  lc rgb "red" title "LUMO",\
+	'$GAP'  u 1:2 w lp pt 6 lw 2  lc rgb "blue" title "HOMO"
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+set nomulti
+
+# Generate a PNG image (useful for GitHub)
+set term pngcairo enhanced size 800,400
+set output "${GAP}.png"
+set multiplot layout 1,2
+plot \
+	'$GAP'  u 1:3 w lp pt 7 lw 2  lc rgb "red" title "LUMO",\
+	'$GAP'  u 1:2 w lp pt 6 lw 2  lc rgb "blue" title "HOMO"
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+set nomulti
+replot
+
+# Plot onscreen just the gap.
+# x11 should work on most system. Try wxt (ubuntu) or aqua (mac) for nicer plots.
+set term x11 enhanced
+set out
+plot \
+	'$GAP'  u 1:4 w lp pt 5 lw 2  lc rgb "black" title "Gap"
+replot
+pause -1
+EOF
+
+#Run the gnuplot script to make the plot
+gnuplot plot-gap-script.gnu
+
+
+##!/usr/bin/gnuplot
+cat > plot-pot-script.gnu <<EOF
+#!/opt/local/bin/gnuplot
+
+set term x11 enhanced
+
+LIST="3 4 5 6 7 8 10 12 15"
+
+set xlabel "x (A)"
+set ylabel "Potential (Ry)"
+set key invert
+set arrow 1 from 2,graph 0 to 2,graph 1 nohead dt 2
+set arrow 2 from 3.13,graph 0 to 3.13,graph 1 nohead dt 2
+set label 1 "O" at 2-0.5,-0.3
+set label 2 "C" at 3.13-0.5,-0.3
+
+plot for[i=1:words(LIST)]\
+	sprintf("co.avg-script.out_size%d",word(LIST,i)+0)  u (\$1*0.529177):(\$2+real(i)/5) w l lw 2  title sprintf("size=%d A",word(LIST,i)+0)
+#plot for[i=5:15] "co.avg-script.out_size".i  u 1:2 w l lw 2  title "size=".i
+#plot for[i=1:words(LIST)]       sprintf("co.avg-script.out_size%d",word(LIST,i)+0)  u (\$1*0.529177):(\$2+real(i)/5) w l lw 2  title sprintf("size=%d",word(LIST,i)+0)
+replot for[j=1:words(LIST)]     sprintf("co.avg-script.out_size%d",word(LIST,j)+0)  u (\$1*0.529177+word(LIST,j)):(\$2+real(j)/5) w l lw 1 lc 0 title "" 
+
+pause -1
+set term pdfcairo enhanced
+set output "potential-script.pdf"
+replot
+set term pngcairo enhanced
+set output "potential-script.png"
+replot
+EOF
+
+gnuplot plot-pot-script.gnu
+
+
+
+
+
+exit
+
