@@ -20,7 +20,7 @@ In this tutorial we consider an isolated system, the carbon monoxide (CO) molecu
      0.0  8.0  0.0
      0.0  0.0  8.0
      [...]
-
+     ```
      This makes the calculation relatively heavy, as a large unit cell implies a smaller Brillouin zone, and a large number of reciprocal lattice vectors. 
 
      For isolated systems, one can use e.g. `ibrav=1`, `CELL_PARAMETERS{alat}`, bohr units, etc. However it is more common (and easier) to use Angstroms and cartesian coordinates when dealing with chemical systems.
