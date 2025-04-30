@@ -7,7 +7,7 @@
     pseudo_dir        = '../../Pseudo'
     outdir            = './tmp'
     verbosity         = 'high'
-    disk_io = 'minimal'
+!   disk_io = 'minimal'
     wf_collect        = .true.
 /
 &SYSTEM
