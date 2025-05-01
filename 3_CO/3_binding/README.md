@@ -1,5 +1,6 @@
 # Binding energy
-The binding energy is defined as the energy required to bring the atoms of a molecule to infinite distance from each other (non-interacting).
+
+The binding energy is the energy required to completely separate a molecule into its individual, isolated atoms in their ground states. It quantifies how strongly the atoms are bound together within the molecule.
 
 <img src="Ref/BE_eqn.png" height="60"/>
 
@@ -7,7 +8,6 @@ It can be accurately computed by calculating the total energy of the isolated at
 
 Atoms present a new problem - both oxygen and carbon are paramagnetic, and according to Hund's rule their electrons prefer to occupy states with parallel spin instead of filling up states with antiparallel configuration:
 
-<img src="Ref/hunds_rule.png" height="80"/>
 ![Hunds rule](Ref/hunds_rule.png?raw=true "Hunds rule")
 
 DFT calculations of a single atom in a large box is a somewhat pathological problem, and quite often one is faced by the dreaded:
