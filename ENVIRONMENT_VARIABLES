@@ -2,9 +2,9 @@
 #BIN_DIR=
 #
 #By default the code will run in serial.
-RUN_COMMAND=""
+#RUN_COMMAND=""
 #For running in parallel, uncomment the following line (remove the first # symbol)
-#RUN_COMMAND="mpirun -np 2"
+RUN_COMMAND="mpirun -np 2"
 
 
 #

@@ -98,7 +98,8 @@ CO.pot
 EOF
 
 echo -e "\tStart: " `date`
-COMMAND="  $RUN_COMMAND $BIN_DIR/average.x"
+#COMMAND="  $RUN_COMMAND $BIN_DIR/average.x"
+COMMAND="  $BIN_DIR/average.x"
 echo -e "\t\t$COMMAND < $IN > $OUT"
 $COMMAND < $IN > $OUT
 # Overwrite the useless output with the actual datafile.
