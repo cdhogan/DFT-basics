@@ -1,13 +1,14 @@
 # Binding energy
 The binding energy is defined as the energy required to bring the atoms of a molecule to infinite distance from each other (non-interacting).
 
-    ![Binding energy](Ref/BE_eqn.png?raw=true "Binding energy")
+<img src="Ref/BE_eqn.png" height="60"/>
 
 It can be accurately computed by calculating the total energy of the isolated atoms with respect to the total energy of the molecule. For CO, the experimental value is 11.108 (see Ref/binding.dat).
 
 Atoms present a new problem - both oxygen and carbon are paramagnetic, and according to Hund's rule their electrons prefer to occupy states with parallel spin instead of filling up states with antiparallel configuration:
 
-    ![Hunds rule](Ref/hunds_rule.png?raw=true "Hunds rule")
+<img src="Ref/hunds_rule.png" height="80"/>
+![Hunds rule](Ref/hunds_rule.png?raw=true "Hunds rule")
 
 DFT calculations of a single atom in a large box is a somewhat pathological problem, and quite often one is faced by the dreaded:
    ```
@@ -30,7 +31,7 @@ In principle we could also continue our bond-length study until the atoms are fa
      ```
 ## Using smearing
 
-  2. Let's try next the C atom. Start with a standard input file:
+  2. Let's try next the C atom. Start with a basic input file, in which we have simply removed the oxygen from co.scf.in:
      ```
      % cd ../C
      % pw.x < c.scf.in      [without output redirection]
@@ -51,14 +52,14 @@ In principle we could also continue our bond-length study until the atoms are fa
      ```
           k = 0.0000 0.0000 0.0000 ( 26462 PWs)   bands (ev):
 
-   -13.5140  -5.2916  -5.2916  -5.2916  -0.3319   1.2656
+        -13.5140  -5.2916  -5.2916  -5.2916  -0.3319   1.2656
 
-     occupation numbers 
-     1.0000   0.3334   0.3334   0.3333   0.0000   0.0000
+          occupation numbers 
+          1.0000   0.3334   0.3334   0.3333   0.0000   0.0000
 
-     the Fermi energy is    -5.2957 ev
+          the Fermi energy is    -5.2957 ev
      ```
-     ![Occupations](Ref/occ_nospin.png?raw=true "Occupations")
+     <img src="Ref/occ_nospin.png" height="80"/>
 
      Clearly this is not consistent with the desired occupations, but at least we have a converged calculation and a total energy. Repeat this also for the oxygen atom and extract the total energies of the three systems.
      ```
@@ -87,8 +88,12 @@ In principle we could also continue our bond-length study until the atoms are fa
       starting_magnetization=0.1
       ```
       Let's run the 'spin-smearing' input files for the carbon and oxygen atoms. Look at the output file to see the changes. For carbon:
-     % pw.x < c.scf-spin-smearing.in > c.scf-spin-smearing.out
+
+      
       ```
+      % pw.x < c.scf-spin-smearing.in > c.scf-spin-smearing.out
+      % cat c.scf-spin-smearing.out
+      [...]
        ------ SPIN UP ------------
                 k = 0.0000 0.0000 0.0000 ( 26462 PWs)   bands (ev):
          -14.3912  -6.1163  -6.1163  -6.1162  -0.3217   1.2981
@@ -107,28 +112,29 @@ In principle we could also continue our bond-length study until the atoms are fa
       !    total energy              =     -10.79193341 Ry
            total magnetization       =     2.00 Bohr mag/cell
            absolute magnetization    =     2.00 Bohr mag/cell
-     ```
-     ![Occupations](Ref/occ_smear.png?raw=true "Occupations")
-     On the positive note, the system results to be paramagnetic, with the 2p2 electrons all in a spin-up state. The magnetization (difference in number of spin up and spin down electrons) is 2 Bohr magnetons, corresponding a total spin angular quantum number of S=1.
+      ```   
+       <img src="Ref/occ_smear.png" height="80"/>
+       
+      On the positive note, the system results to be paramagnetic, with the 2p2 electrons all in a spin-up state. The magnetization (difference in number of spin up and spin down electrons) is 2 Bohr magnetons, corresponding a total spin angular quantum number of S=1.
 
-     The total energy is also considerably lower than for the first 'smearing' attempt.
+      The total energy is also considerably lower than for the first 'smearing' attempt.
 
-     However, the two electrons are again smeared out across the three 2p orbitals.
+      However, the two electrons are again smeared out across the three 2p orbitals.
 
-     Repeating for C, O and (for completeness) CO, we obtain again a value for the binding energy.
+      Repeating for C, O and (for completeness) CO, we obtain again a value for the binding energy.
 
-     ```
-     % cd ../O
-     % pw.x < o.scf-spin-smearing.in > o.scf-spin-smearing.out
-     % cd ../CO
-     % pw.x < co.scf-spin-smearing.in > co.scf-spin-smearing.out
-     % cd ../
-     % grep ! */*scf-spin-smearing.out
-     C/c.scf-spin-smearing.out:!   total energy = -10.79193341 Ry
-     CO/co.scf-spin-smearing.out:! total energy = -43.25079381 Ry
-     O/o.scf-spin-smearing.out:!   total energy = -31.50775784 Ry
-     ```
-     we obtain a better value for the binding energy of 12.940 eV.
+      ```
+      % cd ../O
+      % pw.x < o.scf-spin-smearing.in > o.scf-spin-smearing.out
+      % cd ../CO
+      % pw.x < co.scf-spin-smearing.in > co.scf-spin-smearing.out
+      % cd ../
+      % grep ! */*scf-spin-smearing.out
+      C/c.scf-spin-smearing.out:!   total energy = -10.79193341 Ry
+      CO/co.scf-spin-smearing.out:! total energy = -43.25079381 Ry
+      O/o.scf-spin-smearing.out:!   total energy = -31.50775784 Ry
+      ```
+      we obtain a better value for the binding energy of 12.940 eV.
 
 ## Using nspin=2 and fixed multiplicity
 
@@ -143,6 +149,7 @@ In principle we could also continue our bond-length study until the atoms are fa
      [...]
      ```
      Let's run the 'spin-triplet' input files for the carbon atom. Look at the output file to see the changes. For carbon:
+     ```
      % pw.x < c.scf-spin-triplet.in > c.scf-spin-triplet.out
      % cat c.scf-spin-triplet.out
 
@@ -168,8 +175,9 @@ In principle we could also continue our bond-length study until the atoms are fa
           total magnetization       =     2.00 Bohr mag/cell
           absolute magnetization    =     2.00 Bohr mag/cell
      ```
-     ![Occupations](Ref/occ_triplet.png?raw=true "Occupations")
-     As you can we, we finally obtain the correct orbital occupancy! The total energy is again lower, but oly slightly lower than for 'spin-smearing' technique.
+       <img src="Ref/occ_triplet.png" height="80"/>
+
+     As you can see, we finally obtain the correct orbital occupancy! The total energy is again lower, but only slightly lower than for 'spin-smearing' technique.
 
      Repeat the calculation for oxygen and the CO molecule. In the latter case the multiplicity is singlet. 
      ```
