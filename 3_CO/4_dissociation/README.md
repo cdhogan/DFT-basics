@@ -4,16 +4,13 @@ Now that we know better how to treat isolated atoms in DFT, we can extend our pr
 
 The dissociation curve can be described by an intermolecular pair potential. The most well known of these is the Lennard-Jones potential, which describes in a simple yet effective way the distance-dependent relation between two weakly interacting neutral entities. It is defined by a power law expression with exponents 12 (for the repulsive component) and 6 (for the attractive component).
 
-eqn_lj.png
-
+<img src="Ref/eqn_lj.png" height="60"/>
 
 The Lennard-Jones potential could be used to describe non-bonded interactions between CO molecules, or CO adsorption on a surface, or the long-range repulsion/attraction between atoms after the bond is broken.
 
 Here however we have strong covalent bond within the CO molecule. Thus it is better to model the dissociation potential with e.g. the Morse potential. Like LJ, the Morse potential is anharmonic, thus can describe bond stretching and dissociation, and features an exponential form which better  models how the electron cloud (and bond strength) decays with distance.
 
-eqn_morse.png
-
-In our case we have 2 atoms that form a chemical bond, so we expect to not find an exact L-J poptential, but a similar function where we relax the exponents from (12,6) to (2n,n).
+<img src="Ref/eqn_morse.png" height="60"/>
 
 ## Purpose
   1. Calculate the potential curve between 2 atoms forming a chemical bond
@@ -47,10 +44,12 @@ In our case we have 2 atoms that form a chemical bond, so we expect to not find 
      Plot also the 'Mag_vs_bond.dat' file. Note there is a kind of transition between 2 and 3 A, where the system moves from singlet (CO molecule) to two triplets (separated fragments). However, LDA suffers from a gross delocalization error at large bond distances, so treat these results with skepticism! See Ref [1].
 
      Ref/plot_mag.png
+     ![dissociation](Ref/plot_mag.png?raw=true "dissociation")
 
-  3. Next, we run a gnuplot script to fit to the Morse and Lennard-Jones potentials. Here in fact we will use a modified L-J potential of the form:
+  4. Next, we run a gnuplot script to fit to the Morse and Lennard-Jones potentials. Here in fact we will use a modified L-J potential of the form:
 
-     Ref/eqn_mLJ.png
+
+     <img src="Ref/eqn_mLJ.png" height="60"/>
 
      See the 2_binding tutorial for how to fit functions to data in gnuplot; you may inspect Scripts/run_plots for details.
      ```
@@ -58,15 +57,18 @@ In our case we have 2 atoms that form a chemical bond, so we expect to not find 
      gnuplot> load "plot-script.gnu"
      gnuplot> load "plot-script-mag.gnu"
      ```
-     Ref/plot_morse.png
+     
+     ![dissociation](Ref/plot_morse.png?raw=true "dissociation")
 
-     It is clear that the LJ-like potential fails badly to simulate the CO dissociation, as expected. Instead, a satisfactory fit is found for the Morse potential. 
+     It is clear that the LJ-like potential fails badly to simulate the CO dissociation, as expected. Instead, a satisfactory fit is found for the Morse potential.
+
+     Instead of this modified LJ "6-12"-potential, you may try a similar function where the exponents are allowed to change from  from (12,6) to (2n,n). See 4_LennardJones.
 
 ## Advanced
 
-  4. The above analysis was carried out with LDA (O.pw-mt_fhi.UPF pseudopotential). LDA is well know to overbind and to show poor long range behaviour. Repeat the simulation with a GGA pseudopotential like PBE, which should improve performance (deficiencies will remain, however).
+  4. The above analysis was carried out with LDA (O.pw-mt_fhi.UPF pseudopotential). LDA is well know to overbind and to show poor long range behaviour. Repeat the simulation with a GGA pseudopotential like PBE, which should improve the binding energy somewhat.
 
   5. Extract fitting parameters and import them into a molecular dynamics code...or better, use Avogadro to run a simple MD simulation of C-O binding. Compare the bond distance with that found in DFT.
 
-
-Insights into Current Limitations of Density Functional Theory, Aron J. Cohen, Paula Mori-Sánchez, and Weitao Yang.  Science (2008) Vol 321, Issue 5890 pp. 792-794. DOI: 10.1126/science.1158722
+## Bibliography
+1. Insights into Current Limitations of Density Functional Theory, Aron J. Cohen, Paula Mori-Sánchez, and Weitao Yang.  Science (2008) Vol 321, Issue 5890 pp. 792-794. [Link](https://doi.org/10.1126/science.1158722)
