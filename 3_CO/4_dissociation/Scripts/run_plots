@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+
+cat > plot-script.gnu <<EOF
+#!/opt/local/bin/gnuplot
+
+set term aqua enhanced
+SAVE="Etot_vs_bond_eV.dat"
+
+# Define the Morse function
+morse(x) = D * (1 - exp(-a * (x - r0)))**2
+# Initial guesses for the parameters
+D  = 12  # Dissociation energy (eV)
+a  = 2.0       # Width parameter (1/Å)
+r0 = 1.119      # Equilibrium bond length (Å)
+# Load and fit the data 
+fit morse(x) SAVE using 1:2 via D, a, r0
+
+
+# Define the modified LJ function
+lj2(x) = -e0 * ((rm/x)**12 - 2*(rm/x)**6) 
+# Initial guesses for the parameters
+rm=1.1
+e0=-12
+# Fit to data file 
+fit [1.0:4.0] lj2(x) SAVE u 1:($2-12.686) via e0,rm
+
+# Plot the result
+set title "CO bond dissociation energy"
+set xlabel "Bond Length (Å)"
+set ylabel "Energy (eV)"
+set grid
+set xrange [0.5:4.1]
+set yrange [-2:31]
+set samples 1000
+
+plot \
+	SAVE  u 1:2 w p pt 7 ps 1.0 lc rgb "black" title "Calculation",\
+	morse(x) t "Morse potential fit" w l lw 2,\
+	lj2(x)-e0 t "Modified Lennard-Jones potential fit" w l lc "red"
+
+pause -1
+set term pngcairo enhanced
+set output "plot_morse.png"
+replot
+set term x11
+set out
+replot
+EOF
+
+gnuplot plot-script.gnu
+
+
+
+cat > plot-script-mag.gnu <<EOF
+#!/opt/local/bin/gnuplot
+
+set term aqua enhanced
+SAVE="Mag_vs_bond.dat"
+
+# Plot the result
+set title ""
+set xlabel "Bond Length (Å)"
+set ylabel "Abs. magnetization (Bohr. mag)"
+set grid
+set xrange [0.5:4.1]
+set yrange [0:4]
+set samples 1000
+
+plot \
+	SAVE  u 1:2 w lp pt 7 ps 1.0 lc rgb "red" title ""
+
+pause -1
+set term pngcairo enhanced
+set output "plot_mag.png"
+replot
+set term x11
+set out
+replot
+EOF
+gnuplot plot-script-mag.gnu
+
+exit
+
+
+
