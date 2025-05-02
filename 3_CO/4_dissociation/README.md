@@ -8,7 +8,7 @@ The dissociation curve can be described by an intermolecular pair potential. The
 
 The Lennard-Jones potential could be used to describe non-bonded interactions between CO molecules, or CO adsorption on a surface, or the long-range repulsion/attraction between atoms after the bond is broken.
 
-Here however we have strong covalent bond within the CO molecule. Thus it is better to model the dissociation potential with e.g. the Morse potential. Like LJ, the Morse potential is anharmonic, thus can describe bond stretching and dissociation, and features an exponential form which better  models how the electron cloud (and bond strength) decays with distance.
+Here however we have strong covalent bond within the CO molecule. Thus it is better to model the dissociation potential with e.g. the Morse potential [1]. Like LJ, the Morse potential is anharmonic, thus can describe bond stretching and dissociation, and features an exponential form which better  models how the electron cloud (and bond strength) decays with distance.
 
 <img src="Ref/eqn_morse.png" height="60"/>
 
@@ -41,9 +41,8 @@ Here however we have strong covalent bond within the CO molecule. Thus it is bet
      ```
      Plot the created 'Etot_vs_bond.dat' datafile. Compare the dissociation energy with that computed in the 2_binding tutorial.
 
-     Plot also the 'Mag_vs_bond.dat' file. Note there is a kind of transition between 2 and 3 A, where the system moves from singlet (CO molecule) to two triplets (separated fragments). However, LDA suffers from a gross delocalization error at large bond distances, so treat these results with skepticism! See Ref [1].
+     Plot also the 'Mag_vs_bond.dat' file. Note there is a kind of transition between 2 and 3 A, where the system moves from singlet (CO molecule) to two triplets (separated fragments). However, LDA suffers from a gross delocalization error at large bond distances, so treat these results with skepticism! See Ref [2].
 
-     Ref/plot_mag.png
      ![dissociation](Ref/plot_mag.png?raw=true "dissociation")
 
   4. Next, we run a gnuplot script to fit to the Morse and Lennard-Jones potentials. Here in fact we will use a modified L-J potential of the form:
@@ -71,4 +70,5 @@ Here however we have strong covalent bond within the CO molecule. Thus it is bet
   5. Extract fitting parameters and import them into a molecular dynamics code...or better, use Avogadro to run a simple MD simulation of C-O binding. Compare the bond distance with that found in DFT.
 
 ## Bibliography
-1. Insights into Current Limitations of Density Functional Theory, Aron J. Cohen, Paula Mori-Sánchez, and Weitao Yang.  Science (2008) Vol 321, Issue 5890 pp. 792-794. [Link](https://doi.org/10.1126/science.1158722)
+1. Morse potential at Wikipedia. [Link](https://en.wikipedia.org/wiki/Morse_potential)
+2. Insights into Current Limitations of Density Functional Theory, Aron J. Cohen, Paula Mori-Sánchez, and Weitao Yang.  Science (2008) Vol 321, Issue 5890 pp. 792-794. [Link](https://doi.org/10.1126/science.1158722)
