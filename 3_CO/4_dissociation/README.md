@@ -4,7 +4,7 @@ Now that we know better how to treat isolated atoms in DFT, we can extend our pr
 
 The dissociation curve can be described by an intermolecular pair potential. The most well known of these is the Lennard-Jones potential, which describes in a simple yet effective way the distance-dependent relation between two weakly interacting neutral entities. It is defined by a power law expression with exponents 12 (for the repulsive component) and 6 (for the attractive component).
 
-<img src="Ref/eqn_lj.png" height="60"/>
+<img src="Ref/eqn_LJ.png" height="60"/>
 
 The Lennard-Jones potential could be used to describe non-bonded interactions between CO molecules, or CO adsorption on a surface, or the long-range repulsion/attraction between atoms after the bond is broken.
 
