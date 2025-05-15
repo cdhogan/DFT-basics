@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Etot_vs_Ecut-script.dat
+echo -e "# ecut(Ry) energy(Ry)" > $SAVE
+
+GAP=Gap_vs_Ecut-script.dat
+echo -e "# Ecut(Ry)\tHOMO\tLUMO\tGap (eV)" > $GAP
+
+for dual in 4 8 12; do
+
+for ecut in 10 16 20 25 30 35 40 45 50 60 80 100; do
+
+IN=o_script.scf.in
+OUT=o_script.scf.out_ecut$ecut
+ecutrho=`echo "$dual *$ecut" | bc -l`
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "O",
+  pseudo_dir   = "../../Pseudo",
+  outdir       = "$TMP_DIR",
+  verbosity    = 'high'
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 1,
+  ntyp      = 1,
+  nbnd      = 6,
+  ecutwfc   = $ecut
+  ecutrho   = $ecutrho
+  nspin=2
+  occupations = 'fixed'
+  tot_magnetization = 2
+/
+&ELECTRONS
+  conv_thr    = 1.D-7,
+  mixing_beta = 0.7D0,
+/
+CELL_PARAMETERS {angstrom}
+ 8.0  0.0  0.0
+ 0.0  8.0  0.0
+ 0.0  0.0  8.0
+ATOMIC_SPECIES
+O  1.00  O.pbe-n-kjpaw_psl.0.1.UPF
+ATOMIC_POSITIONS {angstrom}
+O  2.000  2.0  2.0  
+K_POINTS {Gamma}
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+echo -e "$ecut\t\t$dual\t\t$ENERGY" >> $SAVE
+
+BANDS=`cat $OUT | grep highest | awk '{print $7,$8,$8-$7}'`
+echo -e "$ecut\t\t$dual\t\t$BANDS" >> $GAP
+
+done
+echo "" >> $SAVE
+echo "" >> $SAVE
+echo "" >> $GAP
+echo "" >> $GAP
+done
+
+echo "Run completed at: " `date`
+

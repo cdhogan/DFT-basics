@@ -1,0 +1,37 @@
+&CONTROL
+  calculation  = "vc-relax",
+  prefix       = "Al_bulk",
+  pseudo_dir   = "../../Pseudo",
+  outdir       = "./tmp",
+  restart_mode = "from_scratch"
+  verbosity    = "high"
+  tprnfor = .true.
+  wf_collect=.true.
+/
+&SYSTEM
+  ibrav     = 2,
+! celldm(1) = 7.652448  ! first attempt
+  celldm(1) = 7.62892650 ! second attempt
+  nat       = 1,
+  ntyp      = 1,
+  ecutwfc   = 20 
+  nbnd      = 5
+  occupations = "smearing",
+  smearing    = "marzari-vanderbilt",
+  degauss     = 0.05D0,
+/
+&ELECTRONS
+  conv_thr    = 1.D-8,
+  mixing_beta = 0.7D0	,
+/
+&IONS
+/
+&CELL
+  cell_dofree='ibrav'
+/
+ATOMIC_SPECIES
+ Al  28.086  Al.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS {alat}
+ Al 0.00 0.00 0.00
+K_POINTS {automatic}
+8 8 8 1 1 1

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Etot_vs_kgrid-script.dat
+SAVE0="${SAVE}0"
+SAVE1="${SAVE}1"
+echo -e "# N(NxNxN 000 grid) NKTOT energy(Ry)" > $SAVE0
+echo -e "# N(NxNxN 111 grid) NKTOT energy(Ry)" > $SAVE1
+
+for offset in 1 0; do
+for grid in 2 4 6 8 10 12 16; do
+
+klist="$grid $grid $grid $offset $offset $offset"
+echo $klist
+
+IN=al_script.scf.in
+OUT=al_script.scf.out_k${grid}_${offset}
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "Al_bulk",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  restart_mode = "from_scratch"
+  verbosity    = "high"
+  tprnfor = .true.
+  wf_collect=.true.
+/
+&SYSTEM
+  ibrav     = 2,
+  celldm(1) = 7.652448
+  nat       = 1,
+  ntyp      = 1,
+  ecutwfc   = 20
+  nbnd      = 5
+  occupations = "smearing",
+  smearing    = "marzari-vanderbilt",
+  degauss     = 0.01D0,
+/
+&ELECTRONS
+  conv_thr    = 1.D-8,
+  mixing_beta = 0.7D0	,
+/
+ATOMIC_SPECIES
+ Al  28.086  Al.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS {alat}
+ Al 0.00 0.00 0.00
+K_POINTS {automatic}
+$klist
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+#KPOINTS=`cat $OUT | grep 'number of k points' | tr -dc '0-9,-.'`
+KPOINTS=`cat $OUT | grep 'number of k points' | awk '{print $5}'`
+
+echo -e "$grid\t\t$KPOINTS\t\t$ENERGY" >> $SAVE${offset}
+
+done
+
+done
+echo "Run completed at: " `date`
+echo "Now launch the run_plots script."
+
+exit
+
+
+
+

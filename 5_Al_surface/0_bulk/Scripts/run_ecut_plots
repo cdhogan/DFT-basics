@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+SAVE=Etot_vs_Ecut-script.dat			
+
+#Print a gnuplot script to plot the 2 column files
+cat > plot-energy-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+reset
+set term x11 enhanced
+set out
+
+set xlabel "E_{cut} (Ry)"
+set ylabel "E_{tot} (Ry)
+thres_1mRy_per_atom=0.001
+thres_10mRy_per_atom=0.01
+set xrange [5:60]
+set yrange [-39.505:-39.490]
+
+plot \
+	'$SAVE' i 0 u 1:3 w lp pt 7 lw 1  lc rgb "black" title "dual=4",\
+	'$SAVE' i 1 u 1:3 w lp pt 6 lw 1  lc rgb "orange" title "dual=8",\
+	'$SAVE' i 2 u 1:3 w lp pt 5 lw 1  lc rgb "forest-green" title "dual=12"
+replot GPVAL_DATA_Y_MIN t "Min value" w l lt 4 dt 4 lc "red",\
+        GPVAL_DATA_Y_MIN+thres_1mRy_per_atom w l lt 2 lc "blue" t "Min + 1mRy/atom",\
+        GPVAL_DATA_Y_MIN+thres_10mRy_per_atom w l lt 3 lc "magenta" t "Min + 10mRy/atom"
+
+
+
+pause -1
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+set xlabel "E_{cut} (Ry)"
+set ylabel "E_{tot} (Ry)"
+set yrange [GPVAL_DATA_Y_MIN-0.005:GPVAL_DATA_Y_MAX+0.02]
+thres_1mRy_per_atom=0.001
+thres_10mRy_per_atom=0.01
+stats '$SAVE' u 1:3 name 'EN' nooutput
+set multiplot 
+
+       set size 0.6,0.9
+       set origin 0.03,0.05
+
+plot \
+	'$SAVE' i 0 u 1:3 w lp pt 7 lw 1  lc rgb "black" title "dual=4",\
+	'$SAVE' i 1 u 1:3 w lp pt 6 lw 1  lc rgb "orange" title "dual=8",\
+	'$SAVE' i 2 u 1:3 w lp pt 5 lw 1  lc rgb "forest-green" title "dual=12",\
+        EN_min_y t "Min value" w l lt 4 dt 4 lc "red",\
+        EN_min_y+thres_1mRy_per_atom w l lt 2 lc "blue" t "Min + 1mRy/atom",\
+        EN_min_y+thres_10mRy_per_atom w l lt 3 lc "magenta" t "Min + 10mRy/atom"
+
+       set size 0.38,0.9
+       set origin 0.63,0.05
+set ylabel "log_{10} (E_{tot}-E_{min}) (Ry)
+set xlabel "E_{cut} (Ry)"
+set grid y
+set autoscale y
+set logscale y
+set yrange [0.0001:1]
+plot \
+	'$SAVE'  u 1:(\$3-EN_min_y) w lp pt 7 lw 2  lc rgb "black" title "Total energy" 
+set nomulti
+pause -1
+set term x11
+set out
+replot
+pause -1
+
+EOF
+
+
+#Run the gnuplot script to make the plot of the total energy
+gnuplot plot-energy-script.gnu
+

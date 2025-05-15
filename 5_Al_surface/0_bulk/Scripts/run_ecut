@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#Every 1st line of a bas script start with #! followed by the shell that should run the script
+
+source ../../ENVIRONMENT_VARIABLES		#Load variables/code present in a different file
+echo "BIN_DIR:" $BIN_DIR			#echo -> print a string to the stdout
+						#$NAME -> recal the value of a variable of name NAME
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+# Prepare the files to be plotted
+SAVE=Etot_vs_Ecut-script.dat				#NAME=something assign a variable of name NAME and value something (can be a string ora  number)
+						#!!!!!! There must be no spaces when assigning variable
+echo -e "# Ecut(Ry)\tEnergy(Ry)" > $SAVE	
+
+# Loop over dual
+for dual in 4 8 12; do		#for NAME in LIST; do ... done
+
+# Loop over cutoff energies
+for ecut in 5 10 15 20 25 30 40 50 60; do
+
+ecutrho=`echo " $ecut * $dual " | bc -l`
+IN=al_script.scf.in
+OUT=al_script.scf.out_Ecut${ecut}_dual${dual}
+
+echo "Cutoffs: $ecut and $dual $ecutrho"
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "Al_bulk",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  restart_mode = "from_scratch"
+  verbosity    = "high"
+  tprnfor = .true.
+  wf_collect=.true.
+/
+&SYSTEM
+  ibrav     = 2,
+  celldm(1) = 7.652448
+  nat       = 1,
+  ntyp      = 1,
+  ecutwfc   = $ecut 
+  ecutrho   = $ecutrho
+  nbnd      = 5
+  occupations = "smearing",
+  smearing    = "marzari-vanderbilt",
+  degauss     = 0.01D0,
+/
+&ELECTRONS
+  conv_thr    = 1.D-8,
+  mixing_beta = 0.7D0	,
+/
+ATOMIC_SPECIES
+ Al  28.086  Al.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS {alat}
+ Al 0.00 0.00 0.00
+K_POINTS {automatic}
+8 8 8 1 1 1
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+ENERGY=`cat $OUT | grep ! | tr -dc '0-9,-.'`
+echo -e "$ecut\t\t$dual\t\t$ENERGY" >> $SAVE
+
+done    # end of main loop over cutoff energy
+echo "" >> $SAVE
+echo "" >> $SAVE
+
+done # loop over dual
+
+echo "Run completed at: " `date`
+echo "Now run the run_plots script" 
+
