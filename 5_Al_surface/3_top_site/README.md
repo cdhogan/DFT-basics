@@ -3,7 +3,7 @@
 Here we will compute the adsorption energy of an O atom on the Ag(001) surface.
 Surface optimizations are slow calculations so it is important to identify a good strategy.
 
-     ![Adsorption sites](Ref/al001_O_sites.png?raw=true "Adsorption sites")
+<img src="Ref/al001_O_sites.png" height="300"/>
 
 ## Input file
 
