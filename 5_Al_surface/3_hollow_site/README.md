@@ -2,7 +2,7 @@
 
 Using the strategies outlined for the on top site, we compute the adsorption energy for hollow and bridge site O adsorption.
 
-     ![Adsorption sites](Ref/al001_O_sites.png?raw=true "Adsorption sites")
+<img src="Ref/al001_O_sites.png" height="300"/>
 
 ## Input file
 
