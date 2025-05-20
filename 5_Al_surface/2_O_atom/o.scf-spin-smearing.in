@@ -1,7 +1,7 @@
 &CONTROL
   calculation  = "scf",
   prefix       = "O",
-  pseudo_dir   = "../../../Pseudo",
+  pseudo_dir   = "../../Pseudo",
   outdir       = "./tmp",
   verbosity    = 'high'
 /
@@ -11,7 +11,7 @@
   ntyp      = 1,
   nbnd      = 6,
   ecutwfc   = 40
-  ecutrho   = 400
+  ecutrho   = 320
   nspin=2
   occupations = 'smearing'
   degauss = 0.001

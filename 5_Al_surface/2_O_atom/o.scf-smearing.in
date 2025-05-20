@@ -12,9 +12,9 @@
   nbnd      = 6,
   ecutwfc   = 40
   ecutrho   = 320
-  nspin=2
-  occupations = 'fixed'
-  tot_magnetization = 2
+  nspin=1
+  occupations = 'smearing'
+  degauss = 0.001
 /
 &ELECTRONS
   conv_thr    = 1.D-7,
