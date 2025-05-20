@@ -2,6 +2,10 @@
 
 Here we test convergence for a (3x3) supercell of the Al(001) surface.
 
+     ![Al(001) slab](Ref/al001_O_geometry.png?raw=true "Al(001) slab")
+
+al001_O_geometry.png
+
 ## Input file
 
 To create the atomic positions for a surface slab, it is easy if you have the right software. Even common free AI tools will prepare an input for you. In principle, one can use VESTA, or the CrystalToolKit at Materials Project.
