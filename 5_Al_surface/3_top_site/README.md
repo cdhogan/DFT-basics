@@ -54,8 +54,32 @@ We are now ready to compute the relaxed geometry.
 
 ### Convergence with k-points
 
+Now that you know how to make better use of the multi-core environment, compute the adsorption energy for the top site in an efficient manner. For instance:
+
+   ```
+   % mpirun -np 4 pw.x < al001_3x3_O-top.in >& al001_3x3_O-top.out_221110 &     <- Use 221 110 grid
+   % grep Total al001_3x3_O-top.out_221110
+   % vi al001_3x3_O-top.in                 <- increase to 441 110, read old charge density/potential
+   % cat al001_3x3_O-top.in 
+   [...]
+    &ELECTRONS
+     conv_thr    = 1.D-7,
+     mixing_beta = 0.5D0,
+     mixing_mode = 'local-TF' ,
+     startingpot = 'file'            <- read from 221 110 calculation     
+     startingwfc = 'atomic'          <- don't read as #nkpt will differ
+   /
+   % pw.x < al001_3x3_O-top.in      ^C      <- check quickly number of k-points (3)
+   % mpirun -np 6 pw.x -npool 3 < al001_3x3_O-top.in > al001_3x3_O-top.out_441110
+   ```
+At each step compute the adsorption energy and check its convergence with k-points. Check also the Al-O bond distance. 
+A spreadsheet can be useful to keep track of the various runs.
+
+You should eventually obtain something like this:
+
 <img src="Ref/ads_table.png" height="200"/>
 
+Observations:
 - While gamma and 221110 both use a single k-point, the gamma_only choice is significantly poorer. It would be better to run a first rough relaxation with 221110, and restart from there.
 - Convergence is achieved for a 661110 grid (6 k-points)
 - Hollow site is significantly more favoured over top site.
