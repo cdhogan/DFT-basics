@@ -2,9 +2,7 @@
 
 Here we test convergence for a (3x3) supercell of the Al(001) surface.
 
-     ![Al(001) slab](Ref/al001_O_geometry.png?raw=true "Al(001) slab")
-
-al001_O_geometry.png
+<img src="Ref/al001_O_geometry.png" height="400"/>
 
 ## Input file
 
