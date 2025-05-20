@@ -50,7 +50,7 @@ We are now ready to compute the relaxed geometry.
 
 ### Parallelization
 
-<img src="Ref/parallel.png" height="200"/>
+<img src="Ref/parallel.png" height="400"/>
 
 ### Convergence with k-points
 
@@ -68,6 +68,7 @@ We are now ready to compute the relaxed geometry.
 
 [1] M. Young et al, ACS Appl.Mater. Interfaces 2020,12, 22804−22814
 Probing the Atomic-Scale Structure of Amorphous Aluminum Oxide Grown by Atomic Layer Deposition
+
 [2] G. G. Khan et al, Journal of Physics and Chemistry of Solids 70(2):298-302
 Ab-initio pseudopotential study of electronic structure and chemisorption of oxygen on aluminium surface
 DOI: 10.1016/j.jpcs.2008.10.017
