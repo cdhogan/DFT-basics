@@ -1,0 +1,17 @@
+&INPUTPP
+/
+&plot
+  nfile=3
+  filepp(1)="../Al001_O_charge.dat"
+  filepp(2)="../Al001_peeled/Al001_charge.dat"
+  filepp(3)="../O_peeled/O_charge.dat"
+  weight(1)=1.0
+  weight(2)=-1.0
+  weight(3)=-1.0
+  iflag=3
+  output_format=5
+  fileout="chargediff.xsf"
+/
+
+
+

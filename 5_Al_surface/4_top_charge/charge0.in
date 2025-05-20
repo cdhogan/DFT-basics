@@ -1,0 +1,13 @@
+&INPUTPP
+prefix       = "Al",
+outdir       = "./tmp",
+plot_num     = 0
+filplot      = "Al001_O_charge.dat"
+/
+&plot
+  iflag=3
+  output_format=6
+  fileout="charge0.cube"
+/
+
+

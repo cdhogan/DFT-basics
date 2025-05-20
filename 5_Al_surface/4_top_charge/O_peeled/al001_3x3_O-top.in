@@ -1,0 +1,41 @@
+&CONTROL
+  calculation = "scf",
+  pseudo_dir  = "../../../Pseudo",
+  prefix      = "Al"
+  outdir      = "./tmp",
+! restart_mode = 'restart'
+  wf_collect  = .true.
+/
+&SYSTEM
+  nosym       = .false.  ! danger!
+  ibrav       = 0,
+  A           = 2.8546 
+  nat         = 1,
+  ntyp        = 1,
+  ecutwfc     = 40.D0,
+  ecutrho     = 320.D0,
+  occupations = "smearing",
+  smearing    = "marzari-vanderbilt",
+  degauss     = 0.05D0,
+/
+&ELECTRONS
+  conv_thr    = 1.D-7,
+  mixing_beta = 0.5D0,
+  mixing_mode = 'local-TF' ,
+! startingpot = 'file'
+! startingwfc = 'atomic'
+/
+&IONS
+  bfgs_ndim         = 3,
+/
+CELL_PARAMETERS {alat}
+ 3.000000   0.000000   0.000000 
+ 0.000000   3.000000   0.000000 
+ 0.000000   0.000000   8.000000 
+ATOMIC_SPECIES
+O   1.0  O.pbe-n-kjpaw_psl.0.1.UPF
+ATOMIC_POSITIONS (alat)
+O                1.4999999993        1.4999999993        2.6435558304    0   0   1
+K_POINTS {automatic}
+6 6 1 1 1 0
+
