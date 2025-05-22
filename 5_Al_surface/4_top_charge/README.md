@@ -1,18 +1,50 @@
 # Chemical bonding analysis: charge and potential
 
+In this tutorial we examine some ways to analyse the chemical bond between the O atom and the Al(001) surface. In particular we will focus on analysing the electronic charge density.
+
+Before continuing, let's regenerate the ground state charge density for the converged geometry and parameters.
+We use a 6x6x1 k-point grid corresponding to 6 k-points, thus on a 16-core machine:
+   ```
+   % mpirun -np 12 pw.x -npool 6 < al001_3x3_O-top.in >& al001_3x3_O-top.out &
+   % ls tmp/Ag.save
+   Al.pbe-n-kjpaw_psl.1.0.0.UPF	paw.txt		    wfc1.dat ... wfc6.dat   
+   O.pbe-n-kjpaw_psl.0.1.UPF	
+   charge-density.dat		data-file-schema.xml		
+   ```
+This SCF run can take 5-10 minutes. Make sure the calculation is complete before continuing.
+
 ### Electrostatic potential
 
-Use pp.x and average.x to investigate the electrostatic potential in the Al(001)/O supercell. Note the potential in the vacuum!
+Let's start by looking at the planar-averaged electrostatic potential. As before, use `pp.x` and `average.x`.
+   ```
+   % pp.x < pp_pot.in
+   % average.x < average_pot.in
+   % mv avg.dat avg_pot_Al001_O.dat        <- NB later runs of average.x will overwrite "avg.dat"
+   % gnuplot
+   gnuplot> plot "avg_pot_Al001_O.dat" t "Average" w l,"" u 1:3 t "Macroscopic average" w l
+   ```
 
-### Charge density difference
+We note several things:
 
-This is a very powerful technique for analysing and understanding bonding.
+- There is a gradient in the vacuum region. This is because the slab with oxygen on one side is now polar, and there is a long range dipolar interaction between images. This could effect some properties! We could mitigate it by increasing the vacuum size (with a penalty of slower calculation), by using a (thicker) symmetric slab with O on both sides, or by implementing a dipole correction in the vacuum (see keyword `dipfield`).
+- The potential from the O atom is hardly visible due to the averaging process across 3x3 cells.
+- The potential in the Al layers is not precisely constant, indicating our slab is not really thick enough.
+- By applying a second averaging step (the window size is defined in the last line of `average_pot.in`) we can determine the average value of the electrostatic potential inside the slab. This can be useful for aligning slab and bulk calculations.
+- By comparing with the electrostatic potential of the clean surface, we can compute the work function change due to O adsorption (at 0.11ML coverage).
 
-<img src="Ref/CDD.png" height="80"/>
+However, this analysis doesn't really help with understanding the chemical bonding.
 
-It is based on calculating the charge densities of the relaxed Al(001)/O system and of the A(001) and O atom in the same frozen geometries they have in the Al(001)/O case. The latter are called "peeled-off" geometries.
+### Charge density difference (CDD)
+
+This is a very powerful technique for analysing and understanding bonding. In particular, it allows us to analyse the charge redistribution after a chemical bond or interaction is formed.
+
+<img src="Ref/CDD.png" height="60"/>
+
+It is based on calculating the charge densities of the relaxed Al(001)/O system and of the A(001) and O atom in the same frozen geometries they have in the Al(001)/O case. The latter are called "peeled-off" geometries. In other words, for the peeled off Al(001) system, we take the converged Al(001)/O geometry, remove the O atom, and recompute the charge density (without relaxation).
 
 For the difference calculation to work, the three calculations must be done in exactly the same way (cell, cutoff, k-points, etc).
+
+This process is thus quite different from the adsorption energy calculation, which used the relaxed Al(001) surface and an O atom (or O2 molecule) in a box as reference.
 
 What we can expect to find:
 
@@ -24,7 +56,7 @@ Bridge or hollow site:
 - Accumulation may appear between multiple Al atoms and O, indicating shared bonding.
 
 Charge transfer direction:
-- If electrons accumulate around O, and deplete near Al, this means O is accepting electrons from Al (expected for electronegative atoms like O).
+- If electrons accumulate around O, and deplete near Al, this means O is accepting electrons from Al (this is expected for electronegative atoms like O).
 
 
 1. Average plot
