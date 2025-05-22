@@ -60,7 +60,9 @@ Now that you know how to make better use of the multi-core environment, compute 
    % mpirun -np 4 pw.x < al001_3x3_O-top.in >& al001_3x3_O-top.out_221110 &     <- Use 221 110 grid
    % grep Total al001_3x3_O-top.out_221110
    % vi al001_3x3_O-top.in                 <- increase to 441 110, read old charge density/potential
-   % cat al001_3x3_O-top.in 
+   % cat al001_3x3_O-top.in
+   &CONTROL
+     restart_mode = 'restart'         <- will try to restart from the last atomic positions
    [...]
     &ELECTRONS
      conv_thr    = 1.D-7,
@@ -72,6 +74,8 @@ Now that you know how to make better use of the multi-core environment, compute 
    % pw.x < al001_3x3_O-top.in      ^C      <- check quickly number of k-points (3)
    % mpirun -np 6 pw.x -npool 3 < al001_3x3_O-top.in > al001_3x3_O-top.out_441110
    ```
+To be absolutely sure that the code is using the latest positions when restarting, simply copy the last ATOMIC_POSITIONS block from the output and paste them into the input file. In any case, check in the output what positions are being used.
+
 At each step compute the adsorption energy and check its convergence with k-points. Check also the Al-O bond distance. 
 A spreadsheet can be useful to keep track of the various runs.
 
