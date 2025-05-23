@@ -44,7 +44,7 @@ This is a very powerful technique for analysing and understanding bonding. In pa
 
 It is based on calculating the charge densities of the relaxed Al(001)/O system and of the A(001) and O atom in the same frozen geometries they have in the Al(001)/O case. The latter are called "peeled-off" geometries. In other words, for the peeled off Al(001) system, we take the converged Al(001)/O geometry, remove the O atom, and recompute the charge density (without relaxation).
 
-For the difference calculation to work, the three calculations must be done in exactly the same way (cell, cutoff, k-points, etc). The atoms must be in the same positions, otherwise the Delta rho will just show huge spikes due to the shift in the total atomic charge density!
+For the difference calculation to work, the three calculations must be done in exactly the same way (cell, cutoff, k-points, etc). The atoms must be in the same positions, otherwise the Δρ will just show huge spikes due to the shift in the total atomic charge density!
 
 It is highly important to do things neatly: use separate folders for the separate systems.
 
@@ -101,31 +101,69 @@ Yes - it's bit tedious, just take your time. Now we collect the data and compute
    % gnuplot
    gnuplot>
    ```
+![charge](Ref/plot_charge.png?raw=true "charge")
 
-What we can expect to find:
+From our definition of Δρ, positive values will correspond to an accumulation of charge, and negative values to a depletion of charge.
 
-Top site:
-- Charge depletion just above the Al atom.
-- Charge accumulation between Al and O, suggesting covalent bonding (see adsorption energy).
+Thus: we observe
+   - Charge depletion around the Al atom
+   - Charge accumulation between Al and O, suggestive of covalent bonding
+   - A net charge transfer from Al to O, consistent with the higher electronegativity of O
+   - Formation of a dipole perpendicular to the surface  
 
-Bridge or hollow site:
-- Accumulation may appear between multiple Al atoms and O, indicating shared bonding.
+We can get a more complete understanding by looking at the charge redistribution in 3D. The three charge densities in real space have already been computed, we just need to carry out the subtraction in some way. Fortunately it is straightforward to do this in quantum-ESPRESSO.
+   ```
+   % cat chargediff.in
+   &INPUTPP
+   /
+   &plot
+     nfile=3
+     filepp(1)="../Al001_O_charge.dat"
+     filepp(2)="../Al001_peeled/Al001_charge.dat"
+     filepp(3)="../O_peeled/O_charge.dat"
+     weight(1)=1.0                  <:   +ρ(Al001_O)
+     weight(2)=-1.0                 <:   -ρ(Al001)
+     weight(3)=-1.0                 <:   -ρ(O)
+     iflag=3
+     output_format=5
+     fileout="chargediff.xsf"
+   /
+   % pp.x < chargediff.in
+   [...]
+        MPI processes distributed on     1 nodes
+     Reading header from file  ../Al001_O_charge.dat
+     Reading data from file  ../Al001_O_charge.dat
+     Reading data from file  ../Al001_peeled/Al001_charge.dat
+     Reading data from file  ../O_peeled/O_charge.dat
 
-Charge transfer direction:
-- If electrons accumulate around O, and deplete near Al, this means O is accepting electrons from Al (this is expected for electronegative atoms like O).
+     Writing data to be plotted to file chargediff.xsf
+     Plot Type: 3D                     Output format: XCrySDen
 
+   % xcrysden --xsf chargediff.xsf      <- isovalue of e.g. 0.05
+   ```
 
-1. Average plot
+![charge](Ref/CDD_3D.png?raw=true "charge")
 
-2. 3D plot
+Thus we confirm the charge depletion is centred around one Al atom, and slightly elongated along the Al-Al axes. For the on-top site, this is somewhat banal - a similar analysis should be more interesting for the hollow site. Try it!
 
 ### Charge transfer and Bader charges
 
-    We can use the `bader` code to compute the atomic charges.
+The only thing that is missing is a numerical estimate of the charge transfer. We should integrate the charge density around the adsorbed O atom and compare with the value for the isolated atom (6 electrons, obviously). But this introduces a new problem. How to define the volume around the O atom? How to partition the charges? One could take the midpoint of the Al-O bond, but what about a hollow site adsorption? And what about the higher electronegativity of O?
+
+Indeed there are many ways to partition the charge: Atoms-in-molecules, Hirshfeld, Voronoi, formal charges, DDEC, etc... Here we will use the well-known AIM scheme of Bader ("Bader charges"), which is based on the charge density. Quoting from the Henklemann site: "Bader uses what are called zero flux surfaces to divide atoms. A zero flux surface is a 2-D surface on which the charge density is a minimum perpendicular to the surface. Typically in molecular systems, the charge density reaches a minimum between atoms and this is a natural place to separate atoms from each other."
+
+Two codes that offer this analysis (and more) are `bader` and `critic2`.
+The ingredients are the same: we need the valence charge density (`plot_num=0`) but also the PAW all-electron charge density (`plot_num=21`) as a reference to allow the atomic volumes to be defined. 
+Note that this method requires a very dense real space (FFT) grid, so one should perform a convergence with `nr1, nr2, nr3`.
+
+Taking the Bader code, the output file "ACF.dat" contains the atomic charges.
+
     ```
-    % pp.x < charge0.in 
+    % pp.x < charge0.in          <- already done above
     % pp.x < charge21.in 
-    % bader charge0.cube -ref charge21.cube 
+    % 
+    % bader Al001_O_charge0.cube -ref Al001_O_charge21.cube
+    % 
     % cat ACF.dat 
            #         X           Y           Z       CHARGE      MIN DIST   ATOMIC VOL
     --------------------------------------------------------------------------------
@@ -141,7 +179,13 @@ Charge transfer direction:
        VACUUM VOLUME:               0.0000
        NUMBER OF ELECTRONS:       113.9994
     ```
-(O is #37, the Al underneath is #32).
+Note that O is #37, and the Al atom directly underneath is #32.
 
-Thus O has accepted 1.63 electrons from the surface, most of which is coming from the Al atom bonded to it.
+Thus O has accepted 7.63-6.00=1.63 electrons from the surface, most of which is coming from the Al atom bonded to it (3.00-2.08=0.92e).
 
+It is interesting to view the shape of the integration volumes:
+
+   ```
+   % bader -p sum_atom 37 charge0.cube -ref charge21.cube
+   ```
+![charge](Ref/CDD_3D.png?raw=true "charge")
