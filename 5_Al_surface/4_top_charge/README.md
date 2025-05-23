@@ -24,12 +24,14 @@ Let's start by looking at the planar-averaged electrostatic potential. As before
    gnuplot> plot "avg_pot_Al001_O.dat" t "Average" w l,"" u 1:3 t "Macroscopic average" w l
    ```
 
+![potential](Ref/plot_pot.png?raw=true "potential")
+
 We note several things:
 
 - There is a gradient in the vacuum region. This is because the slab with oxygen on one side is now polar, and there is a long range dipolar interaction between images. This could effect some properties! We could mitigate it by increasing the vacuum size (with a penalty of slower calculation), by using a (thicker) symmetric slab with O on both sides, or by implementing a dipole correction in the vacuum (see keyword `dipfield`).
-- The potential from the O atom is hardly visible due to the averaging process across 3x3 cells.
+- The potential from the O atom is hardly visible (see the arrow) due to the averaging process across 3x3 cells.
 - The potential in the Al layers is not precisely constant, indicating our slab is not really thick enough.
-- By applying a second averaging step (the window size is defined in the last line of `average_pot.in`) we can determine the average value of the electrostatic potential inside the slab. This can be useful for aligning slab and bulk calculations.
+- By applying a second averaging step (the window size is defined in the last line of `average_pot.in`) we can determine the average value of the electrostatic potential (i.e. the macroscopic potential) inside the slab. This can be useful for aligning slab and bulk calculations.
 - By comparing with the electrostatic potential of the clean surface, we can compute the work function change due to O adsorption (at 0.11ML coverage).
 
 However, this analysis doesn't really help with understanding the chemical bonding.
@@ -42,9 +44,63 @@ This is a very powerful technique for analysing and understanding bonding. In pa
 
 It is based on calculating the charge densities of the relaxed Al(001)/O system and of the A(001) and O atom in the same frozen geometries they have in the Al(001)/O case. The latter are called "peeled-off" geometries. In other words, for the peeled off Al(001) system, we take the converged Al(001)/O geometry, remove the O atom, and recompute the charge density (without relaxation).
 
-For the difference calculation to work, the three calculations must be done in exactly the same way (cell, cutoff, k-points, etc).
+For the difference calculation to work, the three calculations must be done in exactly the same way (cell, cutoff, k-points, etc). The atoms must be in the same positions, otherwise the Delta rho will just show huge spikes due to the shift in the total atomic charge density!
 
-This process is thus quite different from the adsorption energy calculation, which used the relaxed Al(001) surface and an O atom (or O2 molecule) in a box as reference.
+It is highly important to do things neatly: use separate folders for the separate systems.
+
+This process is subtly different from the adsorption energy calculation, which used the _relaxed_ Al(001) surface and an O atom (or O2 molecule) in a _cubic box_ as reference.
+
+Let's calculate then the CDD as a difference in the planar averages and as a difference in the 2D densities: both are useful to understand the results. For reasons that will be clear later, we will call the input for `pp.x` "charge0.in", where 0 corresponds to the value of `plot_num` (valence charge density).
+
+   ```
+   % cat charge0.in
+   &INPUTPP
+      prefix       = "Al",
+      outdir       = "./tmp",
+      plot_num     = 0
+      filplot      = "Al001_O_charge.dat"
+   /
+   &plot
+     iflag=3
+     output_format=6
+     fileout="Al001_O_charge.cube"
+   /
+   % pp.x < charge0.in
+   [...]
+   Writing data to file  Al001_O_charge.dat
+   Reading data from file  Al001_O_charge.dat
+
+   Writing data to be plotted to file Al001_O_charge.cube
+   Plot Type: 3D                     Output format: Gaussian cube
+   ```
+The _unformatted_ charge density is written to "Al001_O_charge.dat", and the _formatted_ charge density is written to "Al001_O_charge.cube". The latter is an alternative file format to XSF, it can be opened for instance with VESTA (`% VESTA Al001_O_charge.cube`)
+
+Using `average.x` we compute the planar average of the _charge density_, reading the "Al001_O_charge.dat" file.
+   ```
+   % average.x < average_charge.in
+   % mv avg.dat avg_Al001_O.dat
+   ```
+Now, we do the same for the two peeled off systems. Obviously, we have to do an SCF run first in each case.
+   ```
+   % cd O_peeled
+   % mpirun -np 4 pw.x < O_peeled.in > O_peeled.out
+   % pp.x < charge0.in
+   % average.x < average.in
+   % mv avg.dat avg_O.dat
+   %
+   % cd ../Al001_peeled
+   % mpirun -np 6 pw.x -npool 6 < al001_peeled.in > al001_peeled.out
+   % pp.x < charge0.in
+   % average.x < average.in
+   % mv avg.dat avg_Al001.dat
+   ```
+Yes - it's bit tedious, just take your time. Now we collect the data and compute the difference. Let's do this in a separate folder. Use the UNIX command `paste` to collect the three avg.dat files together, and use `awk` to select the columns we want:
+   ```
+   % cd ../Charge_difference
+   % paste ../avg_Al001_O.dat ../Al001_peeled/avg_Al001.dat ../O_peeled/avg_O.dat | awk '{print $1,$2,$5,$8,$2-$5-$8}' > avg_difference.dat
+   % gnuplot
+   gnuplot>
+   ```
 
 What we can expect to find:
 
