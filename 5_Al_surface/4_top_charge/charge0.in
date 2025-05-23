@@ -7,7 +7,7 @@ filplot      = "Al001_O_charge.dat"
 &plot
   iflag=3
   output_format=6
-  fileout="charge0.cube"
+  fileout="Al001_O_charge.cube"
 /
 
 

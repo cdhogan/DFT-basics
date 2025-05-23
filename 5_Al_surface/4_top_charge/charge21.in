@@ -1,13 +1,13 @@
 &INPUTPP
 prefix       = "Al",
 outdir       = "./tmp",
-plot_num     = 21
-filplot      = "charge21.dat"
+plot_num     = 0
+filplot      = "Al001_O_charge21.dat"
 /
 &plot
   iflag=3
   output_format=6
-  fileout="charge21.cube"
+  fileout="Al001_O_charge21.cube"
 /
 
 
