@@ -142,7 +142,7 @@ We can get a more complete understanding by looking at the charge redistribution
    % xcrysden --xsf chargediff.xsf      <- isovalue of e.g. 0.05
    ```
 
-![charge](Ref/CDD_3D.png?raw=true "charge")
+<img src="Ref/CDD_3D.png" height="500"/>
 
 Thus we confirm the charge depletion is centred around one Al atom, and slightly elongated along the Al-Al axes. For the on-top site, this is somewhat banal - a similar analysis should be more interesting for the hollow site. Try it!
 
@@ -188,4 +188,5 @@ It is interesting to view the shape of the integration volumes:
    ```
    % bader -p sum_atom 37 charge0.cube -ref charge21.cube
    ```
-![charge](Ref/CDD_3D.png?raw=true "charge")
+<img src="Ref/volumes.png" height="300"/>
+
