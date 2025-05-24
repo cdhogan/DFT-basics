@@ -1,4 +1,4 @@
-# Optical spectra calculation (UNDER CONSTRUCTION)
+# Optical spectra calculation
 
 The optical spectra (dielectric functions) can be computed (at the independent particle level) using the tools `epsilon.x` and `pw2gw.x`. Remember that Kohn-Sham DFT is fundamentally a ground state theory and thus calculation of excited state properties such as optical excitations must be viewed as a first approximation. (For a better treatment, check out TDDFT and GW-BSE approaches.)
 
@@ -160,8 +160,7 @@ If we compare the spectrum computed with DFT against experiment, we find pretty 
 Compare the computed dielectric function e2 with the computed band structure and DOS. What are the connections between them?
 
 - The onset in e2 will occur at the minimum (direct) band gap
-- Peaks occur when transitions are between parallel bands, i.e. many transitions are possible at the same photon energy. These correspond to the van Hove singularities at critical points, where
-  <img src="Ref/vanhove.png" height="80"/>  
+- Peaks occur when transitions are between parallel bands, i.e. many transitions are possible at the same photon energy. These correspond to the van Hove singularities at critical points, where <img src="Ref/vanhove.png" height="40"/> . Use `epsilon.x` to plot also the joint density of states (JDOS). 
 - Strength of the peak (oscillator strength) will depend also on the transition matrix elements
 - If using `epsilon.x`, also intraband excitations can be simulated.
 
