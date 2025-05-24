@@ -111,7 +111,7 @@ In this tutorial we will examine the functionality of both codes and pay careful
 
       <img src="Ref/KK.png" height="80"/>
 
-      From this expression is it clear why ɛ2(0) depends on the number of bands/transitions included in computing ɛ1.
+      From this expression is it clear why ɛ1(0) depends on the number of bands/transitions included in computing ɛ2.
 
       In any case, we take 12 bands to have well converged spectra. (However, check "eels_Si.dat" for a more sensitive convergence!).
 
@@ -151,9 +151,19 @@ Again, the k-point convergence must be checked (there is no need to repeat the c
     ```
  ![optics](Ref/plot_script_pw2gw_kpts.png?raw=true "optics")     
 
-Comparing the spectrum with experiment, one finds a pretty large discrepancy.
+If we compare the spectrum computed with DFT against experiment, we find pretty large discrepancies. Where do you think the errors lie, and which is most important?
 
 <img src="Ref/expt_Si.png" height="300"/>
- 
+
+### Analyse the optical spectrum
+
+Compare the computed dielectric function e2 with the computed band structure and DOS. What are the connections between them?
+
+- The onset in e2 will occur at the minimum (direct) band gap
+- Peaks occur when transitions are between parallel bands, i.e. many transitions are possible at the same photon energy. These correspond to the van Hove singularities at critical points, where
+  <img src="Ref/vanhove.png" height="80"/>  
+- Strength of the peak (oscillator strength) will depend also on the transition matrix elements
+- If using `epsilon.x`, also intraband excitations can be simulated.
+
 ## Bibliography
 1.  Aroyo et al, Acta Cryst. (2014). A70, 126-137 [Link](https://doi.org/10.1107/S205327331303091X)
