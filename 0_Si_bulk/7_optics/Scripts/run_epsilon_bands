@@ -60,23 +60,25 @@ echo -e "\tEnd: " `date`
 # Non-self-consistent run, regular k-grid
 #-------------------------------------------------#
 
-for grid in 8 16 32; do
+for nband in 5 8 12 16; do
+
+grid=16
 
 # Use shifted grid for better convergence
 #klist="$grid $grid $grid 0 0 0"
 klist="$grid $grid $grid 1 1 1"
 echo $klist
 
-TMP_OPT="./epsilon_script_k$grid"
+TMP_OPT="./epsilon_script_b$nband"
 mkdir -p $TMP_OPT
 cp -r $TMP_DIR/$PREFIX.* $TMP_OPT/
-echo "TMP_DIR $TMP_DIR"
+echo "SCF TMP_DIR $TMP_DIR"
 ls $TMP_DIR
-echo "TMP_OPT $TMP_OPT"
+echo "NSCF TMP_OPT $TMP_OPT"
 ls $TMP_OPT
 
 IN=si_script.nscf.epsilon.in
-OUT=si_script.nscf.epsilon.out_k${grid}
+OUT=si_script.nscf.epsilon.out_b${nband}
 
 cat > $IN << EOF
 &CONTROL
@@ -95,7 +97,7 @@ cat > $IN << EOF
   nat       = 2,
   ntyp      = 1,
   ecutwfc   = 20
-  nbnd      = 20
+  nbnd      = $nband
 /
 &ELECTRONS
   diago_full_acc=.true.
@@ -118,6 +120,7 @@ COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x -npool 4"
 echo -e "\t\t$COMMAND < $IN > $OUT"
 $COMMAND < $IN > $OUT
 echo -e "\tEnd: " `date`
+mv $IN $OUT $TMP_OPT
 
 #-------------------------------------------------#
 # epsilon.x calculation, regular k-grid and Gaussian smearing
@@ -135,7 +138,7 @@ cat > $IN_EPS << EOF
   intersmear = 0.1
   wmin =  0.05
   wmax = 20.05
-  nw = 201
+  nw = 2001
 /
 EOF
 
@@ -144,75 +147,9 @@ COMMAND="  $RUN_COMMAND $BIN_DIR/epsilon.x"
 echo -e "\t\t$COMMAND < $IN_EPS > $OUT_EPS"
 $COMMAND < $IN_EPS > $OUT_EPS
 echo -e "\tEnd: " `date`
+mv $IN_EPS $OUT_EPS $TMP_OPT
 
 mv *.dat $TMP_OPT
 
 done
-exit
-
-#-------------------------------------------------#
-# DOS calculation, regular k-grid and Gaussian smearing
-#-------------------------------------------------#
-
-IN=si_script.dos.in
-OUT=si_script.dos.out
-FILDOS=si_script.dos-kgrid${grid}.dat
-
-# DOS without tetrahedra
-cat > $IN << EOF
- &dos
-   outdir='./tmp'
-   prefix='Si'
-   fildos="$FILDOS",
-   degauss=0.01
-   Emin=-10.0, Emax=20.0, DeltaE=0.1
- /
-EOF
-
-echo -e "\tStart: " `date`
-COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
-echo -e "\t\t$COMMAND < $IN > $OUT"
-$COMMAND < $IN > $OUT
-echo -e "\tEnd: " `date`
-
-#awk '/EFermi/{print "DOS,       EFermi= "$9}' $FILDOS >> $SAVE
-
-#-------------------------------------------------#
-# DOS calculation, with tetrahedra
-#-------------------------------------------------#
-
-IN=si_script.dos-tetra.in
-OUT=si_script.dos-tetra.out
-FILDOS=si_script.dos-tetra-kgrid${grid}.dat
-
-# DOS with tetrahedra
-cat > $IN << EOF
- &dos
-   outdir='./tmp'
-   prefix='Si'
-   bz_sum="tetrahedra"
-   fildos="$FILDOS",
-   Emin=-10.0, Emax=20.0, DeltaE=0.1
- /
-EOF
-
-echo -e "\tStart: " `date`
-COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
-echo -e "\t\t$COMMAND < $IN > $OUT"
-$COMMAND < $IN > $OUT
-echo -e "\tEnd: " `date`
-
-#awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
-
-#done
-awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
-
-echo "Run completed at: " `date`
-
-echo "Now launch the run_plots script."
-
-exit
-
-
-
 

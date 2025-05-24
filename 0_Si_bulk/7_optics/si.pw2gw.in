@@ -1,11 +1,7 @@
 &inputpp
   prefix       = "Si",
-  outdir       = "./pw2gw_k32",
+  outdir       = "./tmp_pw2gw",
     Emin=0.0
     Emax=20.0
     DeltaE=0.1
-!   what='gw',
-!   qplda=.false.,
-!   vxcdiag=.false.,
-!   vkb=.false.,
 /

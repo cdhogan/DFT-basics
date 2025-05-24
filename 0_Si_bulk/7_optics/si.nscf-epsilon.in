@@ -2,19 +2,21 @@
   calculation  = "nscf",
   prefix       = "Si",
   pseudo_dir   = "../../Pseudo",
-  outdir       = "./tmp",
+  outdir       = "./tmp_epsilon",
   restart_mode = "from_scratch"
   tprnfor = .true.
   wf_collect=.true.
   verbosity='high'
 /
 &SYSTEM
+  nosym=.true.
+  noinv=.true.
   ibrav     = 2,
   celldm(1) = 10.21,
   nat       = 2,
   ntyp      = 1,
   ecutwfc   = 20 
-  nbnd      = 10
+  nbnd      = 5
 /
 &ELECTRONS
   conv_thr    = 1.D-8,

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+SAVE=plot_script_epsilon_kpts
+
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set term x11 enhanced
+
+set title "epsilon.x with shifted MP grid"
+set xlabel "Energy (eV)"
+set ylabel "ɛ_1, ɛ_2"
+set xrange [0:10]
+set xtics 1
+set mxtics 5
+
+plot 	\
+     	"epsilon_script_k8/epsi_Si.dat" t "8x8x8 (512)" w l dt 1 lc "red","epsilon_script_k8/epsr_Si.dat" t "" w l dt 3 lw 2 lc "red",\
+     	"epsilon_script_k16/epsi_Si.dat" t "16x16x16 (4076)" w l dt 1 lc "blue","epsilon_script_k16/epsr_Si.dat" t "" w l dt 4 lc "blue",\
+     	"epsilon_script_k32/epsi_Si.dat" t "32x32x32 (32768)" w l dt 1 lc "black" lw 2,"epsilon_script_k32/epsr_Si.dat" t "" w l dt 4 lc "black" lw 2,\
+	0 t "" w l lt 1 lc "black"
+
+pause -1
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+replot
+EOF
+
+gnuplot ${SAVE}.gnu
+
+
+exit
+
+
+
+

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+SAVE=plot_script_pw2gw_kpts
+
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set term x11 enhanced
+
+set title "pw2gw.x with shifted MP grid, sbezier smoothing"
+set xlabel "Energy (eV)"
+set ylabel "ɛ_2"
+set xrange [0:10]
+set yrange [0:100]
+set xtics 1
+set mxtics 5
+#smooth sbezier w l lw 4
+set samples 2000
+plot 	\
+     	"pw2gw_script_k8/epsTOT.dat" t "8x8x8 (60)" smooth sbezier w l dt 1 lc "magenta",\
+     	"pw2gw_script_k16/epsTOT.dat" t "16x16x16 (408)" smooth sbezier w l dt 1 lc "cyan",\
+     	"pw2gw_script_k32/epsTOT.dat" t "32x32x32 (2992)" smooth sbezier w l dt 1 lc "red" lw 1,\
+     	"pw2gw_script_k32/epsTOT.dat" t "no smoothing" w l dt 1 lc "red" lw 0,\
+     	"pw2gw_script_k48/epsTOT.dat" t "48x48x48 (9800)" smooth sbezier w l dt 1 lc "black" lw 1,\
+     	"pw2gw_script_k48/epsTOT.dat" t "no smoothing" w l dt 1 lc "black" lw 0,\
+	0 t "" w l lt 1 lc "black"
+
+pause -1
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+replot
+EOF
+
+gnuplot ${SAVE}.gnu
+
+
+exit
+
+
+
+

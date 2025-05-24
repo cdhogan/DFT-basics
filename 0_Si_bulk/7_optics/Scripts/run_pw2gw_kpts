@@ -9,6 +9,8 @@ echo "Started at: " `date`
 echo
 
 PREFIX="Si"
+CALC_DOS=0  # off
+#CALC_DOS=1  # on
 
 SAVE=EFermi-script-pw2gw.dat
 
@@ -69,7 +71,7 @@ echo "NSCF calculation" >> $SAVE
 # Non-self-consistent run, regular k-grid
 #-------------------------------------------------#
 
-for grid in 8 16 32; do
+for grid in 8 16 32 48; do
 
 # Use shifted grid for better convergence of optical spectra
 #klist="$grid $grid $grid 0 0 0"
@@ -100,7 +102,7 @@ cat > $IN << EOF
   nat       = 2,
   ntyp      = 1,
   ecutwfc   = 20
-  nbnd      = 20
+  nbnd      = 12
 /
 &ELECTRONS
   diago_full_acc=.true.
@@ -127,6 +129,7 @@ echo "NSCF $klist"
 
 # Check the VBM/CBM
 awk -v grid="$klist" '/number of k points/{kpt=$5} /highest/{printf("Grid %s K-points: %-8i Band edges %8.4f %8.4f Gap %8.4f\n", grid, kpt, $7,$8,$8-$7)}' $OUT >> $SAVE
+mv $IN $OUT $TMP_OPT
 
 #-------------------------------------------------#
 # pw2gw.x calculation, regular k-grid and Gaussian smearing
@@ -140,10 +143,6 @@ cat > $IN_EPS << EOF
     Emin=0.0
     Emax=20.0
     DeltaE=0.01
-!   what='gw',
-!   qplda=.false.,
-!   vxcdiag=.false.,
-!   vkb=.false.,
 /
 EOF
 
@@ -155,11 +154,14 @@ echo "PW2GW $klist"
 #echo -e "\tEnd: " `date`
 
 mv *.dat $TMP_OPT
+mv $IN_EPS $OUT_EPS $TMP_OPT
 rm matrixelements
 
 #-------------------------------------------------#
 # DOS calculation, regular k-grid and Gaussian smearing
 #-------------------------------------------------#
+
+if [ $CALC_DOS ] ; then
 
 IN=si_script.dos.in
 OUT=si_script.dos.out
@@ -211,6 +213,7 @@ echo
 $COMMAND < $IN > $OUT
 #echo -e "\tEnd: " `date`
 
+fi
 
 done
 

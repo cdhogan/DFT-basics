@@ -1,7 +1,7 @@
 &inputpp
   calculation = "eps"
   prefix       = "Si",
-  outdir       = "./epsilon_k32",
+  outdir       = "./tmp_epsilon",
 /
 &energy_grid
   smeartype = "gauss"
