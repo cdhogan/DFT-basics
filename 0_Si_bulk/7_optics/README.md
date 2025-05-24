@@ -13,9 +13,9 @@ i.e. like the DOS it involves an integral over the Brillouin zone of a Dirac del
 Calculation of the dielectric function is straightforward (but tedious) with quantum-ESPRESSO, and involves three distinct steps: 
 1. SCF calculation with `pw.x`. The ground state electronic charge density is computed with `pw.x` self-consistently, as before, on a sufficiently dense k-point grid. 
 2. NSCF calculation with `pw.x`. A non-self-consistent (NSCF) calculation is performed using `pw.x` over a much denser k-point grid and over a larger range of bands (to cover the energy range we are interested in). 
-3. Dielectric function calculation with `epsilon.x` or `pw2gw.x`. 
+3. Dielectric function calculation with `epsilon.x` or `pw2gw.x`. In practice the integral is replaced by a sum over (special) k-points.
 
-In practice the integral is replaced by a sum over (special) k-points.
+It is _very_ important to organise the files neatly. Use separate directories for different numbers of k-points and bands. Also, keep an eye on the amount of disk space being used: some of the examples below use over 10000 k-points.
 
 In this tutorial we will examine both codes.
 
@@ -30,6 +30,13 @@ In this tutorial we will examine both codes.
       ```
       As this is a SCF run, we set `calculation = 'scf'` in the input file.
       We have chosen 5 bands as before, with 4 being filled.
+
+![optics](Ref/plot_script_epsilon_bands.png?raw=true "optics")
+![optics](Ref/plot_script_epsilon_kpts.png?raw=true "optics")
+![optics](Ref/plot_script_epsilon_kpts_unshifted.png?raw=true "optics")
+![optics](Ref/plot_script_pw2gw_kpts.png?raw=true "optics")
+
+plot "Ref/epsTOT.dat_k32_g0.01" w l,"" u 1:2:(1000) smooth acsplines 
 
 
   2.  Run the non-self-consistent (NSCF) calculation using the provided input `si.nscf.in` to generate a set of eigenvalues and eigenfunctions on specific k-points of the Brillouin zone. There are two important changes to the input file:
