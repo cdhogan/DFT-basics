@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+echo
+
+PREFIX="Si"
+CALC_DOS=0  # off
+#CALC_DOS=1  # on
+
+SAVE=EFermi-script-pw2gw.dat
+
+#-------------------------------------------------#
+# self-consistent calculation
+#-------------------------------------------------#
+
+IN_SCF=si_script.scf.in
+OUT_SCF=si_script.scf.out
+grid=8
+klist="$grid $grid $grid 1 1 1"
+
+cat > $IN_SCF << EOF
+&CONTROL
+  calculation  = "scf",
+  prefix       = "$PREFIX",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  restart_mode = "from_scratch"
+  verbosity='high'
+  tprnfor = .true.
+  wf_collect=.true.
+/
+&SYSTEM
+  force_symmorphic=.TRUE.
+  ibrav     = 2,
+  celldm(1) = 10.21,
+  nat       = 2,
+  ntyp      = 1,
+  ecutwfc   = 20
+  nbnd      = 5
+/
+&ELECTRONS
+  conv_thr    = 1.D-8,
+  mixing_beta = 0.7D0	,
+/
+ATOMIC_SPECIES
+ Si  28.086  Si.pz-vbc.UPF
+ATOMIC_POSITIONS
+ Si 0.00 0.00 0.00
+ Si 0.25 0.25 0.25
+K_POINTS {automatic}
+$klist
+EOF
+
+#echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN_SCF > $OUT_SCF"
+$COMMAND < $IN_SCF > $OUT_SCF
+#echo -e "\tEnd: " `date`
+
+# Check the VBM/CBM
+echo "SCF calculation" > $SAVE
+awk -v grid="$klist" '/number of k points/{kpt=$5} /highest/{printf("Grid %s K-points: %-8i Band edges %8.4f %8.4f Gap %8.4f\n", grid, kpt, $7,$8,$8-$7)}' $OUT_SCF >> $SAVE
+echo "NSCF calculation" >> $SAVE
+
+#-------------------------------------------------#
+# Non-self-consistent run, regular k-grid
+#-------------------------------------------------#
+
+for grid in 8 16 32 48; do
+
+# Use shifted grid for better convergence of optical spectra
+#klist="$grid $grid $grid 0 0 0"
+klist="$grid $grid $grid 1 1 1"
+
+TMP_OPT="./pw2gw_script_k$grid"
+mkdir -p $TMP_OPT
+cp -r $TMP_DIR/$PREFIX.* $TMP_OPT/
+
+IN=si_script.nscf.pw2gw.in
+OUT=si_script.nscf.pw2gw.out_k${grid}
+
+cat > $IN << EOF
+&CONTROL
+  calculation  = "nscf",
+  prefix       = "$PREFIX",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_OPT",
+  verbosity='high'
+  wf_collect=.true.
+/
+&SYSTEM
+! nosym=.true.
+! noinv=.true.
+  force_symmorphic=.TRUE.
+  ibrav     = 2,
+  celldm(1) = 10.21,
+  nat       = 2,
+  ntyp      = 1,
+  ecutwfc   = 20
+  nbnd      = 12
+/
+&ELECTRONS
+  diago_full_acc=.true.
+  diago_thr_init=1.D-10
+  diagonalization='david'
+  conv_thr    = 1.D-8,
+  mixing_beta = 0.7D0	,
+/
+ATOMIC_SPECIES
+ Si  28.086  Si.pz-vbc.UPF
+ATOMIC_POSITIONS
+ Si 0.00 0.00 0.00
+ Si 0.25 0.25 0.25
+K_POINTS {automatic}
+$klist
+EOF
+
+#echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+#echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo "NSCF $klist"
+#echo -e "\tEnd: " `date`
+
+# Check the VBM/CBM
+awk -v grid="$klist" '/number of k points/{kpt=$5} /highest/{printf("Grid %s K-points: %-8i Band edges %8.4f %8.4f Gap %8.4f\n", grid, kpt, $7,$8,$8-$7)}' $OUT >> $SAVE
+mv $IN $OUT $TMP_OPT
+
+#-------------------------------------------------#
+# pw2gw.x calculation, regular k-grid and Gaussian smearing
+#-------------------------------------------------#
+IN_EPS=si_script.pw2gw.in
+OUT_EPS=si_script.pw2gw.out_k${grid}
+cat > $IN_EPS << EOF
+&inputpp
+  prefix       = "$PREFIX",
+  outdir       = "$TMP_OPT",
+    Emin=0.0
+    Emax=20.0
+    DeltaE=0.01
+/
+EOF
+
+#echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw2gw.x"
+#echo -e "\t\t$COMMAND < $IN_EPS > $OUT_EPS"
+$COMMAND < $IN_EPS > $OUT_EPS
+echo "PW2GW $klist"
+#echo -e "\tEnd: " `date`
+
+mv *.dat $TMP_OPT
+mv $IN_EPS $OUT_EPS $TMP_OPT
+rm matrixelements
+
+#-------------------------------------------------#
+# DOS calculation, regular k-grid and Gaussian smearing
+#-------------------------------------------------#
+
+if [ $CALC_DOS ] ; then
+
+IN=si_script.dos.in
+OUT=si_script.dos.out
+FILDOS=si_script.dos-kgrid${grid}.dat
+
+# DOS without tetrahedra
+cat > $IN << EOF
+ &dos
+  prefix       = "$PREFIX",
+  outdir       = "$TMP_OPT",
+   fildos="$FILDOS",
+   degauss=0.01
+   Emin=-10.0, Emax=20.0, DeltaE=0.1
+ /
+EOF
+
+#echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo 
+#echo -e "\tEnd: " `date`
+
+#awk '/EFermi/{print "DOS,       EFermi= "$9}' $FILDOS >> $SAVE
+
+#-------------------------------------------------#
+# DOS calculation, with tetrahedra
+#-------------------------------------------------#
+
+IN=si_script.dos-tetra.in
+OUT=si_script.dos-tetra.out
+FILDOS=si_script.dos-tetra-kgrid${grid}.dat
+
+# DOS with tetrahedra
+cat > $IN << EOF
+ &dos
+  prefix       = "$PREFIX",
+  outdir       = "$TMP_OPT",
+   bz_sum="tetrahedra"
+   fildos="$FILDOS",
+   Emin=-10.0, Emax=20.0, DeltaE=0.1
+ /
+EOF
+
+#echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/dos.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+echo 
+$COMMAND < $IN > $OUT
+#echo -e "\tEnd: " `date`
+
+fi
+
+done
+
+awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
+
+echo "Run completed at: " `date`
+
+echo "Now launch the run_plots script."
+
+exit
+
+
+
+

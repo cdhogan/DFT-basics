@@ -1,0 +1,12 @@
+&inputpp
+  calculation = "eps"
+  prefix       = "graphene",
+  outdir       = "./epsilon_script_k72_unshifted",
+/
+&energy_grid
+  smeartype = "gauss"
+  intersmear = 0.1
+  wmin =  0.05
+  wmax = 20.05
+  nw = 2001
+/

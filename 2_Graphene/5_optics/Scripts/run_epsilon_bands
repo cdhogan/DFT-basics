@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+PREFIX="graphene"
+
+#SAVE=EFermi-script.dat
+
+#-------------------------------------------------#
+# self-consistent calculation
+#-------------------------------------------------#
+
+IN_SCF=graphene_script.scf.in
+OUT_SCF=graphene_script.scf.out
+
+cat > $IN_SCF << EOF
+&CONTROL
+    calculation       = 'scf'
+  prefix       = "$PREFIX",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+    restart_mode      = 'from_scratch'
+    prefix            = 'graphene'
+    verbosity         = 'high'
+    wf_collect        = .true.
+/
+&SYSTEM
+                       ibrav = 4,
+                   celldm(1) = 4.635,
+                   celldm(3) = 6,
+                         nat = 2,
+                        ntyp = 1,
+                     ecutwfc = 40 ,
+                        nbnd = 16,
+                 occupations = 'smearing' ,
+                     degauss = 0.03 ,
+                    smearing = 'gaussian' ,
+/
+&ELECTRONS
+                 mixing_beta = 0.7 ,
+/
+ATOMIC_SPECIES
+    C   12.01100  C.pz-vbc.UPF 
+ATOMIC_POSITIONS crystal 
+    C      0.000000000    0.000000000    0.000000000    
+    C      0.333333333    0.666666667    0.000000000    
+K_POINTS automatic
+ 12 12 1	0 0 0
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN_SCF > $OUT_SCF"
+$COMMAND < $IN_SCF > $OUT_SCF
+echo -e "\tEnd: " `date`
+
+#-------------------------------------------------#
+# Non-self-consistent run, regular k-grid
+#-------------------------------------------------#
+
+for nband in 5 8 12 16 20; do
+
+grid=12
+
+# Use shifted grid for better convergence
+klist="$grid $grid 1 0 0 0"
+#klist="$grid $grid 1 1 1 0"
+echo $klist
+
+TMP_OPT="./epsilon_script_b$nband"
+mkdir -p $TMP_OPT
+cp -r $TMP_DIR/$PREFIX.* $TMP_OPT/
+echo "SCF TMP_DIR $TMP_DIR"
+ls $TMP_DIR
+echo "NSCF TMP_OPT $TMP_OPT"
+ls $TMP_OPT
+
+IN=graphene_script.nscf.epsilon.in
+OUT=graphene_script.nscf.epsilon.out_b${nband}
+
+cat > $IN << EOF
+&CONTROL
+    calculation       = 'nscf'
+  prefix       = "$PREFIX",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_OPT",
+    verbosity         = 'high'
+    wf_collect        = .true.
+/
+&SYSTEM
+  nosym=.true.
+  noinv=.true.
+                       ibrav = 4,
+                   celldm(1) = 4.635,
+                   celldm(3) = 6,
+                         nat = 2,
+                        ntyp = 1,
+                     ecutwfc = 40 ,
+  nbnd      = $nband
+                 occupations = 'smearing' ,
+                     degauss = 0.03 ,
+                    smearing = 'gaussian' ,
+/
+&ELECTRONS
+  diago_full_acc=.true.
+  diago_thr_init=1.D-10
+                 mixing_beta = 0.7 ,
+/
+ATOMIC_SPECIES
+    C   12.01100  C.pz-vbc.UPF 
+ATOMIC_POSITIONS {crystal}
+    C      0.000000000    0.000000000    0.000000000    
+    C      0.333333333    0.666666667    0.000000000    
+K_POINTS {automatic}
+$klist
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x -npool 4"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+mv $IN $OUT $TMP_OPT
+
+#-------------------------------------------------#
+# epsilon.x calculation, regular k-grid and Gaussian smearing
+#-------------------------------------------------#
+IN_EPS=graphene_script.epsilon.in
+OUT_EPS=graphene_script.epsilon.out_k${grid}
+cat > $IN_EPS << EOF
+&inputpp
+  calculation = "eps"
+  prefix       = "$PREFIX",
+  outdir       = "$TMP_OPT",
+/
+&energy_grid
+  smeartype = "gauss"
+  intersmear = 0.1
+  wmin =  0.05
+  wmax = 20.05
+  nw = 2001
+/
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/epsilon.x"
+echo -e "\t\t$COMMAND < $IN_EPS > $OUT_EPS"
+$COMMAND < $IN_EPS > $OUT_EPS
+echo -e "\tEnd: " `date`
+mv $IN_EPS $OUT_EPS $TMP_OPT
+
+mv *.dat $TMP_OPT
+
+done
+
