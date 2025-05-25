@@ -7,23 +7,28 @@ cat > ${SAVE}.gnu <<EOF
 
 set term x11 enhanced
 
-set title "pw2gw.x with shifted MP grid, acsplines smoothing"
+set title "pw2gw.x with shifted MP grid, acsplines smoothing (100)"
 set xlabel "Energy (eV)"
-set ylabel "ɛ_2"
-set xrange [0:10]
-set yrange [0:100]
+set ylabel "ɛ_2 (xx/zz)"
+set xrange [0:20]
+set yrange [0:18]
 set xtics 1
 set mxtics 5
 set samples 2000
-smooth=1000
+smooth=100
+zz=4
 plot 	\
-     	"pw2gw_script_k8/epsTOT.dat" u 1:2:(smooth) t "8x8x8 (60)" smooth acsplines w l dt 1 lc "magenta",\
-     	"pw2gw_script_k16/epsTOT.dat" u 1:2:(smooth) t "16x16x16 (408)" smooth acsplines w l dt 1 lc "cyan",\
-     	"pw2gw_script_k32/epsTOT.dat" u 1:2:(smooth) t "32x32x32 (2992)" smooth acsplines w l dt 1 lc "red" lw 1,\
-     	"pw2gw_script_k48/epsTOT.dat" u 1:2:(smooth) t "48x48x48 (9800)" smooth acsplines w l dt 1 lc "black" lw 1,\
-     	"pw2gw_script_k48/epsTOT.dat" t "48x no smoothing" w l dt 1 lc "black" lw 0,\
+     	"pw2gw_script_k12/epsX.dat" u 1:2:(smooth) t "12x12x1 (42)" smooth acsplines w l dt 1 lc "black",\
+     	"pw2gw_script_k12/epsZ.dat" u 1:2:(smooth) t "" smooth acsplines w l dt 1 lc "red" lw 1,\
+     	"pw2gw_script_k24/epsX.dat" u 1:(\$2+zz):(smooth) t "24x24x1 (156)" smooth acsplines w l dt 1 lc "black",\
+     	"pw2gw_script_k24/epsZ.dat" u 1:(\$2+zz):(smooth) t "" smooth acsplines w l dt 1 lc "red" lw 1,\
+     	"pw2gw_script_k48/epsX.dat" u 1:(\$2+zz*2):(smooth) t "48x48x1 (600)" smooth acsplines w l dt 1 lc "black" lw 1,\
+     	"pw2gw_script_k48/epsZ.dat" u 1:(\$2+zz*2):(smooth) t "" smooth acsplines w l dt 1 lc "red" lw 1,\
+     	"pw2gw_script_k72/epsX.dat" u 1:(\$2+zz*3):(smooth) t "72x72x1 (1332)" smooth acsplines w l dt 1 lc "black" lw 1,\
+     	"pw2gw_script_k72/epsZ.dat" u 1:(\$2+zz*3):(smooth) t "" smooth acsplines w l dt 1 lc "red" lw 1,\
 	0 t "" w l lt 1 lc "black"
 
+#     	"pw2gw_script_k48/epsX.dat" u 1:(\$2+zz*3) t "72x no smoothing" w l dt 1 lc "black" lw 0
 pause -1
 set term pngcairo enhanced size 800,400
 set output "${SAVE}.png"
