@@ -2,6 +2,8 @@
 
 Run the scripts in Scripts folder
 
+![epsilon](Ref/plot_script_epsilon_bands.png?raw=true "epsilon")
+
 ![epsilon](Ref/compk.png?raw=true "epsilon")
 ![epsilon](Ref/compk_unshifted.png?raw=true "epsilon")
 

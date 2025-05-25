@@ -8,19 +8,28 @@ cat > ${SAVE}.gnu <<EOF
 set term x11 enhanced
 
 set xlabel "Energy (eV)"
-set ylabel "ɛ_1, ɛ_2"
-set xrange [0:10]
+#set ylabel "ɛ_1, ɛ_2"
+set ylabel "ɛ_2"
+set xrange [0:20]
+set yrange [0:6]
 set xtics 1
 set mxtics 5
+set title "epsilon.x (12x12x1 shifted)"
 
 plot 	\
-     	"epsilon_script_b5/epsi_Si.dat" t "5 bands" w l dt 1 lc "orange","epsilon_script_b5/epsr_Si.dat" t "" w l dt 4 lc "orange",\
-     	"epsilon_script_b8/epsi_Si.dat" t "8 bands" w l dt 1 lc "red","epsilon_script_b8/epsr_Si.dat" t "" w l dt 3 lw 2 lc "red",\
-     	"epsilon_script_b12/epsi_Si.dat" t "12 bands" w l dt 1 lc "blue","epsilon_script_b12/epsr_Si.dat" t "" w l dt 4 lc "blue",\
-     	"epsilon_script_b16/epsi_Si.dat" t "16 bands" w l dt 1 lc "black","epsilon_script_b16/epsr_Si.dat" t "" w l dt 4 lc "black",\
+     	"epsilon_script_b5/epsi_graphene.dat" t "5 bands" w filledcurves y=0 fc "orange",\
+     	"epsilon_script_b8/epsi_graphene.dat" t "8 bands" w l dt 1 lc "red",\
+     	"epsilon_script_b12/epsi_graphene.dat" t "12 bands" w l dt 1 lc "blue",\
+     	"epsilon_script_b16/epsi_graphene.dat" t "16 bands" w l dt 1 lc "magenta",\
+     	"epsilon_script_b20/epsi_graphene.dat" t "20 bands" w l dt 1 lc "black",\
 	0 t "" w l lt 1 lc "black"
 
-#plot "epsilon_script_b5/eels_Si.dat" w l,"epsilon_script_b10/eels_Si.dat" w l,"epsilon_script_b15/eels_Si.dat" w l,"epsilon_script_b20/eels_Si.dat" w l dt 2
+#     	"epsilon_script_b5/epsi_graphene.dat" t "5 bands" w l dt 1 lc "orange","epsilon_script_b5/epsr_graphene.dat" t "" w l dt 4 lc "orange",\
+#     	"epsilon_script_b8/epsi_graphene.dat" t "8 bands" w l dt 1 lc "red","epsilon_script_b8/epsr_graphene.dat" t "" w l dt 3 lw 2 lc "red",\
+#     	"epsilon_script_b12/epsi_graphene.dat" t "12 bands" w l dt 1 lc "blue","epsilon_script_b12/epsr_graphene.dat" t "" w l dt 4 lc "blue",\
+#     	"epsilon_script_b16/epsi_graphene.dat" t "16 bands" w l dt 1 lc "magenta","epsilon_script_b16/epsr_graphene.dat" t "" w l dt 4 lc "magenta",\
+#     	"epsilon_script_b20/epsi_graphene.dat" t "20 bands" w l dt 1 lc "black","epsilon_script_b16/epsr_graphene.dat" t "" w l dt 4 lc "black",\
+#plot "epsilon_script_b5/eels_graphene.dat" w l,"epsilon_script_b10/eels_graphene.dat" w l,"epsilon_script_b15/eels_graphene.dat" w l,"epsilon_script_b20/eels_graphene.dat" w l dt 2
 
 #plot \
 #	'$SAVE0'  u 1:3 w lp pt 7 lw 2  lc rgb "black" title "E vs NxNxN 000",\
