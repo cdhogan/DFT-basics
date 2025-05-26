@@ -1,0 +1,3 @@
+!B3LYP OPT def2-TZVP PAL4
+!PRINTGAP
+* XYZfile 0 1 pyrrole_relax_PBE.xyz

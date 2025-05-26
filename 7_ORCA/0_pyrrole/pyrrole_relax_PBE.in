@@ -1,0 +1,3 @@
+!PBE OPT def2-TZVP 
+!PRINTGAP
+* XYZfile 0 1 pyrrole_initial.xyz
