@@ -135,7 +135,7 @@ Clearly a shifted grid is much better choice in this case.
 
 6. Last we can repeat the analysis with the `pw2gw.x` code. The main difference here is that the summations over k are performed over the irreducible Brillouin zone, so larger k-point meshes can be used. In this case, however, only the trace of the dielectric tensor is valid.
 
-There is no broadening used in `pw2gw.x`, only a step size. As a result, the raw spectra are very noisy, so one could convolute the spectra with e.g. gaussian. However, it is straightforward to smooth the spectra with gnuplot.
+There is no broadening used in `pw2gw.x`, only a step size. As a result, the raw spectra are very noisy, so one could convolute the spectra with e.g. gaussian. However, it is straightforward to smooth the spectra with gnuplot: from `gnuplot> help smooth` a good option is using acsplines (approximate cubic splines) to fit the data; the smoothing factor can be read from a third column or set manually (here 1000; try other values) like in the following.
 
     ```
     % cp -r tmp tmp_pw2gw
