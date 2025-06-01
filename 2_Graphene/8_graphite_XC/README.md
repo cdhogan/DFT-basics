@@ -3,47 +3,57 @@
 In this tutorial we will study the choice of exchange correlation (XC) functional on the lattice parameters of a layered material, graphite. 
 Graphite is a good model system as it combines in-plane covalent bonding with interlayer weak bonding (van der Waals interaction).
 
+### Nomenclature
+
 Below we will make use of some internal conventions on XC names and on pseudopotential names. For reference:
 
 1) Names for functionals available inside quantum-ESPRESSO are defined in the `Modules/funct.f90` Fortran file. This Fortran file is obviously present in the QE distribution or can be viewed online at e.g. https://gitlab.com/QEF/q-e/-/blob/develop/Modules/funct.f90. An edited snippet is presented at the bottom of this page; the functionals use in this tutorial are:
    ```
-    "pz"    = "sla+pz"            = Perdew-Zunger   (LDA)
-    "pw"    = "sla+pw"            = Perdew-Wang     (LDA)
-    "pw91"  = "sla+pw+ggx+ggc"    = Perdew-Wang91   (GGA) 
-    "pbe"   = "sla+pw+pbx+pbc"    = PBE             (GGA)
-    "pbesol"= "sla+pw+psx+psc"    = PBEsol          (GGA)
-    "tpss"  = "sla+pw+tpss+tpss"  = TPSS Meta-GGA   (mGGA)
-    "vdw-df-ob86"   ="sla+pw+ob86+vdw1"  = vdW-DF-ob86 (optB86b-vdW)   (vdW-DF)
-    "vdw-df-obk8"   ="sla+pw+obk8+vdw1"  = vdW-DF-obk8 (optB88-vdW)    (vdW-DF)
-    "vdw-df2"       ="sla+pw+rw86+vdw2"  = vdW-DF2                     (vdW-DF2)
-    "vdw-df2-b86r"  ="sla+pw+b86r+vdw2"  = vdW-DF2-B86R (rev-vdw-df2)  (vdW-DF2)
-    "vdw-df3-opt2"  ="sla+pw+w32x+w32c"  = vdW-DF3-opt2                (vdW-DF3)
+    "pz"            = "sla+pz"            = Perdew-Zunger   (LDA)
+    "pw"            = "sla+pw"            = Perdew-Wang     (LDA)
+    "pw91"          = "sla+pw+ggx+ggc"    = Perdew-Wang91   (GGA) 
+    "pbe"           = "sla+pw+pbx+pbc"    = PBE             (GGA)
+    "pbesol"        = "sla+pw+psx+psc"    = PBEsol          (GGA)
+    "tpss"          = "sla+pw+tpss+tpss"  = TPSS Meta-GGA   (mGGA)
+    "vdw-df-ob86"   = "sla+pw+ob86+vdw1"  = vdW-DF-ob86 (optB86b-vdW)   (vdW-DF)
+    "vdw-df-obk8"   = "sla+pw+obk8+vdw1"  = vdW-DF-obk8 (optB88-vdW)    (vdW-DF)
+    "vdw-df2"       = "sla+pw+rw86+vdw2"  = vdW-DF2                     (vdW-DF2)
+    "vdw-df2-b86r"  = "sla+pw+b86r+vdw2"  = vdW-DF2-B86R (rev-vdw-df2)  (vdW-DF2)
+    "vdw-df3-opt2"  = "sla+pw+w32x+w32c"  = vdW-DF3-opt2                (vdW-DF3)
     ```
 For local/semilocal functionals this long string represents: 
 "LDA exchange + LDA correlation + GGA exchange + GGA correlation"
 
-In the output, a 7-integer string is reported corresponding to internal variables:
+In the output, a 7-integer string is reported corresponding to internal variables (see below):
 "LDA exchange + LDA correlation + GGA exchange + GGA correlation + non-local-vdW + meta-GGA exchange + meta-GGA correlation", e.g.
    ```
    Exchange-correlation= VDW-DF3-OPT2
                     (   1   4  46   0   4   0   0)
    ```
+This information can be used to double check that the correct XC functional is being used.
+
 
 2) Acronyms used for the pseudopotentials 
 
-psl
-dojo Pseudo-DOJO website
-oncv
-sssp
-sg15
+| Acronym | Pseudo library/link |
+| --- | --- |
+| psl | pslibrary |
+| dojo | pseudo-dojo library |
+| oncv | |
+| sssp | |
+| sg15 | |
 
-vbc
-vwn  
-nc Norm Conserving
-rrkj	Rappe-Rabe-Kaxiras-Joannopoulos (NC)
-rrkjus	Rappe-Rabe-Kaxiras-Joannopoulos (Ultrasoft)
-paw 
-kjpaw	Kresse-Joubert (PAW)
+
+| Acronym | Meaning |
+| --- | --- |
+| vbc | von Barth/Car (LDA) |
+| vwn | Vosko-Wi;l-Nusair (LDA) |
+| nc | norm-conserving (NC) |
+| uspp | ultrasoft pseudopotential | 
+| rrkj | Rappe-Rabe-Kaxiras-Joannopoulos (NC) |
+| rrkjus | Rappe-Rabe-Kaxiras-Joannopoulos (Ultrasoft) |
+| paw | projector augmented wave (PAW) |
+| kjpaw | Kresse-Joubert PAW | 
 
 
 ### Input files
@@ -91,8 +101,8 @@ Referring to the full table in funct.f90 we can understand the two files use Per
 
 Run vc-relax calculations for each XC choice and tabulate the a and c lattice parameters.
    ```
-   % mpirun -np 4 pw.x < graphite.in_LDA_PW_DOJO > graphite.out_LDA_PW_DOJO
-   % mpirun -np 4 pw.x < graphite.in_LDA_PZ > graphite.out_LDA_PZ
+   % pw.x < graphite.in_LDA_PW_DOJO > graphite.out_LDA_PW_DOJO
+   % pw.x < graphite.in_LDA_PZ > graphite.out_LDA_PZ
    ```
 
 ### Semi-local functionals
@@ -103,15 +113,26 @@ graphite.in_PBEsol_DOJO
 
 ### meta-GGA functionals
 
+Unfortunately, meta-GGAs can be notoriously difficult to work with, and often give convergence problems. For this reason they are not widely used. Nonetheless for completeness we try one meta-GGA here, the TPSS for which pseudopotential for C is available.
 Care with NLCC!
 
-### vdW functionals
+Note that newer mGGAs like R2SCAN are more reliable. To use them, quantum-ESPRESSO must be compiled with libXC support.
+
+### Semi-empirical vdW 
 
 graphite.in_PBE_D3BJ_DOJO
 graphite.in_PBEsol_D3BJ_DOJO
 
+### Ab-initio vdW
+
+graphite.in_vdw-DF2
+graphite.in_vdw-df2-b86r
+graphite.out_optB88-vdW
+graphite.in_optB88-vdW
 
 ### Hybrid functionals
+
+More useful for band gaps, thus not relevant here.
 
 ### Results
 
