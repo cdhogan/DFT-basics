@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=a_c_vs_XC-script.dat
+echo -e "# a \t c \t XC" > $SAVE
+
+# Loop over a
+declare -a upflist=("C.pz-vbc.UPF" "C_DOJO_LDA.upf" "c_lda_v1.2.uspp.F_GBRV.UPF" 
+                    "C_DOJO_PBE.upf" "C.pbe-n-kjpaw_psl.1.0.0.UPF" "C_ONCV_PBE-1.2.upf" "c_pbe_v1.2.uspp.F_GBRV.UPF"  
+                    "C_DOJO_PBEsol.upf" "c_pbesol_v1.2.uspp.F_GBRV.UPF" 
+                    "C_DOJO_PBE.upf" "C_DOJO_PBEsol.upf" 
+                    "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" 
+                    "C.tpss-mt.UPF")
+declare -a wfclist=(40 80 40
+                    80 40 80 40
+                    80 40
+                    80 80
+                    80 80 80 80
+                    40)
+declare -a rholist=(4 4 10
+                    4 10 4 10
+                    4 10
+                    4 4
+                    4 4 4 4
+                    4)
+declare -a inputlist=("" "" ""
+                     "" "" "" ""
+                    "" "" 
+                    "vdw_corr='DFT-D3',dftd3_version=4" "vdw_corr='DFT-D3',dftd3_version=4"
+                    "input_dft='vdw-df2-b86r'" "input_dft='vdw-df2'" "input_dft='vdw-df-obk8'" "input_dft='vdw-df3-opt2'"
+                    "input_dft='TPSS'")
+
+#xclength=${#upflist[@]}
+
+for xc in ${!upflist[@]}
+#for xc in 0 4 8 10
+#for xc in {9..15};
+do
+ecutrho=`echo "${wfclist[$xc]}*${rholist[$xc]}" | bc -l --scale=5`
+
+   echo "XC $xc PSEUDO ${upflist[$xc]} CUTOFF ${wfclist[$xc]}/$ecutrho VDWXC ${inputlist[$xc]} "
+
+IN=graphite_script.vc-relax.in_${xc}
+OUT=graphite_script.vc-relax.out_${xc}
+
+# loop over vc-run
+
+A=2.46
+C=6.71
+echo -e "\tStart: " `date`
+echo "Starting   A C: $A $C"
+for vcrun in {0..2};
+do
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation = 'vc-relax'
+  outdir = './tmp'
+  prefix = 'graphite'
+  pseudo_dir = './'
+  tprnfor = .true.
+  tstress = .true.
+  verbosity = 'high'
+/
+&SYSTEM
+  ecutwfc = ${wfclist[$xc]} 
+  ecutrho = $ecutrho
+  ibrav = 4
+  A = $A
+  C = $C
+  nat = 4
+  nosym = .false.
+  ntyp = 1
+  occupations = 'fixed'
+  degauss = 0.02
+  ${inputlist[$xc]} 
+/
+&ELECTRONS
+  conv_thr =   1e-7
+  electron_maxstep = 80
+  mixing_beta =   0.4
+/
+&IONS
+/
+&CELL
+   press_conv_thr=0.001
+   cell_dofree="ibrav"
+/
+ATOMIC_SPECIES
+C      12.0107 ${upflist[$xc]}
+ATOMIC_POSITIONS crystal
+C            0.0000000000       0.0000000000       0.2500000000
+C            0.0000000000       0.0000000000       0.7500000000
+C            0.3333333300       0.6666666700       0.2500000000
+C            0.6666666700       0.3333333300       0.7500000000
+K_POINTS automatic
+12 12 6 0 0 0
+EOF
+
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+#echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT 2>/dev/null 
+
+
+
+celldm1=`grep "celldm(1) =" $OUT | tail -1 | awk '{print $3}'`
+celldm3=`grep "celldm(3) =" $OUT | tail -1 | awk '{print $3}'`
+#echo "celldm1 celldm3 $celldm1 $celldm3"
+A=`echo "$celldm1*0.529177/1" | bc -l --scale=2`
+C=`echo "$celldm1*0.529177*$celldm3/1" | bc -l --scale=2`
+
+echo "vc-relax $vcrun A C $A $C"
+
+done
+echo -e "\tEnd: " `date`
+
+echo "$xc ${upflist[$xc]} ${wfclist[$xc]}/$ecutrho $A $C " >> $SAVE
+
+done
+echo "Run completed at: " `date`
+
+exit
+
+
+
+
