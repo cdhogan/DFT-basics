@@ -5,9 +5,9 @@ Graphite is a good model system as it combines in-plane covalent bonding with in
 
 ### Nomenclature
 
-Below we will make use of some internal conventions on XC names and on pseudopotential names. For reference:
+Below we will make use of some internal conventions on XC names. For pseudopotential names, abbreviations see..
 
-1) Names for functionals available inside quantum-ESPRESSO are defined in the `Modules/funct.f90` Fortran file. This Fortran file is obviously present in the QE distribution or can be viewed online at e.g. https://gitlab.com/QEF/q-e/-/blob/develop/Modules/funct.f90. An edited snippet is presented at the bottom of this page; the functionals use in this tutorial are:
+Names for functionals available inside quantum-ESPRESSO are defined in the `Modules/funct.f90` Fortran file. This Fortran file is obviously present in the QE distribution or can be viewed online at e.g. https://gitlab.com/QEF/q-e/-/blob/develop/Modules/funct.f90. An edited snippet is presented at the bottom of this page; the functionals use in this tutorial are:
    ```
     "pz"            = "sla+pz"            = Perdew-Zunger   (LDA)
     "pw"            = "sla+pw"            = Perdew-Wang     (LDA)
@@ -20,47 +20,23 @@ Below we will make use of some internal conventions on XC names and on pseudopot
     "vdw-df2"       = "sla+pw+rw86+vdw2"  = vdW-DF2                     (vdW-DF2)
     "vdw-df2-b86r"  = "sla+pw+b86r+vdw2"  = vdW-DF2-B86R (rev-vdw-df2)  (vdW-DF2)
     "vdw-df3-opt2"  = "sla+pw+w32x+w32c"  = vdW-DF3-opt2                (vdW-DF3)
-    ```
+   ```
 For local/semilocal functionals this long string represents: 
 "LDA exchange + LDA correlation + GGA exchange + GGA correlation"
 
 In the output, a 7-integer string is reported corresponding to internal variables (see below):
 "LDA exchange + LDA correlation + GGA exchange + GGA correlation + non-local-vdW + meta-GGA exchange + meta-GGA correlation", e.g.
    ```
-   Exchange-correlation= VDW-DF3-OPT2
+    Exchange-correlation= VDW-DF3-OPT2
                     (   1   4  46   0   4   0   0)
    ```
 This information can be used to double check that the correct XC functional is being used.
 
-
-2) Acronyms used for the pseudopotentials 
-
-| Acronym | Pseudo library/link |
-| --- | --- |
-| psl | pslibrary |
-| dojo | pseudo-dojo library |
-| oncv | |
-| sssp | |
-| sg15 | |
-
-
-| Acronym | Meaning |
-| --- | --- |
-| vbc | von Barth/Car (LDA) |
-| vwn | Vosko-Wi;l-Nusair (LDA) |
-| nc | norm-conserving (NC) |
-| uspp | ultrasoft pseudopotential | 
-| rrkj | Rappe-Rabe-Kaxiras-Joannopoulos (NC) |
-| rrkjus | Rappe-Rabe-Kaxiras-Joannopoulos (Ultrasoft) |
-| paw | projector augmented wave (PAW) |
-| kjpaw | Kresse-Joubert PAW | 
-
-
 ### Input files
 
 A selection of pseudopotentials and input files are provided directly. 
-Where possible, pseudopotential files for C have been taken from the pseudo-DOJO library and used at the recommended cutoff of 80 Ry for carbon. Since pseudo-DOJO files have the same name (C.upf) for different XC, we have renamed them in the following (it would be better in practice to change `pseudo_dir`). 
-We perform a vc-relax calculation in each case, with otherwise the same computational parameters (12x12x6 unshifted k-point set, 0.02 Ry smearing). The initial lattice parameters are set to those of the experiment (A = 2.46 A, C=6.71 A). For the vc-relax calculation we allow A and C to vary but keep the geometry (axes, angles) consistent.
+Unless indicated, pseudopotential files for C have been taken from the pseudo-DOJO library and used at the recommended cutoff of 80 Ry for carbon. Since pseudo-DOJO files have the same name (C.upf) for different XC, we have renamed them in the following (it would be better in practice to change `pseudo_dir`). 
+We perform a single vc-relax calculation in each case, with otherwise the same computational parameters (12x12x6 unshifted k-point set, 0.02 Ry smearing). The initial lattice parameters are set to those of the experiment (A = 2.46 A, C=6.71 A). For the vc-relax calculation we allow A and C to vary but keep the geometry (axes, angles) consistent. In principle we should re-run vc-relax to check the converged values, but here we are running an illustrative test. 
    ```
    % cat graphite.in_LDA_PZ
      calculation = 'vc-relax'
@@ -76,17 +52,18 @@ We perform a vc-relax calculation in each case, with otherwise the same computat
    /
    ```
 ### Local XC functionals
-For LDA, the XC functional is simply chosen via the pseudopotential. The relevant input files and pseudopotentials are
+For LDA (and GGA), the XC functional is simply determined (chosen) via the pseudopotential. **Do NOT specify `input_dft`**. 
+The relevant input files and pseudopotentials are
    ```
    % grep -e upf -e UPF *graphite.in_LDA*
    graphite.in_LDA_PW_DOJO    :  C      12.0107 C_DOJO_LDA.upf
    graphite.in_LDA_PZ         :  C      12.0107 C.pz-vbc.UPF
    ```
-To understand which functional or parameterization is being used, we need to check the comments and user-readable data or header in the pseudopotential files. This can appear in different ways for different pseudo 'families'.
+To understand which functional or parameterization is being used, we need to check the comments and user-readable data or header in the pseudopotential files. This can appear in different formats for different pseudo 'families'.
    ```
-   % grep "functional" C.pz-vbc.UPF C_DOJO_LDA.upf
-   C.pz-vbc.UPF: SLA  PZ   NOGX NOGC   PZ   Exchange-Correlation functional
+   % grep "functional"  C_DOJO_LDA.upf C.pz-vbc.UPF
    C_DOJO_LDA.upf:functional="SLA  PW   NOGX NOGC"
+   C.pz-vbc.UPF: SLA  PZ   NOGX NOGC   PZ   Exchange-Correlation functional
    ```
 These are reflected also in the output:
    ```
@@ -96,8 +73,8 @@ These are reflected also in the output:
    Exchange-correlation=  SLA  PZ   NOGX NOGC
                           (   1   1   0   0   0   0   0)
    ```
-Thus, we have Slater exch + PZ correlation; and Slater exch + PW correlation; respectively, with no GGA or meta-GGA terms.
-Referring to the full table in funct.f90 we can understand the two files use Perder-Zunger (PZ) and Perdew-Wang (PW) type LDA functionals (clearly, the two kinds differ only in the parameterization of the correlation). 
+Thus, we have Slater exch + PW correlation; and Slater exch + PZ correlation; respectively, with no GGA or meta-GGA terms.
+Referring to the full table in funct.f90 we can understand the two files use Perdew-Wang (PW) and Perder-Zunger (PZ) type LDA functionals (the two kinds differ only in the parameterization of the correlation). 
 
 Run vc-relax calculations for each XC choice and tabulate the a and c lattice parameters.
    ```
@@ -113,10 +90,14 @@ graphite.in_PBEsol_DOJO
 
 ### meta-GGA functionals
 
-Unfortunately, meta-GGAs can be notoriously difficult to work with, and often give convergence problems. For this reason they are not widely used. Nonetheless for completeness we try one meta-GGA here, the TPSS for which pseudopotential for C is available.
-Care with NLCC!
+Unfortunately, meta-GGAs can be difficult to work with, and often give convergence problems. For this reason they are not widely used. 
+Nonetheless for completeness we try one meta-GGA here, the TPSS (Tao–Perdew–Staroverov–Scuseria) functional for which a pseudopotential for C is available (at https://nninc.cnf.cornell.edu/dd_search.php?frmxcprox=&frmxctype=TPSS&frmspclass=)
+   ```
+   % pw.x < graphite.in_LDA_PW_DOJO > graphite.out_LDA_PW_DOJO
+   ```
+Actually, the result for the interlayer separation varies with the cutoff (and FFT mesh). 
 
-Note that newer mGGAs like R2SCAN are more reliable. To use them, quantum-ESPRESSO must be compiled with libXC support.
+Note that newer mGGAs like R2SCAN are more reliable. To use them, quantum-ESPRESSO must be compiled with libXC support. (Only TPSS and M06L are available natively in QE).
 
 ### Semi-empirical vdW 
 
