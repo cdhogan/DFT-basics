@@ -1,4 +1,4 @@
-## XC functional (UNDER CONSTRUCTION)
+## XC functional
 
 In this tutorial we will study the choice of exchange correlation (XC) functional on the lattice parameters of a layered material, graphite. 
 Graphite is a good model system as it combines in-plane covalent bonding with interlayer weak bonding (van der Waals interaction).
