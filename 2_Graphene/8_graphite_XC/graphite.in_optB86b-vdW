@@ -17,7 +17,9 @@
   ntyp = 1
   occupations = 'fixed'
   degauss = 0.02
-  input_dft = 'vdw-df2-b86r'
+! input_dft = 'optB88-vdW'  ! wrong
+! input_dft = 'vdw-df-obk8'  ! optB88-vdW
+  input_dft = 'vdw-df-ob86'  ! optB86B-vdW
 /
 &ELECTRONS
   conv_thr =   8.0000000000d-10

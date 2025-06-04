@@ -8,7 +8,6 @@
   verbosity = 'high'
 /
 &SYSTEM
-! ecutrho = 360
   ecutwfc = 80
   ibrav = 4
   A = 2.46

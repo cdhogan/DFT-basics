@@ -17,7 +17,7 @@
   ntyp = 1
   occupations = 'fixed'
   degauss = 0.02
-  input_dft = 'vdw-df2-b86r'
+  input_dft = 'vdw-df3-opt2'  
 /
 &ELECTRONS
   conv_thr =   8.0000000000d-10

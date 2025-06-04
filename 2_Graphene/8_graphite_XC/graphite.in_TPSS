@@ -8,7 +8,7 @@
   verbosity = 'high'
 /
 &SYSTEM
-  ecutwfc = 80
+  ecutwfc = 120
   ibrav = 4
   A = 2.46
   C = 6.71
@@ -17,12 +17,12 @@
   ntyp = 1
   occupations = 'fixed'
   degauss = 0.02
-  input_dft = 'vdw-df2-b86r'
+  input_dft="TPSS"
 /
 &ELECTRONS
   conv_thr =   8.0000000000d-10
   electron_maxstep = 80
-  mixing_beta =   0.7
+  mixing_beta =   4.0000000000d-01
 /
 &IONS
 /
@@ -32,7 +32,7 @@
    cell_dofree="ibrav"
 /
 ATOMIC_SPECIES
-C      12.0107 C_DOJO_PBE.upf
+C      12.0107 C.tpss-mt.UPF
 ATOMIC_POSITIONS crystal
 C            0.0000000000       0.0000000000       0.2500000000
 C            0.0000000000       0.0000000000       0.7500000000

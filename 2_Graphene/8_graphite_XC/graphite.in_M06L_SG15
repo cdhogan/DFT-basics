@@ -8,7 +8,8 @@
   verbosity = 'high'
 /
 &SYSTEM
-  ecutwfc = 80
+  ecutwfc = 80  ! 27,  27,  80
+  nr1=54, nr2=54,nr3=160
   ibrav = 4
   A = 2.46
   C = 6.71
@@ -17,12 +18,12 @@
   ntyp = 1
   occupations = 'fixed'
   degauss = 0.02
-  input_dft = 'vdw-df2-b86r'
+  input_dft="m06l"
 /
 &ELECTRONS
-  conv_thr =   8.0000000000d-10
-  electron_maxstep = 80
-  mixing_beta =   0.7
+  conv_thr =   1e-7
+  electron_maxstep = 150
+  mixing_beta =   0.01
 /
 &IONS
 /
@@ -32,7 +33,7 @@
    cell_dofree="ibrav"
 /
 ATOMIC_SPECIES
-C      12.0107 C_DOJO_PBE.upf
+C      12.0107 C_ONCV_PBE-1.2.upf
 ATOMIC_POSITIONS crystal
 C            0.0000000000       0.0000000000       0.2500000000
 C            0.0000000000       0.0000000000       0.7500000000

@@ -17,12 +17,12 @@
   ntyp = 1
   occupations = 'fixed'
   degauss = 0.02
-  input_dft = 'vdw-df2-b86r'
+  input_dft="tb09"
 /
 &ELECTRONS
   conv_thr =   8.0000000000d-10
-  electron_maxstep = 80
-  mixing_beta =   0.7
+  electron_maxstep = 150
+  mixing_beta =   4.0000000000d-01
 /
 &IONS
 /
@@ -32,7 +32,7 @@
    cell_dofree="ibrav"
 /
 ATOMIC_SPECIES
-C      12.0107 C_DOJO_PBE.upf
+C      12.0107 C_ONCV_PBE-1.2.upf
 ATOMIC_POSITIONS crystal
 C            0.0000000000       0.0000000000       0.2500000000
 C            0.0000000000       0.0000000000       0.7500000000
