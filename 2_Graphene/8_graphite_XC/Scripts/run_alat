@@ -5,6 +5,7 @@ echo "BIN_DIR:" $BIN_DIR
 echo "PSEUDO_DIR:" $PSEUDO_DIR
 echo "TMP_DIR:" $TMP_DIR
 echo "Parallel command:" $RUN_COMMAND
+echo "Pool command: -npool 4" 
 echo "Started at: " `date`
 
 SAVE=a_c_vs_XC-script.dat
@@ -17,12 +18,18 @@ declare -a upflist=("C.pz-vbc.UPF" "C_DOJO_LDA.upf" "c_lda_v1.2.uspp.F_GBRV.UPF"
                     "C_DOJO_PBE.upf" "C_DOJO_PBEsol.upf" 
                     "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" "C_DOJO_PBE.upf" 
                     "C.tpss-mt.UPF")
-declare -a wfclist=(40 80 40
-                    80 40 80 40
-                    80 40
+#declare -a wfclist=(60 80 60
+#                    80 60 80 60
+#                    80 60
+#                    80 80
+#                    80 80 80 80
+#                    60)
+declare -a wfclist=(120 80 80
+                    80 100 80 120
+                    80 80
                     80 80
                     80 80 80 80
-                    40)
+                    120)
 declare -a rholist=(4 4 10
                     4 10 4 10
                     4 10
@@ -38,11 +45,14 @@ declare -a inputlist=("" "" ""
 
 #xclength=${#upflist[@]}
 
+
 for xc in ${!upflist[@]}
-#for xc in 0 4 8 10
+# USPP/PAW 0 2 4 6 8 15
+#for xc in 0 2 4 6 8 15
 #for xc in {9..15};
+#for xc in {9..9};
 do
-ecutrho=`echo "${wfclist[$xc]}*${rholist[$xc]}" | bc -l --scale=5`
+ecutrho=`echo "scale = 5; ${wfclist[$xc]}*${rholist[$xc]}" | bc -l`
 
    echo "XC $xc PSEUDO ${upflist[$xc]} CUTOFF ${wfclist[$xc]}/$ecutrho VDWXC ${inputlist[$xc]} "
 
@@ -53,9 +63,12 @@ OUT=graphite_script.vc-relax.out_${xc}
 
 A=2.46
 C=6.71
-echo -e "\tStart: " `date`
+Cold=$C
+#echo -e "\tStart: " `date`
 echo "Starting   A C: $A $C"
-for vcrun in {0..2};
+
+# Use vc-relax self-consistently up to 4 times
+for vcrun in {0..4};
 do
 
 # self-consistent calculation
@@ -83,7 +96,7 @@ cat > $IN << EOF
   ${inputlist[$xc]} 
 /
 &ELECTRONS
-  conv_thr =   1e-7
+  conv_thr =   1e-8
   electron_maxstep = 80
   mixing_beta =   0.4
 /
@@ -106,22 +119,34 @@ EOF
 
 COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
 #echo -e "\t\t$COMMAND < $IN > $OUT"
-$COMMAND < $IN > $OUT 2>/dev/null 
+$COMMAND -npool 4 < $IN > $OUT 2>/dev/null 
 
 
 
 celldm1=`grep "celldm(1) =" $OUT | tail -1 | awk '{print $3}'`
 celldm3=`grep "celldm(3) =" $OUT | tail -1 | awk '{print $3}'`
 #echo "celldm1 celldm3 $celldm1 $celldm3"
-A=`echo "$celldm1*0.529177/1" | bc -l --scale=2`
-C=`echo "$celldm1*0.529177*$celldm3/1" | bc -l --scale=2`
+A=`echo "scale=3; $celldm1*0.529177/1" | bc -l `
+C=`echo "scale=3; $celldm1*0.529177*$celldm3/1" | bc -l `
+#diffC=`echo "scale=3; abs($C-$Cold)/1" | bc -l`
+diffC=`echo "scale=3; ($C-$Cold)/1" | bc -l`
+diffC="${diffC/#-}"
 
-echo "vc-relax $vcrun A C $A $C"
+if (( $(echo "$diffC < 0.02" |bc -l) )); then
+   conv="ok"
+else
+   conv="no" 
+fi
+
+echo "vc-relax $vcrun A C $A $C $diffC $conv" | column -t
+Cold=$C
+
+if [ "$conv" = "ok" ]; then break; fi
 
 done
-echo -e "\tEnd: " `date`
+#echo -e "\tEnd: " `date`
 
-echo "$xc ${upflist[$xc]} ${wfclist[$xc]}/$ecutrho $A $C " >> $SAVE
+echo "$xc ${upflist[$xc]} ${wfclist[$xc]}/$ecutrho $A $C $diffC $conv " | column -t >> $SAVE
 
 done
 echo "Run completed at: " `date`
