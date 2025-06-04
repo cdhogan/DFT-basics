@@ -4,8 +4,8 @@
 
 NAME="e_vs_bondl.dat"
 
-set term pdfcairo enhanced
-set out "fit.pdf"
+#set term pdfcairo enhanced
+#set out "fit.pdf"
 
 set xlabel 'Bond Lenght (Bohr)'
 set ylabel 'E_{tot} (Ry)'
