@@ -4,11 +4,3 @@
       filplot = 'O_charge.dat',
      plot_num = 0
 /
-&plot
-  iflag=3
-  output_format=5
-  fileout="charge0.xsf"
-/
-
-
-

@@ -1,7 +1,0 @@
-&INPUTPP
-       prefix = 'Al',
-       outdir = './tmp',
-      filplot = 'Al001_O.pot',
-     plot_num = 11
-/
-
