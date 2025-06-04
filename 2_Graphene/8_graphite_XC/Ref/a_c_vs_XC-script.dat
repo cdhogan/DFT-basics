@@ -1,0 +1,17 @@
+# a 	 c 	 XC
+0  C.pz-vbc.UPF  120/480  2.439  6.596  .002  ok
+1  C_DOJO_LDA.upf  80/320  2.448  6.573  .016  ok
+2  c_lda_v1.2.uspp.F_GBRV.UPF  80/800  2.444  6.611  .006  ok
+3  C_DOJO_PBE.upf  80/320  2.465  7.933  .033  no
+4  C.pbe-n-kjpaw_psl.1.0.0.UPF  100/1000  2.467  8.321  0  ok
+5  C_ONCV_PBE-1.2.upf  80/320  2.463  8.203  .003  ok
+6  c_pbe_v1.2.uspp.F_GBRV.UPF  120/1200  2.466  8.479  .001  ok
+7  C_DOJO_PBEsol.upf  80/320  2.461  7.037  .018  ok
+8  c_pbesol_v1.2.uspp.F_GBRV.UPF  80/800  2.459  7.165  0  ok
+9  C_DOJO_PBE.upf  80/320  2.464  6.723  .013  ok
+10  C_DOJO_PBEsol.upf  80/320  2.460  6.573  .012  ok
+11  C_DOJO_PBE.upf  80/320  2.468  6.593  .009  ok
+12  C_DOJO_PBE.upf  80/320  2.490  7.000  .007  ok
+13  C_DOJO_PBE.upf  80/320  2.471  6.648  .003  ok
+14  C_DOJO_PBE.upf  80/320  2.467  6.549  .011  ok
+15  C.tpss-mt.UPF  120/480  2.464  8.722  0  ok
