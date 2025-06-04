@@ -68,8 +68,8 @@ for nband in 5 8 12 16 20; do
 grid=12
 
 # Use shifted grid for better convergence
-klist="$grid $grid 1 0 0 0"
-#klist="$grid $grid 1 1 1 0"
+#klist="$grid $grid 1 0 0 0"
+klist="$grid $grid 1 1 1 0"
 echo $klist
 
 TMP_OPT="./epsilon_script_b$nband"
