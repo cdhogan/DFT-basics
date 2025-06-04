@@ -35,8 +35,13 @@ This information can be used to double check that the correct XC functional is b
 ### Input files
 
 A selection of pseudopotentials and input files are provided directly. 
-Unless indicated, pseudopotential files for C have been taken from the pseudo-DOJO library and used at the recommended cutoff of 80 Ry for carbon. Since pseudo-DOJO files have the same name (C.upf) for different XC, we have renamed them in the following (it would be better in practice to change `pseudo_dir`). 
-We perform a single vc-relax calculation in each case, with otherwise the same computational parameters (12x12x6 unshifted k-point set, 0.02 Ry smearing). The initial lattice parameters are set to those of the experiment (A = 2.46 A, C=6.71 A). For the vc-relax calculation we allow A and C to vary but keep the geometry (axes, angles) consistent. In principle we should re-run vc-relax to check the converged values, but here we are running an illustrative test. 
+Unless indicated, pseudopotential files for C have been taken from the pseudo-DOJO library and used at the recommended cutoff of about 80 Ry for carbon. 
+Since pseudo-DOJO files have the same name (C.upf) for different XC, we have renamed them in the following (it would be better in practice to change `pseudo_dir`). 
+We perform a vc-relax calculation in each case, with otherwise the same computational parameters (12x12x6 unshifted k-point set, 0.02 Ry smearing). 
+The initial lattice parameters are set to those of the experiment (A = 2.46 A, C=6.71 A). 
+For the vc-relax calculation we allow A and C to vary but keep the geometry (axes, angles) consistent. 
+
+
    ```
    % cat graphite.in_LDA_PZ
      calculation = 'vc-relax'
@@ -99,9 +104,14 @@ graphite.in_PBEsol_DOJO
 ### meta-GGA functionals
 
 Unfortunately, meta-GGAs can be difficult to work with, and often give convergence problems. For this reason they are not widely used. 
-Nonetheless for completeness we try one meta-GGA here, the TPSS (Tao–Perdew–Staroverov–Scuseria) functional for which a pseudopotential for C is available (at https://nninc.cnf.cornell.edu/dd_search.php?frmxcprox=&frmxctype=TPSS&frmspclass=)
+Nonetheless for completeness we try one meta-GGA here, the TPSS (Tao–Perdew–Staroverov–Scuseria) functional for which a pseudopotential for C is available (at https://nninc.cnf.cornell.edu/dd_search.php?frmxcprox=&frmxctype=TPSS&frmspclass=).
+In this case the XC functional must be defined explicitly:
    ```
-   % pw.x < graphite.in_LDA_PW_DOJO > graphite.out_LDA_PW_DOJO
+   % cat graphite.in_TPSS
+   [...]
+   input_dft="TPSS"
+   C      12.0107 C.tpss-mt.UPF
+   % pw.x < graphite.in_TPSS > graphite.out_TPSS
    ```
 Actually, the result for the interlayer separation varies with the cutoff (and FFT mesh). 
 
@@ -109,24 +119,56 @@ Note that newer mGGAs like R2SCAN are more reliable. To use them, quantum-ESPRES
 
 ### Semi-empirical vdW 
 
-graphite.in_PBE_D3BJ_DOJO
-graphite.in_PBEsol_D3BJ_DOJO
+An easy and efficient way to include dispersion corrections is to use the semi-empirical approach of Grimme. Here we try the DFT-D3 approach with Becke-Johnson damping.
+   ```
+   % cat graphite.in_PBE_D3BJ_DOJO
+   [...]
+   vdw_corr='DFT-D3'
+   dftd3_version=4
+   % pw.x < graphite.in_PBE_D3BJ_DOJO > graphite.out_PBE_D3BJ_DOJO
+   % pw.x < graphite.in_PBEsol_D3BJ_DOJO > graphite.out_PBEsol_D3BJ_DOJO
+   ```
+Most defaults in PBE for Grimme-type calculation are tuned for the PBE functional - for other XC functionals, use at your own risk.
 
 ### Ab-initio vdW
 
-graphite.in_vdw-DF2
-graphite.in_vdw-df2-b86r
-graphite.out_optB88-vdW
-graphite.in_optB88-vdW
-
+If the semi-empirical approach is not adequate for your needs, many ab-initio vdW schemes are available in QE. They must be set by changing the XC functional explicitly via `input_dft`.
+   ```
+   % cat graphite.in_vdw-df2-b86r
+   input_dft = 'vdw-df2-b86r'
+   C      12.0107 C_DOJO_PBE.upf
+   ```
+In principle one should use a pseudopotential corresponding to the vdW XC functional. Since they are generally not available, pick one closest as possible to the XC used.
+   ```
+   % pw.x < graphite.in_vdw-df2-b86r > graphite.out_vdw-df2-b86r
+   % pw.x < graphite.in_vdw-DF2
+   % pw.x < graphite.out_optB88-vdW
+   % pw.x < graphite.in_optB88-vdW
+   ```
 ### Hybrid functionals
 
-More useful for band gaps, thus not relevant here.
+Hybrids are far more difficult to use. In any case they are more useful for correcting band gaps, and thus not relevant here.
 
 ### Results
 
-![XC](Ref/XC_chart.png?raw=true "XC")
-![XC](Ref/XC_table.png?raw=true "XC")
+In principle we should re-run vc-relax to check the converged values: indeed, the initial guess for PBE is far from the converged value, and vc-relax must be run 3-4 times self-consistently. You can run the included script to automate this. Note the cutoffs in the script have also been adjusted to better converged values.
+
+![XC](Ref/XC_chart_a.png?raw=true "XC")
+![XC](Ref/XC_chart_c.png?raw=true "XC")
+![XC](Ref/XC_table_final.png?raw=true "XC")
+
+Drawing some conclusions:
+
+- All functionals and pseudopotentials estimate well the in-plane lattice constant *a*; only LDA systematically underestimates the value by 0.01-0.02A.
+- PBE fails completely to descrive the interlayer interaction
+- For PBE the *c* value is also sensitive on the pseudpotential type (may be cutoff-related)
+- PBEsol corrects somewhat the overestimation
+- LDA actually describes quite well the *c* lattice constant, thanks to the over-binding error (a poor-man's vdW!)
+- The semi-empirical D3BJ corrections perform very well
+- The ab-initio vdW-DF functionals also perform very well, with the exception of the original vdw-DF2.
+- The meta-GGA TPSS also performs poorly for *c* (anyway not converged with cutoff/FFT grid)
+
+### Reference
 
 Some XC tests on common elemental crystals
 
