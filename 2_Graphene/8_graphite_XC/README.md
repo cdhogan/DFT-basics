@@ -5,7 +5,7 @@ Graphite is a good model system as it combines in-plane covalent bonding with in
 
 ### Nomenclature
 
-Below we will make use of some internal conventions on XC names. For pseudopotential names, abbreviations see..
+Below we will make use of some internal conventions on XC names. For pseudopotential names, abbreviations see [Pseudopotential notes](../../Pseudo).
 
 Names for functionals available inside quantum-ESPRESSO are defined in the `Modules/funct.f90` Fortran file. This Fortran file is obviously present in the QE distribution or can be viewed online at e.g. https://gitlab.com/QEF/q-e/-/blob/develop/Modules/funct.f90. An edited snippet is presented at the bottom of this page; the functionals use in this tutorial are:
    ```
@@ -83,6 +83,14 @@ Run vc-relax calculations for each XC choice and tabulate the a and c lattice pa
    ```
 
 ### Semi-local functionals
+
+Let's try some GGA functionals. The most popular GGA is probably PBE. 
+
+   ```
+   % pw.x < graphite.in_PBE_DOJO > graphite.out_PBE_DOJO
+   % pw.x < graphite.in_PBE_SSSP > graphite.out_PBE_SSSP
+   % pw.x < graphite.in_LDA_PZ > graphite.out_LDA_PZ
+   ```
 
 graphite.in_PBE_DOJO
 graphite.in_PBE_SSSP
