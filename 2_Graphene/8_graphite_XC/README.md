@@ -1,4 +1,4 @@
-## XC functional (UNDER CONSTRUCTION)
+## XC functional
 
 In this tutorial we will study the choice of exchange correlation (XC) functional on the lattice parameters of a layered material, graphite. 
 Graphite is a good model system as it combines in-plane covalent bonding with interlayer weak bonding (van der Waals interaction).
@@ -89,17 +89,18 @@ Run vc-relax calculations for each XC choice and tabulate the a and c lattice pa
 
 ### Semi-local functionals
 
-Let's try some GGA functionals. The most popular GGA is probably PBE. 
+Let's try some GGA functionals. The most popular GGA is probably PBE. It's interesting to see if the results are dependent on the pseudopotential (see [Pseudopotential notes](../../Pseudo) )
 
    ```
    % pw.x < graphite.in_PBE_DOJO > graphite.out_PBE_DOJO
    % pw.x < graphite.in_PBE_SSSP > graphite.out_PBE_SSSP
-   % pw.x < graphite.in_LDA_PZ > graphite.out_LDA_PZ
+   % pw.x < graphite.in_PBE_GBRV > graphite.out_PBE_GBRV
+   % pw.x < graphite.in_PBE_SG15 > graphite.out_PBE_SG15
    ```
-
-graphite.in_PBE_DOJO
-graphite.in_PBE_SSSP
-graphite.in_PBEsol_DOJO	
+While PBE is great for molecules, more accurate results can be obtained with revised versions, such as PBEsol (PBE for solids).
+   ```
+   % pw.x < graphite.in_PBEsol_DOJO > graphite.out_PBEsol_DOJO
+   ```
 
 ### meta-GGA functionals
 
@@ -151,7 +152,12 @@ Hybrids are far more difficult to use. In any case they are more useful for corr
 
 ### Results
 
-In principle we should re-run vc-relax to check the converged values: indeed, the initial guess for PBE is far from the converged value, and vc-relax must be run 3-4 times self-consistently. You can run the included script to automate this. Note the cutoffs in the script have also been adjusted to better converged values.
+In principle we should re-run vc-relax to check the converged values: indeed, the initial guess for PBE is far from the converged value, and vc-relax must be run 3-4 times self-consistently. You can run the included script to automate this (Warning - it can take quite some time). Note the cutoffs in the script have also been adjusted to better converged values.
+
+   ```
+   % ./Scripts/run_alat
+   % cat a_c_vs_XC-script.dat | column -t
+   ```
 
 ![XC](Ref/XC_chart_a.png?raw=true "XC")
 ![XC](Ref/XC_chart_c.png?raw=true "XC")
