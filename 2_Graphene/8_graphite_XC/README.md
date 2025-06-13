@@ -104,7 +104,7 @@ While PBE is great for molecules, more accurate results can be obtained with rev
 
 ### meta-GGA functionals
 
-Unfortunately, meta-GGAs can be difficult to work with, and often give convergence problems. For this reason they are not widely used. 
+Unfortunately, meta-GGAs can be difficult to work with, and often give convergence problems due to numerical instabilities (e.g. in low electron density regions) [1]. For this reason they are not widely used, at least not with quantum-ESPRESSO. 
 Nonetheless for completeness we try one meta-GGA here, the TPSS (Tao–Perdew–Staroverov–Scuseria) functional for which a pseudopotential for C is available (at https://nninc.cnf.cornell.edu/dd_search.php?frmxcprox=&frmxctype=TPSS&frmspclass=).
 In this case the XC functional must be defined explicitly:
    ```
@@ -328,4 +328,6 @@ Some XC tests on common elemental crystals
   ```
 
 
-Ref:  10.1103/PhysRevB.79.085104 Calculation of the lattice constant of solids with semilocal functionals  Philipp Haas, Fabien Tran, and Peter Blaha
+Ref:  [1]  10.1103/PhysRevB.79.085104 Calculation of the lattice constant of solids with semilocal functionals  Philipp Haas, Fabien Tran, and Peter Blaha
+
+Ref: [2] Oscillations in meta-generalized-gradient approximation potential energy surfaces for dispersion-bound complexes Available, Erin R. Johnson; Axel D. Becke; C. David Sherrill; Gino A. DiLabio, J. Chem. Phys. 131, 034111 (2009) https://doi.org/10.1063/1.3177061
