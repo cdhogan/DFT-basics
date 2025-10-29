@@ -113,21 +113,30 @@ plot energy levels
      <summary>Answer</summary>
      `highest occupied, lowest unoccupied level (ev):    -6.9983   -1.0880`
      Thus the gap is 5.81eV. For comparison, the experimental value is 6.3eV.
+     </details>
      
      * The total energy
+     <details>
+     <summary>Answer</summary>
      `!    total energy              =     -34.04117898 Ry`
      Note that it's easy to search for the final total energy value using grep:
      `% grep ! H2O.scf.out`
      Note that total energies are given in Rydberg atomic units: 1 Ry = 13.6057eV = 0.5 Ha
+     </details>
      
      * The number of iterations needed to converge
+     <details>
+     <summary>Answer</summary>
      The self-consistent field (SCF) loop took 6 iterations to converge. You can track its progress towards convergence by grepping the total energy and its error (precision) at each iteration:
      ```
      % grep "total energy" H2O.scf.out
      % grep scf H2O.scf.out
      ```
+     </details>
      
      * The time taken for the calculation
+     <details>
+     <summary>Answer</summary>
      `PWSCF        :      0.68s CPU      0.75s WALL`
      There are two times reported. The CPU time is the calculation time, and can change with the number of processors. The WALL time, is the "Wall clock" time and is the total run time, including time taken reading and writing to disk. You can also deduce it from the start and end times of the calculation:
      ```
@@ -135,8 +144,11 @@ plot energy levels
      Program PWSCF v.6.7MaX starts on 29Oct2025 at 10: 7:20 
      This run was terminated on:  10: 7:20  29Oct2025    
      ```
+     </details>
      
      * The number of planewaves in the basis set
+     <details>
+     <summary>Answer</summary>
      This information is found in these lines:
      ```
      G-vector sticks info
@@ -147,14 +159,21 @@ plot energy levels
      Dense  grid:    59133 G-vectors     FFT dimensions: (  64,  64,  64)
      ```
      The number of planewaves needed to expand the _wavefunctions_ is 14771, while 59133 = 14771*4 is the number needed to expand the _charge density_.
+     </details>
 
      * The number of points in the FFT grid
+     <details>
+     <summary>Answer</summary>
      `Dense  grid:    59133 G-vectors     FFT dimensions: (  64,  64,  64)`
      Our cubic cell in real space is described by a grid of 64x64x64.
+     </details>
 
      * The real-space resolution
+     <details>
+     <summary>Answer</summary>
      Since the box length is 8A, the resolution in real space is 8A/64 = 0.125A, i.e. about 1/8 the length of the H-O bond.
      This resolution is determined by `ecutwfc`, and needs to be tested (see the next tutorial).
+     </details>
 
      Do any of these values surprise you? 
 
