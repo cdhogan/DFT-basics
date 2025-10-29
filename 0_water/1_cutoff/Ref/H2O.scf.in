@@ -1,0 +1,28 @@
+&CONTROL
+  calculation  = "scf",
+  prefix       = "H2O",
+  pseudo_dir   = "../../Pseudo",
+  outdir       = "./tmp",
+  verbosity    = 'high'
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 3,
+  ntyp      = 2,
+  nbnd      = 8,
+  ecutwfc   = 10
+/
+&ELECTRONS
+/
+CELL_PARAMETERS {angstrom}
+ 8.0  0.0  0.0
+ 0.0  8.0  0.0
+ 0.0  0.0  8.0
+ATOMIC_SPECIES
+H  1.00  H_ONCV_PBE-1.2.upf
+O  6.00  O_ONCV_PBE-1.2.upf 
+ATOMIC_POSITIONS {angstrom}
+H  3.3  4.0  3.3    
+O  4.0  4.0  4.0    
+H  4.7  4.0  3.3 
+K_POINTS {Gamma}

@@ -1,0 +1,30 @@
+&CONTROL
+  calculation  = "relax",
+  prefix       = "H2O",
+  pseudo_dir   = "../../Pseudo",
+  outdir       = "./tmp",
+  verbosity    = 'high'
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 3,
+  ntyp      = 2,
+  nbnd      = 8,
+  ecutwfc   = 40
+/
+&ELECTRONS
+/
+&IONS
+/
+CELL_PARAMETERS {angstrom}
+ 8.0  0.0  0.0
+ 0.0  8.0  0.0
+ 0.0  0.0  8.0
+ATOMIC_SPECIES
+H  1.00  H_ONCV_PBE-1.2.upf
+O  6.00  O_ONCV_PBE-1.2.upf 
+ATOMIC_POSITIONS {angstrom}
+H  3.00  4.00  4.00    1 0 0
+O  4.00  4.00  4.00    0 0 0
+H  5.00  4.00  4.00    1 0 0
+K_POINTS {Gamma}
