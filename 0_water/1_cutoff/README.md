@@ -123,8 +123,9 @@ The G-vector information is found in these lines:
 The number of planewaves needed to expand the _wavefunctions_ for this cutoff is 14771, while 59133 = 14771*4 is the number needed to expand the _charge density_.
 </details>
 
-Prepare a 2-column datafile (Ecut, #G-vectors) and convince yourself that the number of planewaves scales as <img src="Ref/scaling.png" height="20"/>
+Prepare a 2-column datafile (Ecut, #G-vectors) and convince yourself that the number of planewaves scales as <img src="Ref/scaling.png" height="20"/>. Can you guess where the factors 2 and 3 come from in the exponent?
 
+<img src="Ref/scaling-script.png" height="400"/>
 
 6. As a last look under the hood, find the number of points in the FFT grid and work out the real-space resolution for a cutoff of 50 Ry.
 
