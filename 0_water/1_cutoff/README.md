@@ -73,30 +73,76 @@ gnuplot> plot "Etot_vs_Ecut.dat" w l
 
 At what cutoff do you think the total energy is converged? You might say "70Ry" based on where the graph _looks_ flat. But it's not flat! The total energy decreases monotonically with the cutoff (i.e. as the basis set gets more complete). You can see this in the log plot on the right. 
 
-So, you should decide on some numerical threshold. 1mRy? 1meV? Per atom, or per formula unit? It's hard to say.
+So, you should decide on some numerical threshold. 1mRy? 1meV? Per atom, or per formula unit? 
+
+In short, the total energy is not a good criterion to use for testing convergence. In principle you should carry out convergence for the _physical property_ you are interested in.
+
+> [!TIP]
+> The cutoff will be determined by the 'hardest' pseudopotential used: in this case the oxygen.
 
 ### Analyse the electronic properties
 
-4. Instead of focusing on the total energy - an esoteric quantity! - let's look at the HOMO-LUMO gap instead as a function of `ecutwfc`.
-
+4. Let's say we are mostly interested in the HOMO-LUMO gap of water.
+In the previous tutorial we saw that the highest occupied/lowest unoccupied levels are reported explicitly in the output file. 
+You can use `grep` on each file to extract the HOMO and LUMO, and compute the band gap using the `bc -l` program or a calculator.
+``` 
+% grep "highest" H2O_script.scf.out_Ecut10
+     highest occupied, lowest unoccupied level (ev):    -6.1089   -1.3719
+% echo "6.1089   -1.3719" | bc -l
+4.7370
+```
+Create a 4 column file (Ecut, VBM, CBM, gap) called 'Gap_vs_Ecut.dat' and plot the gap versus the cutoff. 
+How does the convergence compare with the value expected from the total energy run?
 
 <img src="Ref/Gap_vs_Ecut-script.dat.png" height="600"/>
 
+Regarding the HOMO-LUMO gap, the convergence behaviour is less smooth up to 100 Ry (any idea why?).
+If we target a reasonable precision of 0.02 eV, an adequate cutoff is only 50Ry - much lower than the value we guessed before.
+
+> [!TIP]
+> Different quantities converge at different rates!
+> There can be a large difference between variational convergence (total energy, forces) and spectral convergence (eigenvalues, DOS).
+
+### More about G-vectors
+
+5. By increasing the cutoff, we have increased the number of G-vectors. 
+Inspect the output files again. How many G-vectors are used for expanding the _wavefunction_ in each run?  
+     
+<details>
+<summary>Answer</summary>
+The G-vector information is found in these lines:
+     
+```
+     G-vector sticks info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Sum        2917    2917    725               118265   118265   14771
+     [...]
+     Dense  grid:    59133 G-vectors     FFT dimensions: (  64,  64,  64)
+```
+The number of planewaves needed to expand the _wavefunctions_ for this cutoff is 14771, while 59133 = 14771*4 is the number needed to expand the _charge density_.
+</details>
+
+Prepare a 2-column datafile (Ecut, #G-vectors) and convince yourself that the number of planewaves scales as <img src="Ref/Gap_vs_Ecut-script.dat.png" height="10"/>
 
 
+6. As a last look under the hood, find the number of points in the FFT grid and work out the real-space resolution for a cutoff of 50 Ry.
+
+<details>
+<summary>Answer</summary>
+     
+* The FFT grid dimensions are reported on the same line as the dense grid, i.e. ( 64 x 64 x 64 )
+
+* Since the cubic box length is 8A, the resolution in real space at this cutoff is 8A/64 = 0.125A, i.e. about 1/8 the length of the H-O bond.
+
+</details>
+
+### Scripts
+For the impatient, the convergence tests above can be run via a simple bash script:
+```
+% ./Scripts/run_ecut
+% ./Scripts/run_plots
+```
+Make sure you know how to run the code and understand error messages before attempting to use the scripts.  
 
 
-
-     Carry out a series of SCF runs, modifying the value of `ecutwfc` each time, Use a script to scan progressively higher values of cut off:
-
-     ```
-     % ./Scripts/run_ecut
-     ```
-     Let's plot the convergence with total energy and with respect to the HOMO-LUMO gap.
-     ![Etot vs cutoff](Ref/Etot_vs_Ecut.dat.png?raw=true "Etot vs Ecut")
-     ![gap vs cutoff](Ref/Gap_vs_Ecut.dat.png?raw=true "Gap vs Ecut")
-
-     A cutoff of 70Ry seems well converged. In the rest of the tutorial we will use 60Ry to speed things up.
-
-
-The cutoff will be determined by the 'hardest' pseudopotential used, it could be the O or the H. 
