@@ -2,8 +2,8 @@
 
 In this first tutorial we consider a familiar system: the water (H2O) molecule.
 We will show how to set up a simple input file to compute the ground state electronic properties with quantum-ESPRESSO.
-![Water](Ref/water.png?raw=true "Water")
 
+<img src="Ref/water.png" height="200"/>
 
 ## Outline
 1. Input file for a simple molecule
@@ -67,13 +67,17 @@ The other settings in the input file we will explain later.
 Here `--pwi` means "PWscf input file format". (You can also choose to read a PWscf input file from XcrysDen main menu).
 Click OK until you see the molecule inside a box: zoom in, rotate it, play with the menu options. 
 
-![Water](Ref/water-wc.png?raw=true "Water")
+<img src="Ref/water-xc.png" height="400"/>
 
 When ready, measure the *bond length* and the *internal angle* using the tools below the image, and check they are consistent with the initial choices above.
 
 ### Run the code
 
-5. If everything looks good, we can run a first simulation with quantum-ESPRESSO, and calculate some basic ground state properties of this approximate water geometry.
+5. If everything looks good, we can run a first simulation with quantum-ESPRESSO. In the `&CONTROL` namelist we set the type of calculation we want: 
+```
+  calculation  = "scf",
+```
+For now, let's just calculate some basic ground state properties for water in this approximate water geometry. To launch the code, type:
 ```
 % pw.x < H2O.scf.in    [ENTER]
 [...]
@@ -93,7 +97,8 @@ If you have a parallel (MPI) environment set up correctly on your computer, you 
 
 ### Examine the output 
 
-6. Inspect the output file. The beginning reports the information about the system (number of atoms, lattice vectors, bands, etc), and the end of the file shows the self-consistent calculation of the ground state (total energy, eigenvalues, etc). 
+6. Inspect the output file. The beginning reports the information about the system (number of atoms, lattice vectors, bands, etc), and the end of the file shows the self-consistent calculation of the ground state (total energy, eigenvalues, etc).
+
 Find, or calculate, the following information (before checking the answers!):
 
 * The number of electrons
@@ -107,9 +112,9 @@ Find, or calculate, the following information (before checking the answers!):
   
 
 <details>
-<summary> Answers </summary>
+<summary> Answers (click to expand) </summary>
 
-* There are **8 electrons** in our system. This is a little surprising, because O has 8 electrons in total, and H has 1, so we might expect 10 electrons. However, the 1s2 electrons in the O atom are accounted     for in the pseudopotential, and we only consider the valence electrons (6 for O, and 1 for each H).
+* There are **8 electrons** in our system. This is a little surprising, because O has 8 electrons in total, and H has 1, so we might expect 10 electrons. However, the 1s2 electrons in the O atom are accounted     for in the pseudopotential, and we only consider the valence electrons (6 for O: 1s²2s²2p⁴, and 1 for each H: 1s1).
 
 ```
 % grep "total energy" H2O.scf.out
@@ -127,7 +132,7 @@ These elements correspond to the four symmetry operations of the molecule, which
 Estimated max dynamical RAM per process >      50.83 MB`
 ```     
 
-* The HOMO-LUMO gap is **6.3 eV**.  You can calculate this by inspecting the eigenvalues, or direcly from the line
+* The HOMO-LUMO gap is **5.91 eV**.  You can calculate this by inspecting the eigenvalues, or direcly from the line
 ```
 highest occupied, lowest unoccupied level (ev):    -6.9983   -1.0880
 ```
@@ -172,6 +177,7 @@ Do any of these values surprise you?
 That's the basic idea of running PWSCF! 
 Next, let's run the calculation properly, and compute some observable quantities.
 
-ed (see the next tutorial).
-     </details>
+### Further information
+1.  PWscf input file parameters web page [Link](https://www.quantum-espresso.org/Doc/INPUT_PW.html)
+2.  Point group symmetries of water [Link](https://chem.libretexts.org/Bookshelves/Inorganic_Chemistry/Inorganic_Chemistry_(LibreTexts)/04%3A_Symmetry_and_Group_Theory/4.03%3A_Properties_and_Representations_of_Groups/4.3.02%3A_Representations_of_Point_Groups)
 
