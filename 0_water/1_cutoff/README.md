@@ -123,7 +123,7 @@ The G-vector information is found in these lines:
 The number of planewaves needed to expand the _wavefunctions_ for this cutoff is 14771, while 59133 = 14771*4 is the number needed to expand the _charge density_.
 </details>
 
-Prepare a 2-column datafile (Ecut, #G-vectors) and convince yourself that the number of planewaves scales as <img src="Ref/scaling.png" height="20"/>. 
+Prepare a 2-column datafile (Ecut, #G-vectors) and convince yourself that the number of planewaves scales as <img src="Ref/scaling.png" height="40"/>. 
 Can you guess where the factors 2 and 3 come from in the exponent?
 
 <img src="Ref/scaling-script.png" height="400"/>
@@ -133,9 +133,9 @@ Can you guess where the factors 2 and 3 come from in the exponent?
 <details>
 <summary>Answer</summary>
      
-* The FFT grid dimensions are reported on the same line as the dense grid, i.e. ( 64 x 64 x 64 )
+* The FFT grid dimensions are reported on the same line as the dense grid, i.e. ( 72 x 72 x 72 )
 
-* Since the cubic box length is 8A, the resolution in real space at this cutoff is 8A/64 = 0.125A, i.e. about 1/8 the length of the H-O bond.
+* Since the cubic box length is 8A, the resolution in real space at this cutoff is 8A/72 = 0.1A, i.e. about 1/10 the length of the H-O bond.
 
 </details>
 
