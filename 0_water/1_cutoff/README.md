@@ -2,17 +2,16 @@
 
 In quantum-ESPRESSO, and other codes that use plane-waves as a basis set (e.g. VASP,Abinit,Castep), the (pseudo-) wavefunction is expanded over a set of plane-waves (G-vectors):
 
-<img src="Ref/basis.png" height="150"/>
+<img src="Ref/basis.png" height="80"/>
 
-In principle one should use an infinite number of G-vectors. In practice, one truncates this expansion at some point, by including G-vectors up to some |Gmax|. However, instead of working in terms of |Gmax|, it is more useful to talk in terms of energy - specifically, the kinetic energy. 
-The reason is that, for the same required precision, the same energy cutoff can be specified 
-even if the cell size changes.
+In principle one should use an infinite number of G-vectors. In practice, one truncates this expansion at some point, by including G-vectors up to some **|Gmax|**. However, instead of working in terms of **|Gmax|**, it is more useful to talk in terms of energy - specifically, the _kinetic energy_. 
+The reason is that, for the same required precision, the same energy cutoff can be specified even if the cell size changes.
 
 Using the expression for the kinetic energy of a planewave with wavevector |k+G| (you should be able to derive this!), we define the cutoff as the following:  
 
-<img src="Ref/cutoff.png" height="150"/>
+<img src="Ref/cutoff.png" height="80"/>
 
-whereby we keep all G-vectors up to this energy.
+whereby we keep all G-vectors that satisfy this expression.
 In quantum-ESPRESSO, this Ecut is determined by the parameter `ecutwfc`. 
 
 Thus, we need to perform convergence tests to find an appropriate value of `ecutwfc`.
