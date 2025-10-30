@@ -56,7 +56,7 @@ Repeat for 10,20,30...100 Ry.
 % pw.x < H2O.scf.in > H2O.scf.out_100Ry
 ```
 
-### Analyse the data
+### Analyse the total energy
 
 3. Use `grep` to extract the final total energy from all files in one command using the wildcard *
 ```
@@ -69,11 +69,18 @@ Copy and paste the cutoff energies and total energies into a 2 column file (Ecut
 ```
 gnuplot> plot "Etot_vs_Ecut.dat" w l
 ```
-For what cutoff do you think the total energy is converged?
+<img src="Ref/Etot_vs_Ecut-script.dat.png" height="600"/>
 
-4. Let's check.
+At what cutoff do you think the total energy is converged? You might say "70Ry" based on where the graph _looks_ flat. But it's not flat! The total energy decreases monotonically with the cutoff (i.e. as the basis set gets more complete). You can see this in the log plot on the right. 
+
+So, you should decide on some numerical threshold. 1mRy? 1meV? Per atom, or per formula unit? It's hard to say.
+
+### Analyse the electronic properties
+
+4. Instead of focusing on the total energy - an esoteric quantity! - let's look at the HOMO-LUMO gap instead as a function of `ecutwfc`.
 
 
+<img src="Ref/Gap_vs_Ecut-script.dat.png" height="600"/>
 
 
 
