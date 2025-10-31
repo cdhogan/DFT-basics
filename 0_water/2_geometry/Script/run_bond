@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=Bond_vs_ecut-script.dat
+echo -e "# ecut(Ry) bond(A) energy(Ry)" > $SAVE
+
+for ecut in 10 15 20 25 30 40 50 60 70 80 90 100; do    
+ 
+IN=H2O_script.relax.in
+OUT=H2O_script.relax.out_ecut$ecut
+
+# self-consistent calculation
+cat > $IN << EOF
+&CONTROL
+  calculation  = "relax",
+  prefix       = "H2O",
+  pseudo_dir   = "$PSEUDO_DIR",
+  outdir       = "$TMP_DIR",
+  verbosity    = 'high'
+  tprnfor = .true.
+/
+&SYSTEM
+  ibrav     = 0,
+  nat       = 3,
+  ntyp      = 2,
+  nbnd      = 6,
+  ecutwfc   = $ecut
+/
+&ELECTRONS
+/
+&IONS
+/
+CELL_PARAMETERS {angstrom}
+ 8.0  0.0  0.0
+ 0.0  8.0  0.0
+ 0.0  0.0  8.0
+ATOMIC_SPECIES
+H  1.00  H_ONCV_PBE-1.2.upf
+O  6.00  O_ONCV_PBE-1.2.upf 
+ATOMIC_POSITIONS {angstrom}
+H  1.00  0.00  0.00    1 0 0
+O  0.00  0.00  0.00    0 0 0
+H  -0.71 0.00  0.71    1 0 1
+K_POINTS {Gamma}
+EOF
+
+echo -e "\tStart: " `date`
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+echo -e "\tEnd: " `date`
+
+BOND=`grep -A3 "Begin final coordinates" $OUT | tail -1 | awk '{print $2}'`
+ANGLE=`grep -A5 "Begin final coordinates" $OUT | tail  -1 | awk '{print atan2($4,$2)*180/3.14159}'`
+ENERGY=`grep "Final energy" $OUT | awk '{print $4}'`
+
+echo -e "$ecut\t\t$BOND\t\t$ANGLE\t\t$ENERGY" >> $SAVE
+
+done
+
+echo "Run completed at: " `date`
+echo "Now launch the run_plots script."

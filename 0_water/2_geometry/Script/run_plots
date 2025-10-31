@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+SAVE=Bond_vs_ecut-script.dat
+
+#Print a gnuplot script to plot the 2 column files
+cat > plot-energy-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+# x11 should work on any system
+# try wxt (ubuntu) or aqua (mac) for nicer plots
+reset
+set term x11 enhanced
+set out
+set key right center 
+
+set xlabel "E_{cut} (Ry)"
+set ylabel "O-H bond length (A)
+set y2label "H-O-H angle (deg)"
+set y2tics 
+
+plot \
+	'$SAVE'  u 1:2 w lp pt 7 lw 2  lc rgb "black" title "O-H bond",'$SAVE' u 1:3 axes x1y2 w lp lc "red" title "angle"
+
+pause -1
+
+reset
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+set xlabel "E_{cut} (Ry)"
+set ylabel "O-H bond length (A)
+set y2label "H-O-H angle (deg)"
+set y2tics 
+set key right center 
+
+plot \
+	'$SAVE'  u 1:2 w lp pt 7 lw 2  lc rgb "black" title "O-H bond",'$SAVE' u 1:3 axes x1y2 w lp lc "red" title "angle"
+
+set nomulti
+set term x11
+set out
+EOF
+
+
+#Run the gnuplot script to make the plot of the total energy
+gnuplot plot-energy-script.gnu
+
