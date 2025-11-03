@@ -155,5 +155,14 @@ H2O.relax_symmetric.out:   Final energy   =     -34.3012262573 Ry
 ```
 The bent molecule is clearly more stable, by about 1.28 eV. 
 
+### Scripts
+The convergence tests above can be run via a simple bash script:
+```
+% ./Scripts/run_ecut
+% ./Scripts/run_plots
+```
+Make sure you know how to run the code and understand error messages before attempting to use the scripts.  
+
+
 
 
