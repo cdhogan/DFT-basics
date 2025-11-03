@@ -1,0 +1,11 @@
+&inputpp
+  prefix="H2O"
+  outdir="./tmp"
+  filplot="ELF.dat"
+  plot_num=9
+/
+&plot
+  iflag=3
+  output_format=5
+  fileout="chargediff_plot3D.xsf"
+/
