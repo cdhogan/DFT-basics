@@ -1,0 +1,7 @@
+ &dos
+   outdir='./tmp'
+   prefix='H2O'
+   fildos="H2O.dos.dat",
+   degauss=.01
+   Emin=-26.0, Emax=3.0, DeltaE=0.01
+ /
