@@ -101,6 +101,8 @@ Based on the study of the total energy, HOMO-LUMO gap, and geometry, what is the
 | HOMO-LUMO gap | 0.01eV   | ~45   |
 | Bond length | 0.01A   | ~40   |
 
+> [!TIP]
+> The optimal cutoff depends on the _physical property_ and the _precision_ you are interested in.
 
 ### Constrained optimization
 
