@@ -27,7 +27,7 @@ nat  = 3,
 [...]
 ```
 
-2. To simulate an isolated molecule, we place it in a large empty box. Later we will examine in more detail what size and form the box must take, but for now let's just take a cubic box of length about 8 A. We can do this by explicitly defining the three  orthogonal lattice vectors in an "input card" called `CELL_PARAMETERS` together with `ibrav = 0`:
+2. To simulate an isolated molecule, we place it in a large empty box. Later we will examine in more detail what size and form the box must take (bear in mind we have a periodic supercell, not an isolated box!), but for now let's just take a cubic box of length about 8 A. We can do this by explicitly defining the three  orthogonal lattice vectors in an "input card" called `CELL_PARAMETERS` together with `ibrav = 0`:
 ```
 % cat H2O.scf.in
 ibrav     = 0,
@@ -98,6 +98,15 @@ If you have a parallel (MPI) environment set up correctly on your computer, you 
 ### Examine the output 
 
 6. Inspect the output file. The beginning reports the information about the system (number of atoms, lattice vectors, bands, etc), and the end of the file shows the self-consistent calculation of the ground state (total energy, eigenvalues, etc).
+
+
+> [!TIP]
+> **Always** confirm that the calculation terminated correctly by checking the PWscf output file. For an SCF calculation you should see messages like:
+> ```
+>   !    total energy              =     -34.30122626 Ry
+>    convergence has been achieved in   X iterations
+> ```
+
 
 Find, or calculate, the following information (before checking the answers!):
 
