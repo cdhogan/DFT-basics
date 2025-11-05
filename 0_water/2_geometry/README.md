@@ -70,7 +70,19 @@ When it is done, you can confirm the convergence of the forces:
      Total force =     0.001085     Total SCF correction =     0.000086
      Total force =     0.000157     Total SCF correction =     0.000035
 ```
-and more interestingly, you can view the geometry optimization as an animation with xcrysden. Launch now with the option for PWscf _output_ file:
+
+> [!TIP]
+> Again, always check the _output file_ to confirm the calculation terminated correctly. For a geometry optimization, you should see lines like:
+> ``` 
+>     bfgs converged in  12 scf cycles and  11 bfgs steps
+>     (criteria: energy <  1.0E-04 Ry, force <  1.0E-03 Ry/Bohr)
+>     End of BFGS Geometry Optimization
+> ```    
+
+
+
+
+More interestingly, you can view the geometry optimization as an animation with xcrysden. Launch now with the option for PWscf _output_ file:
 ```
 % xcrysden --pwo H2O.relax-symmetric.out
 ```
@@ -87,21 +99,24 @@ Repeat the convergence test from the first tutorial, but this time allow the mol
 ```
 % mpirun -np 2 pw.x < H2O.relax-symmetric.in > H2O.relax-symmetric.out_20Ry
 [...]
-% mpirun -np 2 pw.x < H2O.relax-symmetric.in > H2O.relax-symmetric.out_8Ry
+% mpirun -np 2 pw.x < H2O.relax-symmetric.in > H2O.relax-symmetric.out_80Ry
 ```
 For each output, extract the O-H bond length and the internal angle. Prepare as before a 3-column file with the data (ecutwfc, bond length, angle), and plot the results with gnuplot.
 
 <img src="Ref/Bond_vs_ecut-script.dat.png" height="400"/>
 
-Based on the study of the total energy, HOMO-LUMO gap, and geometry, what is the best value (i.e. the lowest acceptable one) of the kinetic energy cutoff for this system? (System being: these elements, these pseudopotentials, this XC choice...)
+Based on the study of the total energy, HOMO-LUMO gap, and geometry, what is the best value (i.e. the lowest acceptable one) of the kinetic energy cutoff for this system? (meaning: these elements, these pseudopotentials, this XC choice...)
 
 | Criterion    | Precision    | Cutoff |
-| :---:   | :---: | :---: |
-| Total energy | 1 mRy/molecule | ~70   |
-| HOMO-LUMO gap | 0.01eV   | ~45   |
-| Bond length | 0.01A   | ~40   |
+| ---   | --- | --- |
+| Total energy  | 1 mRy/molecule | ~75   |
+|               | 10 mRy/molecule | ~65   |
+| HOMO-LUMO gap | 1 meV   | ~45   |
+|               | 10 meV   | ~70  |
+| Bond length   | 0.01A   | ~40   |
+|               | 0.001A   | ~50   |
 
-> [!TIP]
+> [!IMPORTANT]
 > The optimal cutoff depends on the _physical property_ and the _precision_ you are interested in.
 
 ### Constrained optimization
