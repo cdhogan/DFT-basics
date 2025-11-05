@@ -93,7 +93,14 @@ For each output, extract the O-H bond length and the internal angle. Prepare as 
 
 <img src="Ref/Bond_vs_ecut-script.dat.png" height="400"/>
 
-Based on the study of the total energy, HOMO-LUMO gap, and geometry, what is the best value (i.e. the lowest acceptable one) of the kinetic energy cutoff for this system?
+Based on the study of the total energy, HOMO-LUMO gap, and geometry, what is the best value (i.e. the lowest acceptable one) of the kinetic energy cutoff for this system? (System being: these elements, these pseudopotentials, this XC choice...)
+
+| Criterion    | Precision    | Cutoff |
+| :---:   | :---: | :---: |
+| Total energy | 1 mRy/molecule | ~70   |
+| HOMO-LUMO gap | 0.01eV   | ~45   |
+| Bond length | 0.01A   | ~40   |
+
 
 ### Constrained optimization
 
