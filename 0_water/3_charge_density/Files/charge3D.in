@@ -6,6 +6,6 @@
 /
 &plot
   iflag=3
-  output_format=5
-  fileout="charge_plot3D.xsf"
+  output_format=6
+  fileout="charge_plot3D.cube"
 /
