@@ -1,0 +1,14 @@
+# plot "Ref/dense.dat" u 1:($2/4) w p,x**(3.0/2.0)*58 w l
+#ecutwfc	chargeG
+10    7386 G-vectors     FFT dimensions: (  32,  32,  32)
+15   13601 G-vectors     FFT dimensions: (  40,  40,  40)
+20   20926 G-vectors     FFT dimensions: (  45,  45,  45)
+25   29039 G-vectors     FFT dimensions: (  50,  50,  50)
+30   38407 G-vectors     FFT dimensions: (  54,  54,  54)
+40   59133 G-vectors     FFT dimensions: (  64,  64,  64)
+50   82427 G-vectors     FFT dimensions: (  72,  72,  72)
+60  108616 G-vectors     FFT dimensions: (  75,  75,  75)
+70  136605 G-vectors     FFT dimensions: (  81,  81,  81)
+80  166858 G-vectors     FFT dimensions: (  90,  90,  90)
+90  199344 G-vectors     FFT dimensions: (  96,  96,  96)
+100 233425 G-vectors     FFT dimensions: ( 100, 100, 100)
