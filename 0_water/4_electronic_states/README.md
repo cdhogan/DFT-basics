@@ -9,7 +9,10 @@ In this tutorial we will compute the energy levels and plot the molecular orbita
 2. Calculate and plot the wavefunctions
 
 ### Running the exercise
-
+Move to the '4_electronic_states' folder:
+```
+% cd ../4_electronic_states
+```
 1. We will use again the file 'H2O.optimized.in' to compute the SCF charge density. However, we also ask for 20 bands, i.e. 20-4=16 occupied states. In principle it is a waste of resources to use an SCF calculation to compute empty states, but since it is so quick here it is not a big problem. Run the SCF calculation:
 ```
 % pw.x < H2O.optimized.in >  H2O.optimized.out
@@ -23,8 +26,8 @@ and look for the list of eigenvalues:
    -25.0971 -12.8958  -9.0901  -6.9960  -0.9975   1.1612   1.2953   1.7890
      1.8103   2.0213   2.1064   3.1071   3.7917   3.8157   3.8865   4.0681
 ```
-We want to plot these eigenvalues as a sequence of levels/horizontal lines. 
-A quick way to it is to copy and paste the eigenvalues into a new file 'eigenvalues.dat' and move each entry onto a new line, like:
+We want to plot these eigenvalues as a sequence of levels/horizontal lines. Unfortunately there is no simple/clear way to do this
+. One way to it is to copy and paste the eigenvalues into a new file 'eigenvalues.dat' and move each entry onto a new line, like:
 ```
 % cat eigenvalues.dat
  -25.0971 
@@ -33,10 +36,12 @@ A quick way to it is to copy and paste the eigenvalues into a new file 'eigenval
 [...]
 4.0681
 ```
-We then plot these data within gnuplot using a headless 'arrow' style:
+and then plot these data with gnuplot using a headless 'arrow' style:
 ```
-gnuplot> plot "eigenvalues.dat" u (0):1:(0.5):(0.0) w arrows nohead
+gnuplot> plot "eigenvalues.dat" using (0):1:(0.5):(0.0) with arrows nohead
 ```
+(Don't worry about the details. The format (see 'help style arrow') means: (set x-coord=0):column 1 data:(length of line=0.5):(angle=0.0)")
+
 Take note of where the HOMO level is (it is written in the SCF output file) and also the vacuum level (from the previous tutorial).
 
 <img src="Ref/allstates.png" height="500"/>
