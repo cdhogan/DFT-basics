@@ -30,6 +30,10 @@ What cutoff to use depends on many factors, including:
 3. Understand the cutoff vs G-vector relation
 
 ## Running the exercise
+For this tutorial we will work in the '1_cutoff' folder. From '0_start':
+```
+% cd ../1_cutoff
+```
 
 1. We take again our H2O.scf.in input file. Remember, the geometry is still only a guess: nonetheless, it does not affect the following convergence study. In this file, the cutoff is set to a starting value of 10Ry.
 
