@@ -8,6 +8,10 @@ In this tutorial we will compute charge density and dipole moment of the water m
 3. Calculate the dipole moment of water
 
 ### Running the exercise
+For this tutorial we will work in the '3_charge_density' folder. From '2_geometry':
+```
+% cd ../3_charge_density
+```
 
 1. The file 'H2O.optimized.in' contains the final optimized geometry from the previous tutorial. Run an SCF calculation to compute the ground state charge density:
 ```
