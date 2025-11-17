@@ -10,7 +10,10 @@ In this tutorial we will compute the optimized geometry of the water molecule.
 3. Constrained optimization
 
 ### Running the exercise
-
+For this tutorial we will work in the '2_geometry' folder. From '1_cutoff':
+```
+% cd ../2_geometry
+```
 1. Let's inspect the file 'H2O.relax_symmetric.in'. There are some new additions with respect to the previous run:
 ```
 &CONTROL
