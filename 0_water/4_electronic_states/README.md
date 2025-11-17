@@ -83,11 +83,11 @@ Once the ball-and-stick model has loaded, import the volumetric data via Tools >
 Like in the charge density tutorial, find an appropriate isovalue (perhaps 10% of the maximum) and compare the result with the literature images at the top of this page. Repeat for the other 7 molecular orbitals ("bands").
 Note that what is plotted here is |psi^2|, not |psi|. Nonetheless the 'lsign=.true.' flag allows the positive and negative lobes to be distinguished.
 
-You should now be able to answer:
+You might now try to answer:
 
 - On what atom is the HOMO localized?
 - Which state is associated with the O lone pairs?
-- Which states are bonding and antibonding?
+- Which states are bonding/antibonding/nonbonding?
 - What do you notice about the MOs above the vacuum level?
 
 > [!TIP]
@@ -96,5 +96,9 @@ You should now be able to answer:
 ### Links
 Input files for quantum-ESPRESSO are described in 
 - [INPUT_PW](https://www.quantum-espresso.org/Doc/INPUT_PW.html) 
-- [INPUT_PP](https://www.quantum-espresso.org/Doc/INPUT_PP.html) 
+- [INPUT_PP](https://www.quantum-espresso.org/Doc/INPUT_PP.html)  
+
+For a detailed explanation of the molecular orbitals of the water molecule, read  
+- [Bonding in H2O at chem.libretexts.org](https://chem.libretexts.org/Courses/Saint_Marys_College_Notre_Dame_IN/CHEM_431%3A_Inorganic_Chemistry_(Haas)/CHEM_431_Readings/06%3A_Using_Character_Tables_and_Generating_SALCS_for_MO_Diagrams/6.02%3A_Molecular_Orbital_Theory_for_Larger_(Polyatomic)_Molecules/6.2.03%3A_H2O)
+- [Wikipedia entry](https://en.wikipedia.org/wiki/Chemical_bonding_of_water)
 
