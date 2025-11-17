@@ -13,7 +13,11 @@ We will show how to set up a simple input file to compute the ground state elect
 
 ### Input file
 
-1. First look at the provided 'H2O.scf.in' file. 
+For this tutorial we will work in the '0_start' folder:
+```
+% cd 0_water/0_start
+```
+1.First look at the provided 'H2O.scf.in' file. 
 In any calculation, the first thing we need to know is the number and type of atoms. 
 For the water molecule, that's easy: 2 hydrogens and 1 oxygen, so 3 atoms of 2 different types, 
 defined inside the &SYSTEM namelist:
