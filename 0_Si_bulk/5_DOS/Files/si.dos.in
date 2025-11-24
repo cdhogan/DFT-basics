@@ -1,0 +1,8 @@
+ &dos
+   outdir='./tmp'
+   prefix='Si'
+   fildos='si.dos.dat',
+        degauss=0.01
+   Emin=-10.0, Emax=20.0, DeltaE=0.1
+ /
+

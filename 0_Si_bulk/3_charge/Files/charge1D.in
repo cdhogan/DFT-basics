@@ -1,0 +1,14 @@
+&inputpp
+  prefix="Si"
+  outdir="./tmp"
+  filplot="charge.dat"
+  plot_num=0
+/
+&plot
+  iflag=1
+  output_format=0
+  fileout="charge_plot1D.dat"
+  x0(1)=0.00, x0(2)=0.00, x0(3)=0.00
+  e1(1)=0.25, e1(2)=0.25, e1(3)=0.25
+  nx=1001
+/

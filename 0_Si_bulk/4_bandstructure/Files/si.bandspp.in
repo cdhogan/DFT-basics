@@ -1,0 +1,6 @@
+&bands
+    prefix = "Si",
+    outdir='./tmp'
+    filband='Sibands.dat'
+    lsym=.true.
+ /

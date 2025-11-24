@@ -1,0 +1,11 @@
+&inputpp
+  prefix="Si"
+  outdir="./tmp"
+  filplot="charge.dat"
+  plot_num=0
+/
+&plot
+  iflag=3
+  output_format=6
+  fileout="charge_plot3D.cube"
+/
