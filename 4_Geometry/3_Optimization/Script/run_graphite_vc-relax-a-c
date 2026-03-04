@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=graphite_Etot_vs_vc-relax-script.dat
+#echo -e "# cutoff(Ry) \t a(A) \t\t c(A) \t\t c/a \t\t energy(Ry)" > $SAVE
+
+for cutoff in 120; do
+#for cutoff in 20 40 60 80 100; do
+
+INVC=graphite_script.vc-relax.in
+OUTVC=graphite_script.vc-relax.out.out_${cutoff}Ry
+
+sed -e "s/ecutwfc = 20/ecutwfc = $cutoff/" graphite.vc-relax.in > $INVC
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+ENERGY=`grep -F "!    total energy" $OUTVC | tail -n 1 | awk '{print $5}'`
+
+
+a=$(grep -F "celldm(1) = " $OUTVC | tail -n 1 | awk '{print $3*0.52917721092}' )
+ca=$(grep -F "celldm(3) = " $OUTVC | tail -n 1 | awk '{print $3}' )
+c=$(awk -v x="$a" -v y="$ca" 'BEGIN {print x*y}' )
+echo -e "$cutoff\t\t$a\t\t$c\t\t$ca\t\t$ENERGY" >> $SAVE
+
+
+done

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SCF=GaN.relax.in
+IN=GaN_script.relax.in
+OUT=GaN_script.relax.out
+
+for cutoff in 80; do
+
+SAVE=GaN_Etot_vs_a_vs_c-script.dat_${cutoff}Ry
+SAVEFIT=GaN_Etot_vol-script.dat_${cutoff}Ry
+echo -e "# a(A) c(A) energy(Ry)" > $SAVE
+echo -e "# volume(A^3) energy(Ry)" > $SAVEFIT
+
+# from vc-relax
+# A 3.22199         
+# C 5.23927
+
+# Good 0.02 scan
+#for a in $(seq 3.00 0.02 3.40); do
+#for c in $(seq 5.00 0.02 5.40); do
+# Precise 0.01 scan
+for a in $(seq 3.15 0.01 3.31); do
+for c in $(seq 5.09 0.01 5.41); do
+
+volume=$(awk -v aa=$a -v cc=$c 'BEGIN{printf "%.6f", (sqrt(3)/2)*aa*aa*cc}')
+
+sed -e "s/A = 3.19/A = $a/" -e "s/C = 5.19/C = $c/" -e "s/ecutwfc = 20/ecutwfc = $cutoff/" $SCF > $IN
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+
+echo -e "$a\t$c\t$ENERGY" >> $SAVE
+echo -e "$volume\t$ENERGY" >> $SAVEFIT
+
+done
+echo -e "  " >> $SAVE
+done
+
+done

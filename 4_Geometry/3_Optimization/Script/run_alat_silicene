@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+
+#for cutoff in 100 120; do
+for cutoff in 20 40 60 80; do
+SAVE=Etot_vs_alat-script.dat_${cutoff}Ry
+echo -e "# alat(bohr) energy(Ry)" > $SAVE
+
+IN=silicene_script.relax.in
+OUT=silicene_script.relax.out.out_${cutoff}Ry
+
+#3.85
+for alat in $(seq 3.75 0.01 3.90); do
+
+IN=silicene_script.relax.in
+OUT=silicene_script.relax.out
+
+sed -e "s/ecutwfc = 20/ecutwfc   = $cutoff/" -e "s/A = 3.85/A = $alat/" silicene.relax.in > $IN
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+
+echo -e "$alat\t\t$ENERGY" >> $SAVE
+
+done
+
+done
+

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SAVE=GaN_Etot_vs_vc-relax-script.dat
+echo -e "# cutoff(Ry) \t a(A) \t\t c(A) \t\t c/a \t\t energy(Ry)" > $SAVE
+
+for cutoff in 40 60 80 100 120 140 160; do
+
+INVC=GaN_script.vc-relax.in
+OUTVC=GaN_script.vc-relax.out.out_${cutoff}Ry
+
+sed -e "s/ecutwfc = 20/ecutwfc = $cutoff/" GaN.vc-relax.in > $INVC
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+a=$(grep -F "celldm(1) = " $OUTVC | tail -n 1 | awk '{print $3*0.52917721092}' )
+ca=$(grep -F "celldm(3) = " $OUTVC | tail -n 1 | awk '{print $3}' )
+c=$(awk -v x="$a" -v y="$ca" 'BEGIN {print x*y}' )
+
+ENERGY=$(grep -F "Final enthalpy" $OUTVC | tail -n 1 | awk '{print $4}')
+
+echo -e "$cutoff\t\t$a\t\t$c\t\t$ca\t\t$ENERGY" >> $SAVE
+
+done
+#alat=$(awk '/CELL_PARAMETERS/{gsub(/[()=]/," "); alat=$3; getline; scale=$1} END{printf "%.8f", alat*scale*0.52917721092}' $OUTVC )

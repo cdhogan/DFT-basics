@@ -1,0 +1,32 @@
+&CONTROL
+    calculation = 'scf'
+    prefix = 'ZnO_wurtzite'
+    pseudo_dir = './pseudo/'
+    outdir = './tmp/'
+    restart_mode = 'from_scratch'
+    verbosity = 'high'
+/
+&SYSTEM
+    ibrav = 0,                ! 0 means CELL_PARAMETERS will be provided
+    nat = 4,                  ! Total atoms in the cell
+    ntyp = 2,                 ! Number of types of atoms (Zn, O)
+    ecutwfc = 60.0,           ! Plane-wave cutoff (Ry). 60 is generally safe
+    ecutrho = 240.0,          ! Charge density cutoff (4x ecutwfc)
+    ! Wurtzite lattice constants (Angstroms)
+    a = 3.250,
+    c = 5.206,
+/
+&ELECTRONS
+    conv_thr = 1.0D-8
+    mixing_beta = 0.4
+/
+ATOMIC_SPECIES
+    Zn  65.38  Zn.pbe-n-rrkjus_psl.1.0.0.UPF
+    O   16.00  O.pbe-n-rrkjus_psl.1.0.0.UPF
+ATOMIC_POSITIONS crystal
+    Zn  0.333333333  0.666666667  0.000000000
+    Zn  0.666666667  0.333333333  0.500000000
+    O   0.333333333  0.666666667  0.382000000  ! u parameter (approx)
+    O   0.666666667  0.333333333  0.882000000  ! u + 1/2
+K_POINTS automatic
+    6 6 4 0 0 0               ! 6x6x4 Monkhorst-Pack grid

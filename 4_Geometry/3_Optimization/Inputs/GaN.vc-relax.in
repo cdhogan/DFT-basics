@@ -1,0 +1,43 @@
+&CONTROL
+    calculation = 'vc-relax',
+    prefix = 'GaN',
+    outdir = './tmp',
+    pseudo_dir = './',
+    verbosity = 'high'
+/
+
+&SYSTEM
+    ibrav = 4,
+    A = 3.19,
+    C = 5.19,
+    nat = 4,
+    ntyp = 2,
+    ecutwfc = 20 ,
+    nbnd = 20    
+/
+
+&ELECTRONS
+    conv_thr = 1.0d-7,
+/
+
+&IONS
+/
+
+&CELL
+    press = 0.0,
+    cell_dynamics = 'bfgs',
+    cell_dofree = 'ibrav'
+/
+
+ATOMIC_SPECIES
+Ga  69.723  Ga_ONCV_PBE-1.2.upf
+N   14.007  N_ONCV_PBE-1.2.upf
+
+ATOMIC_POSITIONS crystal
+Ga  0.000000000  0.000000000  0.000000000 0 0 0
+Ga  0.333333333  0.666666667  0.500000000 0 0 0
+N   0.000000000  0.000000000  0.377000000 0 0 1
+N   0.333333333  0.666666667  0.877000000 0 0 1
+
+K_POINTS automatic
+4 4 3  0 0 0

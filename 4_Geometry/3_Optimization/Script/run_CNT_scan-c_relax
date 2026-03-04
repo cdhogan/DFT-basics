@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+RELAX=CNT.relax.in
+IN=CNT_script.relax.in
+OUT=CNT_script.relax.out
+
+for cutoff in 40 60 80; do
+
+SAVE=Etot_vs_c.relax_script.dat_${cutoff}Ry
+echo -e "# c(A) energy(Ry)" > $SAVE
+
+# A = 12.0
+# C = 4.19
+
+for c in $(seq 4.10 0.01 4.30); do
+
+sed -e "s/ecutwfc = 20/ecutwfc = $cutoff/" -e "s/C = 4.19/C = $c/" $RELAX > $IN
+
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+
+echo -e "$c\t\t$ENERGY" >> $SAVE
+
+done
+
+done

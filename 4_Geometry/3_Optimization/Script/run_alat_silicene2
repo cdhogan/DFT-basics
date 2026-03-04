@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+
+SAVE=silicene_Etot_vs_vc-relax-script.dat
+echo -e "# cutoff(Ry) alat(bohr) energy(Ry)" > $SAVE
+
+#for cutoff in 100 120; do
+for cutoff in 20 40 60 80 100; do
+
+#SAVE=silicene_Etot_vs_vc-relax-script.dat_${cutoff}Ry
+
+INVC=silicene_script.vc-relax.in
+OUTVC=silicene_script.vc-relax.out_${cutoff}Ry
+
+sed -e "s/ecutwfc = 20/ecutwfc   = $cutoff/" silicene.vc-relax.in > $INVC
+
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+ENERGY=$(grep -F "Final enthalpy" $OUTVC | tail -n 1 | awk '{print $4}')
+alat=$(awk '/CELL_PARAMETERS/{gsub(/[()=]/," "); alat=$3; getline; scale=$1} END{printf "%.8f", alat*scale*0.52917721092}' $OUTVC )
+
+echo -e "$cutoff\t\t$alat\t\t$ENERGY" >> $SAVE
+
+done
+
+

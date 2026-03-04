@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+
+for cutoff in 20 40 60 80 100; do
+SAVE=graphene_Etot_vs_alat-script.dat_${cutoff}Ry
+echo -e "# alat(bohr) energy(Ry)" > $SAVE
+
+#2.46
+for alat in $(seq 2.35 0.01 2.60); do
+
+IN=graphene_script.scf.in
+OUT=graphene_script.scf.out
+
+sed -e "s/ecutwfc = 20/ecutwfc   = $cutoff/" -e "s/A = 2.46/A = $alat/" graphene.scf.in > $IN
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+echo -e "$alat\t\t$ENERGY" >> $SAVE
+
+done
+
+done
+

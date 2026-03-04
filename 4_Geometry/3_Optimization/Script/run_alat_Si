@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+#A = 5.43,
+SAVEVC=Etot_vc-relax-script.dat
+echo -e "# alat(A) energy(Ry) cutoff (Ry)" > $SAVEVC
+
+for cutoff in 10 20 30 40 60; do
+SAVE=Etot_vs_alat-script.dat_${cutoff}Ry
+echo -e "# alat(A) energy(Ry)" > $SAVE
+
+INVC=si_script.vc-relax.in
+OUTVC=si_script.vc-relax.out.out_${cutoff}Ry
+
+for alat in $(seq 5.30 0.01 5.55); do
+
+IN=si_script.scf.in
+OUT=si_script.scf.out
+
+sed -e "s/ecutwfc   = 20/ecutwfc   = $cutoff/" -e "s/A = 5.43/A = $alat/" si.scf.in > $IN
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+echo -e "$alat\t\t$ENERGY" >> $SAVE
+
+done
+
+sed -e "s/ecutwfc   = 20/ecutwfc   = $cutoff/" si.vc-relax.in > $INVC
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+alatvc=$(grep -F "celldm(1) =" $OUTVC | tail -n 1 | awk '{print $3*0.529177}' )
+echo -e "$alatvc\t\t$ENERGY\t\t$cutoff" >> $SAVEVC
+
+
+done
+

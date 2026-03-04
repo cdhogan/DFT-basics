@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+VCRELAX=CNT.vc-relax-c.in
+INVC=CNT_script.vc-relax-c.in
+A=12.0
+
+SAVE=CNT_Etot_vs_c.vc-relax-c_script.dat
+echo -e "# c(A) enthalpy(Ry) cutoff(Ry)" > $SAVE
+
+for cutoff in 20 40 60 80 100; do
+
+OUTVC=CNT_script.vc-relax-c.out_${cutoff}Ry
+
+sed -e "s/ecutwfc = 20/ecutwfc = $cutoff/" $VCRELAX > $INVC
+
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+#ENERGY=`grep -F "!    total energy" $OUTVC | tail -n 1 | awk '{print $5}'`
+ENERGY=$(grep -F "Final enthalpy" $OUTVC | tail -n 1 | awk '{print $4}')
+
+c=`grep -A3 "CELL_PARAMETERS" $OUTVC | tail -n 1 | awk '{print $3*12.0}'`
+
+echo -e "$c\t\t$ENERGY\t\t$cutoff" >> $SAVE
+
+done

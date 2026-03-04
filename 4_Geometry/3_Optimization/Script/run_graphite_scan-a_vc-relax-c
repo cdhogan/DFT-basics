@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+VCRELAX=graphite.vc-relax-c.in
+INVC=graphite_script.vc-relax-c.in
+OUTVC=graphite_script.vc-relax-c.out
+
+for cutoff in 100 120; do
+
+SAVE=Etot_vs_a.vc-relax-c_script.dat_${cutoff}Ry
+echo -e "# a(A) c(A) energy(Ry)" > $SAVE
+
+# A = 2.46
+# C = 6.77
+
+for a in $(seq 2.36 0.01 2.56); do
+
+sed -e "s/ecutwfc = 20/ecutwfc = $cutoff/" -e "s/A = 2.46/A = $a/" $VCRELAX > $INVC
+
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $INVC > $OUTVC"
+$COMMAND < $INVC > $OUTVC
+
+ENERGY=`grep -F "!    total energy" $OUTVC | tail -n 1 | awk '{print $5}'`
+
+c=`grep -A3 "CELL_PARAMETERS" $OUTVC | tail -n 1 | awk -v aa=$a '{print $3*aa}'`
+
+echo -e "$a\t\t$c\t\t$ENERGY" >> $SAVE
+
+done
+
+done

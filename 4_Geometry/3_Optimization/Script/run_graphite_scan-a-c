@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+source ../../ENVIRONMENT_VARIABLES
+echo "BIN_DIR:" $BIN_DIR
+echo "PSEUDO_DIR:" $PSEUDO_DIR
+echo "TMP_DIR:" $TMP_DIR
+echo "Parallel command:" $RUN_COMMAND
+echo "Started at: " `date`
+
+SCF=graphite.scf.in
+IN=graphite_script.scf.in
+OUT=graphite_script.scf.out
+
+for cutoff in 40 60 80; do
+
+SAVE=Etot_vs_a_vs_c-script-ACC.dat_${cutoff}Ry
+SAVEFIT=Etot_vs_volume-script.dat_${cutoff}Ry
+echo -e "# a(A) c(A) energy(Ry)" > $SAVE
+echo -e "# V(A^3) energy(Ry)" > $SAVEFIT
+
+# A = 2.46
+# C = 6.77
+
+#for a in $(seq 2.36 0.01 2.56); do
+#for c in $(seq 5.20 0.25 8.40); do
+for a in $(seq 2.45 0.01 2.49); do
+for c in $(seq 6.70 0.01 6.82); do
+
+volume=$(awk -v aa=$a -v cc=$c 'BEGIN{printf "%.6f", (sqrt(3)/2)*aa*aa*cc}')
+
+sed -e "s/A = 2.46/A = $a/" -e "s/C = 6.77/C = $c/" -e "s/ecutwfc = 40/ecutwfc = $cutoff/" $SCF > $IN
+COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
+echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT
+
+ENERGY=`grep -F "!    total energy" $OUT | tail -n 1 | awk '{print $5}'`
+
+echo -e "$a\t$c\t$ENERGY" >> $SAVE
+echo -e "$volume\t$ENERGY" >> $SAVEFIT
+
+done
+echo -e "  " >> $SAVE
+done
+
+done
