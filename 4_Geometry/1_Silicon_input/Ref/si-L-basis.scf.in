@@ -1,0 +1,34 @@
+&CONTROL
+  calculation  = "scf",			
+  prefix       = "Si",			
+  pseudo_dir   = "../../Pseudo",	
+  outdir       = "./tmp",		
+  verbosity    = "high",		
+/
+&SYSTEM
+  ibrav     = 0,			
+  nat       = 8,			
+  ntyp      = 2,			
+  ecutwfc   = 20, 			
+/
+&ELECTRONS
+/
+CELL_PARAMETERS angstrom
+      3.81837662        3.81837662        0.00000000
+     -3.81837662        3.81837662        0.00000000
+      0.00000000        0.00000000        5.40000000
+
+ATOMIC_SPECIES
+ Si  28.086  Si.pz-vbc.UPF
+ Ge  28.086  Si.pz-vbc.UPF
+ATOMIC_POSITIONS crystal
+Si        0.00000000        0.00000000        0.00000000
+Si        0.50000000        0.50000000        0.00000000
+Si        0.00000000        0.50000000        0.50000000
+Si        0.50000000        0.00000000        0.50000000
+Ge        0.25000000        0.25000000        0.25000000
+Ge        0.75000000        0.75000000        0.25000000
+Ge        0.75000000        0.25000000        0.75000000
+Ge        0.25000000        0.75000000        0.75000000
+K_POINTS {automatic}
+4 4 4 1 1 1

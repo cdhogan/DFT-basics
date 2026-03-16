@@ -1,0 +1,24 @@
+&CONTROL
+  calculation  = "scf",			
+  prefix       = "Si",			
+  pseudo_dir   = "../../Pseudo",	
+  outdir       = "./tmp",		
+  verbosity    = "high",		
+/
+&SYSTEM
+  ibrav     = 2,			
+!  A         = 5.40			
+  celldm(1) = 10.205
+  nat       = 2,			
+  ntyp      = 1,			
+  ecutwfc   = 20, 			
+/
+&ELECTRONS
+/
+ATOMIC_SPECIES
+ Si  28.086  Si.pz-vbc.UPF
+ATOMIC_POSITIONS {crystal}
+ Si 0.00 0.00 0.00
+ Si 0.25 0.25 0.25
+K_POINTS {automatic}
+4 4 4 1 1 1
