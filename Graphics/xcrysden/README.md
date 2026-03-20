@@ -2,9 +2,10 @@
 
 This is a short tutorial on XCrysDen, a software for visualizing atomic structures, charge densities, etc.
 
-XCrysDen is particularly useful in combination with quantum-ESPRESSO since it can directly open pwscf input and output files, as well as .xsf (volumetric) output files. For more publication-grade images, I recommend VESTA.
+XCrysDen is particularly useful in combination with quantum-ESPRESSO since it can directly open pwscf input and output files, as well as `.xsf` (volumetric) output files. For more publication-grade images, I recommend VESTA.
 
 The full documentation is available at e.g. http://www.xcrysden.org/doc/intro.html
+
 A PDF with some instructions is available here: http://www.mineralscloud.com/events/download/tutorial_xcrysden.pdf
 
 ## Installation
@@ -83,10 +84,10 @@ When viewing an XSF file the volumetric data can also be viewed through Tools > 
 
 ![xcrysden menu](Ref/isovalue-annot.png?raw=true "File")
 
-** Isosurfaces **
+**Isosurfaces**
 By default this is switched on. Insert a value of "Isovalue" in the box, making sure to choose a value between the minimum and maximum. If you are viewing more than one unit cell you can ask to show the isosurface across the other cells. Note the options for transparency and for rendering +/- isovalues.
 
-** Planes **
+**Planes**
 Plane #1..#3 give the option to plot 2D data on planes parallel to the cell planes. You can shift the plane using the red arrows at the bottoms. The number of slides typically corresponds to the FFT indices.
 Note the scale function (linear and log are the most useful) and the "Ranges" tab which allows you to tune the contrast (e.g. by cutting the lower valued data).
 
