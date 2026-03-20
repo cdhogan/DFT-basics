@@ -55,23 +55,23 @@ The canvas background can be changed via the icon in the top left corner (useful
 
 The main drop down menus are File, Display, Modify and Tools. Here are some tips (see also image below):
 
-** File **
+**File**
 - Save XSF structure: useful to convert a QE input file to a volumetric XSF format file, which can be read with e.g. VESTA (do not reduce the dimensionality in this case)
 - Save current State (and Structure): will create a larger checkpoint file saving any more complicated view options (supercells, isosurfaces, colours, etc).
 - Print crystal to file: for printing, make the screen as large as possible and save as a PPM or (if available) a PNG file. 
 
-** Display **
+**Display**
 - Coordinate system: the red, green, blue arrows correspond to x,y,z axes. You may need to change their colour if you change the background colour.
 - Anti-aliasing: turn on if saving good quality 3D images with lighting.
 - Primitive/Conventional cell mode: select the former to view the atoms as they appear in the input file.
 
-** Modify **
+**Modify**
 - See http://www.xcrysden.org/doc/modify.html
 - Atomic radius: If bonds do not appear, increase the covalent radius for the selected element(s). The display radius is just the size of the ball on screen.
 - Tessellation factor: increase to improve the resolution/smoothness of printed images.
 - Number of units drawn: use to repeat a few more unit cells in x,y,z directions.
 
-** Tools **
+**Tools**
 - k-path Selection: to view the systems Brillouin zone based on the specified ibrav, and generate paths in k-space.
 - Data grid: to view volumetric data, isosurfaces of density, etc.
 
@@ -81,7 +81,7 @@ The main drop down menus are File, Display, Modify and Tools. Here are some tips
 
 When viewing an XSF file the volumetric data can also be viewed through Tools > Data-grid. Click Ok until you see the following:
 
-![xcrysden menu](Ref/allmenus.png?raw=true "File")
+![xcrysden menu](Ref/isovalue-annot.png?raw=true "File")
 
 ** Isosurfaces **
 By default this is switched on. Insert a value of "Isovalue" in the box, making sure to choose a value between the minimum and maximum. If you are viewing more than one unit cell you can ask to show the isosurface across the other cells. Note the options for transparency and for rendering +/- isovalues.
