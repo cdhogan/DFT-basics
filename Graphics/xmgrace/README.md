@@ -1,11 +1,11 @@
 # Plotting data with grace
-This is a short tutorial for plotting scientific data with grace (xmgrace). Grace is a WYSIWYG graphical program for generating 2D plots of functions and data. Although it is somewhat old, it is still a solid plotting tool for use in a Unix environment, and somewhat easier to learn that say gnuplot or the python-based matplotlib. The curve fitting and multipanel plotting is very nice to use.
+This is a short tutorial for plotting scientific data with grace (xmgrace). Grace is a WYSIWYG graphical program for generating 2D plots of functions and data. Although it is somewhat old, it is still a solid plotting tool for use in a Unix environment, and easier to pick up than say gnuplot or the python-based matplotlib. The curve fitting and multipanel plotting is very nice to use.
 
-![Silicene](Ref/figure.png?raw=true "Silicene")
+<img src="Ref/figure.png" width="50%" />
 
 An example of a two-panel figure created using Grace.
 
-The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you will find the offical [User Guide](https://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html) and [Tutorial](https://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html). Here is the [Tutorial PDF](Ref/vigmond_xmgrace_tutorial.pdf ) and a very nice [physics tutorial PDF](Ref/grace_tutorial_2024.pdf) from https://hogan53.net/common_pdfs/grace_tutorial_2024.pdf .
+The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you will find the offical [User Guide](https://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html) and [Tutorial](https://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html). Here is the [Tutorial PDF](Ref/vigmond_xmgrace_tutorial.pdf ) and a very nice [physics tutorial PDF](Ref/grace_tutorial_2024.pdf) downloaded from [here](https://hogan53.net/common_pdfs/grace_tutorial_2024.pdf).
 
 ## Main window
 Assuming you have the software installed, you can launch it in different ways:
@@ -36,7 +36,7 @@ The main menus are accessible from the menu bar. Specific menus will also open a
 
 ## Data import and export
 
-![Description](Ref/inout.png?raw=true "Comment")
+<img src="Ref/inout.png" width="50%" />
 
 From the `Data > Import > ASCII` option you can read data from a file. Typically grace will Filter files with `.dat` suffix but you can replace the '*.dat' with '*' to show all possible files. Click the desired file to update the Selection field.
 
@@ -75,19 +75,21 @@ The `Plot` drop-down menu contains the key options for styling the plot. `Plot >
 
 One of the true strengths of Grace is the ease of making and arranging multi-panel figures (multiple Graphs), which is very unsatisfactory in gnuplot.
 
-![Description](Ref/arrange.png?raw=true "Comment")
+<img src="Ref/arrange.png" width="50%" />
 
 `Edit > Arrange graphs` allows you to set up an array of graphs [G1...GN] to fill a plot and will automatically show or hide axis labels and tic labels if the panels are `packed`. Typically one ,ust work on one graph at a time, but there are options to apply axis properties to all graphs (handle with care). 
 
-![Description](Ref/data-transform.png?raw=true "Comment")
+<img src="Ref/data-transform.png" width="50%" />
 
 Grace includes a wealth of data transformation options. A quick and easy linear fit can be obtained with `Data > Transformations > Regression`, which creates a new set [S1] from a set [S0].
 
-![Description](Ref/text.png?raw=true "Comment")
+<img src="Ref/text.png" width="50%" />
 
-One of the weakest features of Grace instead is with text formatting, e.g. mixing Roman and Greek lettering. To some extent this can be done. For example:
-* 
-
+One of the weakest features of Grace instead is with text formatting, e.g. mixing Roman and Greek lettering. Nonetheless nice TeX-like results can be obtained. Grace uses the backslash character to escape between different fonts and modes. For example:
+* H\s2\NO    [subscript \s...\N]
+* E = mC\S2\N [superscript \S...\N]
+* \xD\f{}E = \x{ab}/{c}\f{}dE [greek symbols \x...\f{}]
+ 
 ## Other documentation and resources 
 There is not a huge amount of documentation available, but for basic operation the WYSIWYG layout is fairly self-explanatory. 
 
@@ -97,6 +99,4 @@ There is not a huge amount of documentation available, but for basic operation t
 *Video tutorials*
 * https://www.youtube.com/playlist?list=PLzSoIVVxSY_8KZ-Jra7GE3Czi6tu54TrJ
 
-*Miscellaneous blog posts, articles, websites, tutorials.* 
-* http
 
