@@ -2,6 +2,7 @@
 This is a short tutorial for plotting scientific data with grace (xmgrace). Grace is a WYSIWYG graphical program for generating 2D plots of functions and data. Although it is somewhat old, it is still a solid plotting tool for use in a Unix environment, and somewhat easier to learn that say gnuplot or the python-based matplotlib. The curve fitting and multipanel plotting is very nice to use.
 
 ![Silicene](Ref/figure.png?raw=true "Silicene")
+
 An example of a two-panel figure created using Grace.
 
 The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you will find the offical [User Guide](https://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html) and [Tutorial](https://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html). Here is the [Tutorial PDF](Ref/vigmond_xmgrace_tutorial.pdf ) and a very nice [physics tutorial PDF](Ref/grace_tutorial_2024.pdf) from https://hogan53.net/common_pdfs/grace_tutorial_2024.pdf .
@@ -9,12 +10,19 @@ The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you w
 ## Main window
 Assuming you have the software installed, you can launch it in different ways:
 ```
-% xmgrace			[open the default plot window]
-% xmgrace Ref/example.agr	[open a pre-existing project]
-% xmgrace Ref/other_data.txt	[open a textfile containing data in columns]
+% xmgrace			                    [open the default plot window]
+% xmgrace Ref/example.agr	        [open a pre-existing project]
+% xmgrace Ref/other_data.txt	    [read data from 2-column textfile]
+% xmgrace -nxy Ref/other_data.txt [read data from a multi-column file]
 ```
 
 ![Description](Ref/main.png?raw=true "Comment")
+
+The main window has some buttons on the left, the most useful being to autoscale axes. Typically however you will set ranges manually.
+
+![Description](Ref/menus.png?raw=true "Comment")
+
+The main menus are accessible from the menu bar. Specific menus will also open automatically by clicking inside the canvas (on a datapoint, or a legend, etc). 
 
 <details>
 
@@ -26,41 +34,59 @@ Assuming you have the software installed, you can launch it in different ways:
 
 </details>
 
-
-## Plot styles
-![Description](Ref/menus.png?raw=true "Comment")
-
+## Data import and export
 
 ![Description](Ref/inout.png?raw=true "Comment")
+
+From the `Data > Import > ASCII` option you can read data from a file. Typically grace will Filter files with `.dat` suffix but you can replace the '*.dat' with '*' to show all possible files. Click the desired file to update the Selection field.
+
+Next, specify how the data is organized.
+* Load a 'single set' of 2-column (X vs Y) data, or as multiple columns (X vs Y,Y2,Y3, etc) at once 'NXY'. More complicated sets of data can be fine-tuned using 'Block data', which will open up a further menu.
+* Click the default 'XY' type to show a range of options including errors, bars, size, colours, etc.
+* Decide whether to autoscale X and/or Y axes based on the imported dataset
+* Accept to load the data, which will appear in a default style. The data will be named e.g. `[G0.S0]`, meaning set #0 in graph #0.
+
+An existing 'project' can instead be loaded from disk using the `File > Open` option. A project file (suffix '.agr') will contain the plot style and settings as well as the data itself (making it very portable). Likewise, when you want to save a project, use `File > Save (As)`.
+
+A figure can be printed to file (set the Device to PDF, PNG, etc) via the `File > Print setup` and then afterwards `File > Print` options. Also the size of the canvas (resolution) can be changed here.
+
+## Graph appearance and style
+
+The `Plot` drop-down menu contains the key options for styling the plot. `Plot > Plot appearance` allows only to change the canvas background (and put a timestamp). The Plot canvas can contain multiple Graphs.
+
 ![Description](Ref/graph-menu.png?raw=true "Comment")
+
+`Plot > Graph appearance` allows the overall appearance of a single graph (within a multi-graph plot) to be modified, in particular graph titles and legend format and position.
+
 ![Description](Ref/set-menu.png?raw=true "Comment")
+
+`Plot > Set appearance` allows to change the style of separate datasets, i.e. lines, points, bars, etc.  
+
 ![Description](Ref/axis-menu.png?raw=true "Comment")
 
-![Description](Ref/example2.png?raw=true "Multi panel example")
-![Description](Ref/arrange.png?raw=true "Comment")
-
-![Description](Ref/data-transform.png?raw=true "Comment")
-![Description](Ref/text.png?raw=true "Comment")
-
-Now we move to a more useful example. Here on we will drop the `gnuplot>` prompt for clarity.
-```
-set title "Basic functions and styles"
-
-```
-
-<details>
-
-<summary>What we learn here (click to expand)</summary>
-
-* Set primary and secondary axes labels (set xlabel "...")
-* Set axis ranges (set xrange [min:max])
-
-</details>
+`Plot > Axis appearance` allows to change the axis ranges, labels, and tic marks. Make sure to select the desired axis before applying changes. 
 
 > [!TIP]
-> Type "help [topic]" from inside gnuplot to access the exhaustive gnuplot manual, e.g. "help plot" or "help xtics" or "help set" 
+> Save the .agr file often. There is no 'undo' function in xmgrace. However, you can easily 'Revert to saved'. 
 
-## Saving and loading scripts, generating images
+## Advanced options
+
+![Description](Ref/example2.png?raw=true "Multi panel example")
+
+One of the true strengths of Grace is the ease of making and arranging multi-panel figures (multiple Graphs), which is very unsatisfactory in gnuplot.
+
+![Description](Ref/arrange.png?raw=true "Comment")
+
+`Edit > Arrange graphs` allows you to set up an array of graphs [G1...GN] to fill a plot and will automatically show or hide axis labels and tic labels if the panels are `packed`. Typically one ,ust work on one graph at a time, but there are options to apply axis properties to all graphs (handle with care). 
+
+![Description](Ref/data-transform.png?raw=true "Comment")
+
+Grace includes a wealth of data transformation options. A quick and easy linear fit can be obtained with `Data > Transformations > Regression`, which creates a new set [S1] from a set [S0].
+
+![Description](Ref/text.png?raw=true "Comment")
+
+One of the weakest features of Grace instead is with text formatting, e.g. mixing Roman and Greek lettering. To some extent this can be done. For example:
+* 
 
 ## Other documentation and resources 
 There is not a huge amount of documentation available, but for basic operation the WYSIWYG layout is fairly self-explanatory. 
