@@ -4,7 +4,7 @@ This is a short tutorial for plotting scientific data with grace (xmgrace). Grac
 ![Silicene](Ref/figure.png?raw=true "Silicene")
 An example of a two-panel figure created using Grace.
 
-The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you will find the offical User Guide https://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html and Tutorial https://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html. A PDF of the latter is given here Ref/vigmond_xmgrace_tutorial.pdf and a very nice tutorial from https://hogan53.net/common_pdfs/grace_tutorial_2024.pdf  Ref/grace_tutorial_2024.pdf  
+The official website is https://plasma-gate.weizmann.ac.il/Grace/ in which you will find the offical [User Guide](https://plasma-gate.weizmann.ac.il/Grace/doc/UsersGuide.html) and [Tutorial](https://plasma-gate.weizmann.ac.il/Grace/doc/Tutorial.html). Here is the [Tutorial PDF](Ref/vigmond_xmgrace_tutorial.pdf ) and a very nice [physics tutorial PDF](Ref/grace_tutorial_2024.pdf) from https://hogan53.net/common_pdfs/grace_tutorial_2024.pdf .
 
 ## Main window
 Assuming you have the software installed, you can launch it in different ways:
