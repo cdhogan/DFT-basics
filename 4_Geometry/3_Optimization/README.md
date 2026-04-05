@@ -4,6 +4,8 @@ Geometry optimization of periodic systems can be tricky. What works for bulk sil
 
 - [0D: C2H6 molecule](#0d-c2h6-molecule)
 - [3D: Si bulk, diamond lattice](#3d-bulk-si)
+- [2D: graphene, flat honeycomb](#2d-graphene)
+- [3D: graphite](#3d-graphite)
   
 * 3D: graphite
 * 1D: (4,0) carbon nanotube
@@ -149,7 +151,7 @@ HINT: Use vc-relax to find the approximate value, and use an energy scan around 
 
 ![3D Si bulk](3D_Si_bulk/3D_Si_bulk.png?raw=true "Image")
 
-## 2D: graphene, flat honeycomb 
+## 2D: graphene
 
 * Manual: E(scf) vs alat
 * Variable-cell relax: 2Dxy, fixed atoms
