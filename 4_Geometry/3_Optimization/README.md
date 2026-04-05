@@ -2,7 +2,9 @@
 
 Geometry optimization of periodic systems can be tricky. What works for bulk silicon will not work for 2D silicene. It is important to understand what is a truly free parameter, and what is constrained by symmetry. There are powerful tools at your disposal but it is important to understand their limitations. In this tutorial we will discuss how to approach geometry optimization for systems with different dimensionality, degrees of freedom, and symmetry, pointing out common pitfalls. In the following we discuss a range of 0D-3D systems, getting progressively more complicated.
 
-* 0D: C2H6 molecule
+- [0D: C2H6 molecule](#0d-c2h6-molecule)
+- [3D: Si bulk, diamond lattice](#3d-bulk-si)
+  
 * 3D: Si bulk
 * 2D: graphene
 * 3D: graphite
@@ -57,11 +59,13 @@ The optimization converges to the so-called 'staggered' conformer, which is lowe
 
 Exercise: Plot the torsional energy barrier, i.e. the total energy vs dihedral angle, from 0 to 120 in steps of 15 degrees. 
 
-Note: Symmetry reduces the number of coordinates that must be optimized (speeds up the calculation) but can also force a system to stay in a 
+> [!NOTE]
+> Symmetry reduces the number of coordinates that must be optimized (speeds up the calculation) but can also force a system to stay in a local minimum
 
-Note: How to confirm a molecule is in the global minimum? First check it is in a true local minimum by performing a vibrational frequency analysis: any imaginary frequencies indicate an unstable equilibrium. Second, you might need to perform a wider conformational search or use other more advanced methods (basin hopping, metadynamics, etc). This can be done in QE with ph.x or more easily with a code like ORCA. 
+> [!TIP] How to confirm a molecule is in the global minimum? 
+> First check it is in a true local minimum by performing a vibrational frequency analysis: any imaginary frequencies indicate an unstable equilibrium. Second, you might need to perform a wider conformational search or use other more advanced methods (basin hopping, metadynamics, etc). This can be done in QE with `ph.x` or more easily with a code like ORCA. 
 
-## 3D: Bulk Si, diamond lattice
+## 3D: Bulk Si
 
 * Manual: E(scf) vs alat; fit to equation of state
 * Variable-cell relax: ibrav, fixed atoms
@@ -145,6 +149,8 @@ Why not use vc-relax all the time?
 
 HINT: Use vc-relax to find the approximate value, and use an energy scan around this point to find the exact value.
 
+![3D Si bulk](3D_Si_bulk/3D_Si_bulk.png?raw=true "Image")
+
 ## 2D: graphene, flat honeycomb 
 
 * Manual: E(scf) vs alat
@@ -194,6 +200,8 @@ To solidify the result, we perform a fine scan (step 0.01A) around this value of
 100Ry   2.47            -24.09471886
   ```
 Once again we see convergence is obtained at a lower cutoff of 60Ry. In this case there is no equation of state option; you could fit the data to a polynomial if you wish, but if the scan step is small enough it's probably not needed.
+
+![2D graphene](2D_graphene/2D_graphene.png?raw=true "Image")
 
 ## 3D: graphite
 
