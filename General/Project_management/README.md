@@ -1,6 +1,8 @@
+# Project management
+
 In this page are some general guidelines of how to manage larger projects, monitor  disk and memory usage, parallelize efficiently, and so no.
 
-## Organization
+## Task organization
 
 When starting a new project it is important to manage your calculations and files in a neat way. Directories are cheap: use them widely and name them clearly. The main thing to avoid is using a single folder for ten different types of calculation, and hundreds of files with slightly different names.
 
@@ -95,71 +97,133 @@ project_CO_Ag111/
     ├── molecule/
     ├── adsorption/
     └── figures/
+```
+Of course, this is just a guide for a specific (large) project, but try to follow a similar hierarchy corresponding to different physical and computational tasks.
 
+
+
+## Disk space management
+
+Essential commands for monitoring your use (or abuse!) of disk space.
+```
+du -s -h Dir                    # size of a directory in human readable format
+du -sh /data-fast/greenano      # disk usage of a whole shared partition
+du -sh * | sort -h              # file and directory sizes, sorted in order of size
+ls -lh my_file             # size of a single file
+```
+
+### Tips with QE
+When doing convergence tests, especially for dense k-grids needed for DOS or optics calculations, it is easy to generate parge amounts of data (typically wavefunctions). QE makes two kinds of wavefunction file:
+```
+% mpirun -np 2 pw.x < silicon.in >& silicon.out &
+% ls
+silicon.wfc1 silicon.wfc2                 <- temporary WFC files, 1 per MPI process
+silicon.in silicon.out silicon.save
+% ls silicon.save
+data-file.xml charge-density.dat wfc1.dat wfc2.dat wfc3.dat wfc4.dat    <- saved WFC files, 1 per k-point
+```
+Unless you are restarting in the middle of a relaxation run, the `silicon.wfc*` files can be (should be) safely deleted. They are usually deleted at the end of a run, but will remain if a job is interupted or killed.
+
+In many cases it is relatively fast to recompute wavefunctions from disk. Once you have computed plottable data (e.g. your * .dos or eps2.dat files), you can usually delete the `outdir/.save` directory, or at leasts the `outdir/.save/wfc*` files.
+
+Save/copy your (human readable) input and output files to your local machine. In this way you can always quickly regenerate your data. 
+
+## Process management
+Job running slowly? Here are key commands for monitoring your jobs/processes. Before launching any large calculation, always check you have the needed resources available.
+
+```
+% cat /proc/cpuinfo    # How many CPUs are available
+% cat /proc/meminfo    # How much memory available
+% top                  # show running processes 
+% ps aux               # show all processes by user
+% ps aux | grep firefox    # filter processes running the firefox browser
+% ps aux | grep pw.x
+```
+More advanced searching and sorting can be done using e.g. (see `man ps`)
+```
+ps -e -o user,pid,%mem,%cpu,user,comm | sort -k 3 -r | head
+```
+If there are more processes/threads running than the number of CPUs, the machine will run slowly.
+
+To kill a running process, read the PID from the ps command, and 
+```
+% kill -9 [PID]        # replace [PID] with the appropriate number
+```
+
+To launch jobs in the background, put & after the executable, e.g.
+```
+% sleep 100 &
+% kill %1            # kill the job
+```
+Background jobs can be brought to the foreground with `fg`.
+
+In typical QE runs, you also have to tell the job to perform the writing of output in the background as well. In which case you need to put an ampersand after the redirect symbol as well:
+```
+% pw.x < silicon.in >& silicon.out &
+```
+This will redirect the standard output (and standard error) to the output file.
+
+Note however that this command is attached to the __terminal__. If you close the terminal, i.e. disconnect, the job will die. This is not a problem if you are using the virtual machine and leave the terminal running. In general however one should say "don't hangup!", with
+```
+% nohup pw.x < silicon.in >& silicon.out &
+```
+This will allow you to close the terminal and log out, leaving your job safely running.
+
+A useful trick with quantum-ESPRESSO is to check if the output file is updating in real time. You can do this with
+```
+% tail -f silicon.out
+```
+If you want to terminate a QE run in a nice way (i.e. so that it writes completely to disk), you can make an empty `prefix.EXIT' file in the run directory. After each SCF step the code checks for the presence of this file, and terminates neatly if present.
+```
+% pw.x < silicon.in >& silicon.out &
+% touch silicon.EXIT
+[ Job ends]
+```
 
 ## Parallel usage
 
-Parallel usage
+Some notes on running quantum-ESPRESSO in parallel efficiently.
+
+Parallel usage, pools
 speedup graph
 mpi vs openmp
+
 Not useful more than 8 procs
 check multiple jobs
 kill multiple procs
 
-## Disk space management
 
-Disk space
-Greenano students: your workspace ($WORK) is at... 
-You have a second workspace at
-
-Your cohirt has XGb to use.
-
-du -s -h Dir
-du -sh /data-fast/greenano
-du -sh * | sort -h
-ls -lh single files
-
-How to manage space
-When doing convergence tests, especially for dense k-grids, it is easy to generate parge amounts of data (typically wavefunctions).
-In many cases it is relatively fast to recompute wavefubctions from disk. Once you have computed plottable data (e.g. Dos or epsilon2), you can usually delete the save directory, or at oeasts the save/wfc* files.
-
-wfc and wfc files
-Know contents of Save folder
-
-## Process management
-
-Processes
-emory usage
-ps aux
-pc aux | grep firefox
-ps aux | grep pw.x
-top
-Sort by memory M
-Sprt by cpu P
-
-ps eo
-kill -9 PID
-
-
-Job control
-
-Fore ground background
-nohup
-tail -f
 
 ## Restarting jobs
 
-REstarting jobs
-It can happen that a long job dies before completion because of external factors (time limit exceeded, disk full, MPI error). in some cases one xan reatart a run from the last "checkpoint", or speed up a restarted job.
-QE 
-## Restarting jobs
+It can happen that a long relaxation job dies before completion because of external factors (time limit exceeded, disk full, MPI error). 
+In most cases one can restart a run from the last "checkpoint", i.e. using the last files written on disk. The default options are to start from scratch:
+```
+% cat silicon_orig.in
+&system
+    prefix = "silicon"
+    outdir = "tmp"
+   restart_mode="from_scratch"
+&electrons
+   startingpot="atomic"
+   startingwfc="atomic"
+```
+To continue an incomplete relaxation, do
+```
+% cat silicon_restart.in
+&system
+    prefix = "silicon"
+    outdir = "tmp"
+    restart_mode="restart"        <-- Will read the ATOM_POSITIONS from tmp/silicon.save/data-file.xml
+&electrons
+    startingpot="file"            <-- The default: try read potential from charge-density.dat
+    startingwfc="file"            <-- The default: try read wavefunctions from disk
+```
+If WFCs are not completely written, it can be safer to put startingwfc="atomic".
 
-
-convergence relax with k
-read charge
-
-Uploading downloading to cluster/ remote access
-
-browser...
-ssh...
-
+You can also speed up convergence tests by reading some previous data. For example, if increasing a k-grid, the following combination can help:
+```
+   restart_mode="from_scratch"
+    startingpot="file"
+    startingwfc="atomic" 
+```
