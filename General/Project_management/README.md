@@ -2,6 +2,12 @@
 
 In this page are some general guidelines of how to manage larger projects, monitor  disk and memory usage, parallelize efficiently, and so no.
 
+- [Task organization](#task-organization)
+- [Disk space]($disk-space-management)
+- [Processes](#process-management)
+- [Parallel usage](#parallel-usage)
+- [Restarting jobs](#restarting-jobs)
+
 ## Task organization
 
 When starting a new project it is important to manage your calculations and files in a neat way. Directories are cheap: use them widely and name them clearly. The main thing to avoid is using a single folder for ten different types of calculation, and hundreds of files with slightly different names.
@@ -182,17 +188,26 @@ If you want to terminate a QE run in a nice way (i.e. so that it writes complete
 
 ## Parallel usage
 
-Some notes on running quantum-ESPRESSO in parallel efficiently.
+quantum-ESPRESSO can be run in parallel efficiently by making use of MPI and openMP directives.
+```
+% OMP_NUM_THREADS=1
+% mpirun -np 4 pw.x < silicon.in > silicon.out
+```
+For typical cluster usage it is most efficent to use pure MPI and no openMP parallelization.
 
-Parallel usage, pools
-speedup graph
-mpi vs openmp
+Jobs can be parallelized on various levels. 
 
-Not useful more than 8 procs
-check multiple jobs
-kill multiple procs
+* k-points: Jobs can be efficiently divided into different k-point 'pools' using the `pw.x -npool X' command. The number of pools must be a divisor of the number of MPI tasks, e.g.
+  ```
+  % mpirun -np 8 pw.x -npool 4 < silicon.in > silicon.out           <--fine
+  % mpirun -np 8 pw.x -npool 3 < silicon.in > silicon.out           <--will crash immediately
+  ```
+  The number of k-points is then split into N pools. Ideally, Nkpt should be a multiple of N.
+  Note that this option will not reduce the memory load, but just the speed.
+* G-vectors: This is the default. In addition to, or alongside, pools, the code is parallelized with respect to G-vectors. This will reduce the memory load and the speed, albeit not as efficiently as pools. Speedup typically saturates at 4-8 MPI tasks on intel processors.
+* images, bands, diag, GPUs: Larger jobs especially on HPCs need to be run with more finely-tuned options - see the PWscf manual.
 
-
+When killing jobs running in parallel, make sure to kill the 'parent' process and not just one of the threads, as the code may keep running.
 
 ## Restarting jobs
 
