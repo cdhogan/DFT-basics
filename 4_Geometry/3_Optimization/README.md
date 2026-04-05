@@ -1,16 +1,16 @@
+# Geometry optimization
+
 ## UNDER CONSTRUCTION
 
-Geometry optimization of periodic systems can be tricky. What works for bulk silicon will not work for 2D silicene. It is important to understand what is a truly free parameter, and what is constrained by symmetry. There are powerful tools at your disposal but it is important to understand their limitations. In this tutorial we will discuss how to approach geometry optimization for systems with different dimensionality, degrees of freedom, and symmetry, pointing out common pitfalls. In the following we discuss a range of 0D-3D systems, getting progressively more complicated.
+Geometry optimization of periodic systems can be tricky. What works for bulk silicon will not work for 2D silicene. It is important to understand what is a truly free parameter and what is constrained by symmetry. There are powerful tools at your disposal but it is important to understand their limitations. In this tutorial we will discuss how to approach geometry optimization for systems with different dimensionality, degrees of freedom, and symmetry, pointing out common pitfalls. In the following we discuss a range of 0D-3D systems, getting progressively more complicated.
 
 - [0D: C2H6 molecule](#0d-c2h6-molecule)
 - [3D: Si bulk, diamond lattice](#3d-bulk-si)
 - [2D: graphene, flat honeycomb](#2d-graphene)
-- [3D: graphite](#3d-graphite)
-  
-* 3D: graphite
-* 1D: (4,0) carbon nanotube
-* 2D: silicene 
-* 3D: GaN bulk
+- [3D: graphite, stacked honeycomb](#3d-graphite)
+- [1D: nanotube, rolled honeycomb](#1d-nanotube)
+- [2D: silicene, buckled honeycomb](#2d-silicene)
+- [3D: MoS2, stacked tetragonal sheets](#3d-mos2-bulk)  
 
 Note that a small k-point grid has often been chosen to speed up calculations.
 
@@ -205,11 +205,11 @@ Once again we see convergence is obtained at a lower cutoff of 60Ry. In this cas
 
 ## 3D: graphite
 
-The geometry is fully determined by the in-plane lattice constant (alat) and the out-of-plane (interlayer) stacking (c). Atomic positions are again naturally constrained by symmetry. Now we have several options to perform the geometry optimization.
-
 * Manual: E(scf) vs a vs c
 * Full vc-relax: ibrav, fixed atoms
 * Partial vc-relax: scan a, vc-relax on c only, fixed atoms
+
+The geometry is fully determined by the in-plane lattice constant (alat) and the out-of-plane (interlayer) stacking (c). Atomic positions are again naturally constrained by symmetry. Now we have several options to perform the geometry optimization.
 
   ```
   % cp Inputs/graphite.*.in .
@@ -270,48 +270,45 @@ In the end, the convergence with respect to the full vc-relax appears to be simi
 
 ### Scan a vs c, scf calculation
 
-Finally, let's do a full manual scan of a vs c and search for the global minimum. This is a __very__ slow calculation, but it allows you to see the full potential energy surface, and avoids instablilities in the vc-relax optimizer. It is essential to first home in on a good value of c using vc-relax before starting a fine scan across c.
+Finally, let's do a full manual scan of _a_ vs _c_ and search for the global minimum. This is a __very__ slow calculation, but it allows you to see the full potential energy surface (PES), and avoids instablilities in the vc-relax optimizer. It is essential to first home in on a good value of c using vc-relax before starting a fine scan across c.
 ```
 % ./Script/run_graphite_scan-a-c 
 ```
-You can plot the data as a colormap or contour plot, e.g. using splot in gnuplot
-
+You can plot the data as a colormap or contour plot, e.g. using splot in gnuplot. In principle you could fit the energy surface using an appropriate equation of state or 2D polynomial.
 ```
 gnuplot> splot "Etot_vs_a_vs_c-script.dat_80Ry" u 1:2:3 w pm3d
 ```
-
 ![3D graphite](3D_graphite/3D_graphite_vc_all.png?raw=true "Image")
 
-In particular you can see how th PES changes as a function of cutoff, and how the vc-relax calculations are a little slow to arrive at the PES minimum. The PES along c is notoriously flat for graphite, which causes a challenge for the automatic vc-relax optimizer.
+In particular you can see how the PES changes as a function of cutoff, and how the vc-relax calculations are a little slow to arrive at the PES minimum. The PES along c is notoriously flat for graphite, which causes a challenge for the automatic vc-relax optimizer.
 
 Convergence is achieved at 80Ry, with with a=2.47A and c=6.76A.
 
 ## 1D: nanotube
 
-F. 1D with internal parameter: carbon nanotube
-The geometry is determined by the axial lattice constant (c) and the tube diameter (d)
+* Manual: E(relax) vs _c_
+* Variable-cell relax: _z_, free atoms
 
-Manual: E(relax) vs c
-Variable-cell relax: ?, free atoms
+The carbon nanotube geometry is determined by the axial lattice constant _c_ and the tube diameter _d_ (an internal parameter).
 
+Up to now we have needed only to perform SCF calculations, since forces on atoms have been zero by symmetry. In the following three examples the atomic positions must also be optimized.  
 
 
 ## 2D: silicene
 
-D. 2D with internal parameter: silicene, buckled honeycomb lattice
-The geometry is determined by the in-plane lattice constant (alat) and the buckling height (h).
+* Manual: E(relax) vs alat 
+* Variable-cell relax: 2Dxy, free atoms
+
+Silicene is a 2D sheet with a bulkled honeycomb lattice. The geometry is determined by the in-plane lattice constant (alat) and the buckling height h (an internal parameter).
 
 
-Manual: E(relax) vs alat 
-Variable-cell relax: ibrav+2Dxy, free atoms
+## 3D: MoS2 bulk
 
-## 3D: MoS2 bulk or GaN
+Bulk MoS2 has a geometry determined by the in-plane lattice constant (alat) and the internal parameter (u).
+Alternatives are GaN or ZnO.
 
-E. 3D with internal parameter: MoS2 bulk
-The geometry is determined by the in-plane lattice constant (alat) and the internal parameter (u).
-
-Manual: E(relax) vs alat vs c
-Variable-cell relax: ibrav, free atoms
+* Manual: E(relax) vs alat vs c
+* Variable-cell relax: ibrav, free atoms
 
 
 
