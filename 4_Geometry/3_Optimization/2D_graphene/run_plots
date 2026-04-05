@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+SAVE="2D_graphene"
+
+cat > plot-script.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set xlabel "alat (A)"
+set ylabel "E_{tot} (Ry)"
+
+set term pngcairo enhanced
+set output "${SAVE}.png"
+set arrow 1 from 2.466,graph 0 to 2.466,graph 1 nohead dt 2 lc "red"
+set mxtics 5
+plot \
+	'graphene_Etot_vs_alat-script.dat_60Ry' u 1:2 w lp pt 7 lw 2  lc rgb "green" title "60Ry",\
+	'graphene_Etot_vs_alat-script.dat_80Ry' u 1:2 w lp pt 7 lw 2  lc rgb "red" title "80Ry",\
+	'graphene_Etot_vs_alat-script.dat_100Ry' u 1:2 w lp pt 7 lw 1 dt 2  lc rgb "blue" title "100Ry"
+
+#set term pngcairo enhanced
+#set output "${SAVE}.png"
+#replot
+
+#set term x11 enhanced
+#replot
+#pause -1
+EOF
+
+gnuplot plot-script.gnu
+
+
+exit
+
+
+
+
