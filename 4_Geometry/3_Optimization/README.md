@@ -246,6 +246,8 @@ Run the vc-relax calculation for increasing cutoff, or use the provided script.
   ```
 Convergence is achieved at 100Ry, with a=2.47A and c=6.77A.
 
+This process __can__ work, but it is quite unreliable if the settings are not applied carefully (as in the case here). 
+
 ### Partial vc-relax: scan a and vc-relax along c
 
 For these scans, it is essential to use a script.
@@ -262,16 +264,27 @@ For these scans, it is essential to use a script.
 ```
 Convergence is achieved at 100Ry, with a=2.47A and c=6.77A.
 
+In the end, the convergence with respect to the full vc-relax appears to be similar. However, this method allows you to decouple the problematic degrees of freedom, and see the energy landscale more clearly. It is a solid practical choice.
+
 ![3D graphite](3D_graphite/3D_graphite-c.png?raw=true "Image")
 
 ### Scan a vs c, scf calculation
 
+Finally, let's do a full manual scan of a vs c and search for the global minimum. This is a __very__ slow calculation, but it allows you to see the full potential energy surface, and avoids instablilities in the vc-relax optimizer. It is essential to first home in on a good value of c using vc-relax before starting a fine scan across c.
+```
+% ./Script/run_graphite_scan-a-c 
+```
+You can plot the data as a colormap or contour plot, e.g. using splot in gnuplot
+
+```
 gnuplot> splot "Etot_vs_a_vs_c-script.dat_80Ry" u 1:2:3 w pm3d
+```
 
+![3D graphite](3D_graphite/3D_graphite_vc_all.png?raw=true "Image")
 
-Manual:
-a fine, c wider
+In particular you can see how th PES changes as a function of cutoff, and how the vc-relax calculations are a little slow to arrive at the PES minimum. The PES along c is notoriously flat for graphite, which causes a challenge for the automatic vc-relax optimizer.
 
+Convergence is achieved at 80Ry, with with a=2.47A and c=6.76A.
 
 ## 1D: nanotube
 
