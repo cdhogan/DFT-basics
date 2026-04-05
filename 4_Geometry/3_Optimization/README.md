@@ -5,8 +5,6 @@ Geometry optimization of periodic systems can be tricky. What works for bulk sil
 - [0D: C2H6 molecule](#0d-c2h6-molecule)
 - [3D: Si bulk, diamond lattice](#3d-bulk-si)
   
-* 3D: Si bulk
-* 2D: graphene
 * 3D: graphite
 * 1D: (4,0) carbon nanotube
 * 2D: silicene 
@@ -211,15 +209,69 @@ The geometry is fully determined by the in-plane lattice constant (alat) and the
 * Full vc-relax: ibrav, fixed atoms
 * Partial vc-relax: scan a, vc-relax on c only, fixed atoms
 
+  ```
+  % cp Inputs/graphite.*.in .
+  % pw.x < graphite.scf.in > graphite.scf.out
+  % pw.x < graphite.vc-relax.in > graphite.vc-relax.out
+  % pw.x < graphite.vc-relax-c.in > graphite.vc-relax-c.out
+  ```
 
-Full vc-relax:
+### Full variable-cell relaxation
 
+We start with a full vc-relax calculation, constraining only the bravais lattice, allowing both in-plane and out-of-plane axes to vary. Note that the atoms are in high-symmetry positions so they will not move during the relaxation if expressed in reduced/crystal coordinates (forces are zero).
+  ```
+&CELL
+   press_conv_thr=0.001
+   cell_dofree="ibrav"
+/
+ATOMIC_POSITIONS crystal 
+C            0.0000000000       0.0000000000       0.2500000000 0 0 0
+C            0.0000000000       0.0000000000       0.7500000000 0 0 0
+C            0.3333333300       0.6666666700       0.2500000000 0 0 0
+C            0.6666666700       0.3333333300       0.7500000000 0 0 0
+  ```
+Run the vc-relax calculation for increasing cutoff, or use the provided script.
+  ```
+  % ./Script/run_graphite_vc-relax
+
+# cutoff(Ry)     a(A)            c(A)            c/a             energy(Ry)
+20              2.33944         4.79974         2.05166033              -46.61420986
+40              2.4212          5.70018         2.35427823              -48.02798692
+60              2.45747         6.36313         2.58930278              -48.21662243
+80              2.4647          6.72297         2.72770178              -48.23043881
+100             2.46523 **      6.77008 **      2.74622782              -48.23072926
+120             2.46523         6.7697          2.74607439              -48.23075544
+  ```
+Convergence is achieved at 100Ry, with a=2.47A and c=6.77A.
+
+### Partial vc-relax: scan a and vc-relax along c
+
+For these scans, it is essential to use a script.
+```
+% ./Script/run_graphite_scan-a_vc-relax-c
+
+# a(A)          c(A)            energy (Ry)     cutoff (Ry)
+2.56            4.84851         -46.85822362    20Ry
+2.48            5.68882         -48.03874226    40Ry
+2.46            6.36246         -48.21672073    60Ry
+2.47            6.72617         -48.23036208    80Ry
+2.47            6.77237 **      -48.23065070    100Ry **
+2.47            6.77202         -48.23067693    120Ry
+```
+Convergence is achieved at 100Ry, with a=2.47A and c=6.77A.
+
+![3D graphite](3D_graphite/3D_graphite-c.png?raw=true "Image")
+
+### Scan a vs c, scf calculation
+
+gnuplot> splot "Etot_vs_a_vs_c-script.dat_80Ry" u 1:2:3 w pm3d
 
 
 Manual:
 a fine, c wider
 
 
+## 1D: nanotube
 
 F. 1D with internal parameter: carbon nanotube
 The geometry is determined by the axial lattice constant (c) and the tube diameter (d)
@@ -229,7 +281,7 @@ Variable-cell relax: ?, free atoms
 
 
 
-
+## 2D: silicene
 
 D. 2D with internal parameter: silicene, buckled honeycomb lattice
 The geometry is determined by the in-plane lattice constant (alat) and the buckling height (h).
@@ -238,7 +290,7 @@ The geometry is determined by the in-plane lattice constant (alat) and the buckl
 Manual: E(relax) vs alat 
 Variable-cell relax: ibrav+2Dxy, free atoms
 
-
+## 3D: MoS2 bulk or GaN
 
 E. 3D with internal parameter: MoS2 bulk
 The geometry is determined by the in-plane lattice constant (alat) and the internal parameter (u).
