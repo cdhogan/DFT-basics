@@ -291,24 +291,84 @@ Convergence is achieved at 80Ry, with with a=2.47A and c=6.76A.
 
 The carbon nanotube geometry is determined by the axial lattice constant _c_ and the tube diameter _d_ (an internal parameter).
 
-Up to now we have needed only to perform SCF calculations, since forces on atoms have been zero by symmetry. In the following three examples the atomic positions must also be optimized.  
+Up to now we have needed only to perform SCF calculations, since forces on atoms have been zero by symmetry. In the following three examples the atomic positions must also be optimized (`calculation = 'relax'`).  
 
+  ```
+  % cp Inputs/CNT.*.in .
+  % pw.x < CNT.relax.in < CNT.relax.out
+  % pw.x < CNT.vc-relax-c.in < CNT.vc-relax-c.out
+  ```
+
+### Variable-cell relaxation along c
+Being a quasi-1D system, it only makes sense to perform a variable-cell relaxation along one direction. Assuming the tube is aligned along the c-axis, we use `do_free='z'`, and allow all the atoms to freely move. The final tube diameter and C-C distances will determine the cell axis, i.e the repeating unit of the CNT.
+
+```
+% ./Script/run_CNT_vs-relax-c
+
+# c(A) 		enthalpy(Ry) 	cutoff(Ry)
+3.80265         -186.9837861388         20  3.80
+4.08552         -191.1921512692         40  4.09
+4.18943         -191.8158305531         60  4.19
+4.20837         -191.8671963365         80  4.21 **
+4.20967         -191.8683658003         100 4.21
+```
+Convergence is achieved at 80Ry, with _c_=4.21A.
+
+### Manual optimization
+More rapid convergence can be achieved by scanning _c_ and performing a relaxation at each step, until a minimum in the total energy is reached.
+
+```
+% ./Script/run_CNT_scan-c_relax
+
+# cutoff	c(a)		   energy (Ry)
+20Ry 		4.23               -186.75604243
+40Ry		4.22               -191.17371919
+60Ry 		4.21               -191.81632551 **
+80Ry 		4.21               -191.86727301
+
+```
+As in the previous examples, the vc-relax converges slower with respect to the cutoff as it minimizes the stress, which is more sensitive to the cutoff. Instead, the manual run minimizes the total energy at each step, which is safer.
 
 ## 2D: silicene
 
 * Manual: E(relax) vs alat 
 * Variable-cell relax: 2Dxy, free atoms
 
-Silicene is a 2D sheet with a bulkled honeycomb lattice. The geometry is determined by the in-plane lattice constant (alat) and the buckling height h (an internal parameter).
+Silicene is a 2D sheet with a bulkled honeycomb lattice. The geometry is determined by the in-plane lattice constant (alat) and the buckling height h (an internal parameter). Since the buckling height determines the lattice constant, a vc-relax calculation in the xy-plane is necessary.
+
+  ```
+  % cp Inputs/silicene.*.in .
+  % pw.x < silicene.relax.in < silicene.relax.out
+  % pw.x < silicene.vc-relax.in < silicene.vc-relax.out
+  ```
+
+### Variable-cell relaxation along c
+Let's launch the vc-relax script for silicene:
+```
+  % cat silicene.vc-relax.in
+  [...]
+  &CELL
+    press_conv_thr=0.001
+    cell_dofree="2Dxy"
+  /
+  % ./Script/run_alat_silicene2
+
+# cutoff(Ry) alat(bohr) energy(Ry)
+20              3.81543255              -15.7386685318 
+40              3.82318492              -15.7433489561
+60              3.82404525              -15.7437132734 
+80              3.82408885              -15.7437198273
+100             3.82408457              -15.7437201937
+```
+It is worth looking carefully at how the converged value of _alat_ is determined at each value of cutoff. The shell script extracts the data correctly but it is not obvious how it works.
 
 
 ## 3D: MoS2 bulk
 
-Bulk MoS2 has a geometry determined by the in-plane lattice constant (alat) and the internal parameter (u).
-Alternatives are GaN or ZnO.
-
 * Manual: E(relax) vs alat vs c
 * Variable-cell relax: ibrav, free atoms
 
+Bulk MoS2 has a geometry determined by the in-plane lattice constant (alat) and the internal parameter (u).
+Alternatives are GaN or ZnO.
 
 
