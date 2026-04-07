@@ -1,7 +1,5 @@
 # Geometry optimization
 
-## UNDER CONSTRUCTION
-
 Geometry optimization of periodic systems can be tricky. What works for bulk silicon will not work for 2D silicene. It is important to understand what is a truly free parameter and what is constrained by symmetry. There are powerful tools at your disposal but it is important to understand their limitations. In this tutorial we will discuss how to approach geometry optimization for systems with different dimensionality, degrees of freedom, and symmetry, pointing out common pitfalls. In the following we discuss a range of 0D-3D systems, getting progressively more complicated.
 
 - [0D: C2H6 molecule](#0d-c2h6-molecule)
@@ -10,7 +8,7 @@ Geometry optimization of periodic systems can be tricky. What works for bulk sil
 - [3D: graphite, stacked honeycomb](#3d-graphite)
 - [1D: nanotube, rolled honeycomb](#1d-nanotube)
 - [2D: silicene, buckled honeycomb](#2d-silicene)
-- [3D: MoS2, stacked tetragonal sheets](#3d-mos2-bulk)  
+- [3D: GaN, wurtzite crystal](#3d-bulk-gan)  
 
 Note that a small k-point grid has often been chosen to speed up calculations.
 
@@ -363,12 +361,48 @@ Let's launch the vc-relax script for silicene:
 It is worth looking carefully at how the converged value of _alat_ is determined at each value of cutoff. The shell script extracts the data correctly but it is not obvious how it works.
 
 
-## 3D: MoS2 bulk
+## 3D: Bulk GaN
 
 * Manual: E(relax) vs alat vs c
 * Variable-cell relax: ibrav, free atoms
 
-Bulk MoS2 has a geometry determined by the in-plane lattice constant (alat) and the internal parameter (u).
-Alternatives are GaN or ZnO.
+Bulk GaN in the wurtzite phase has a geometry determined by the in-plane lattice constant (alat) and the internal parameter (u). This is a challenging system to optimize manually (see also bulk MoS2 or ZnO).
+
+The ideal value of u is 3/8 = 0.375, but in reality for GaN the typical value is 0.377-0.378. 
+Equivalently, c/a has an ideal HCP value of \sqrt(8/3) = 1.633.
+
+  ```
+  % cp Inputs/GaN.*.in .
+  % pw.x < GaN.relax.in < GaN.relax.out
+  % pw.x < GaN.vc-relax.in < GaN.vc-relax.out
+  ```
+
+### Full variable-cell relaxation 
+
+```
+  % ./Script/run_alat_GaN
+
+# cutoff(Ry)     a(A)            c(A)            c/a             energy(Ry)
+40              2.83677         4.61581         1.62713411              -301.9187950985
+60              3.18894         5.18474         1.62584953              -302.5060419256
+80              3.21596         5.22976         1.62619001              -302.5290192502 **
+100             3.21547         5.22901         1.62620443              -302.5318668472
+120             3.21669         5.23141         1.62633313              -302.5394026721
+140             3.22195         5.23925         1.62611190              -302.5410180030
+160             3.22199         5.23927         1.62609617              -302.5410749470
+```
+At the converged cutoff of 80Ry, we find a=3.22, c=5.23, c/a=1.626.
+
+### Scan a vs c, relax calculation
+
+A manual scan is a step more involved than graphite, as at every value of _a_ and _c_, a relaxation must be run to obtain the internal parameter _u_. While more precise than vc-relax, it is extremely demanding. Here we show the result just to 60Ry, at least to examine the shape of the potential energy surface.
 
 
+```
+  % ./Script/run_GaN_scan_a_c_relax
+
+40Ry	3.22	5.22	-299.74703421 	<- but very noisy
+60Ry	3.22	5.26	-302.50816300 	<- using steps of 0.02 however
+```
+
+![3D GaN](3D_GaN/GaN_a_vs_c.png?raw=true "Image")

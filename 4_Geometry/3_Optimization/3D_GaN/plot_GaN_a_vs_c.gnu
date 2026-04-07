@@ -176,5 +176,9 @@ set nokey
 ## Last datafile plotted: "GaN_Etot_vs_a_vs_c-script.dat_60Ry"
 set xlabel "a (Å)"
 set ylabel "c (Å)"
+set term pngcairo enhanced
+set output "3D_GaN_a_vs_c_60Ry.png"
 splot "GaN_Etot_vs_a_vs_c-script.dat_60Ry" w pm3d
+set output "3D_GaN_a_vs_c_40Ry.png"
+splot "GaN_Etot_vs_a_vs_c-script.dat_40Ry" w pm3d
 #    EOF
