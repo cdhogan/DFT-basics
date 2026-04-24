@@ -45,7 +45,7 @@ As always, the answer is: _it depends_. Here are some general comments on the va
 | DOJO | A systematic, standardized library of norm-conserving pseudos. The clickable tables helpfully indicate the suggested cutoffs, which are, however quite large.
 | SG15 | An accurate, norm-conserving library, optimized to have lower cutoffs. Fully-relativistic PPs are also included. |
 | GBRV | A fast ultrasoft library perfect for high-throughput studies thanks to their low cutoffs. 
-| PSlibrary | A large USPP/PAW library that contains PPs for a wide range of elements and types. If you are looking for something specific, check here. Not as systematically tested as the above ones, but still a great resource. The recommended PPs are listed here: https://dalcorso.github.io/pslibrary/PP_list.html |
+| PSlibrary | A large USPP/PAW library that contains PPs for a wide range of elements and types. If you are looking for something specific, check here. Not as systematically tested as the above ones, but still a great resource. The recommended PPs are listed here: https://dalcorso.github.io/pslibrary/PP_list.html Note that the latter URL gives you the PP file _generator_, if you just want a specific UPF file search through https://pseudopotentials.quantum-espresso.org/legacy_tables |
 | HGH, FHI, ... | These are older libraries that are largely superceded by the modern libraries. Can be accurate but have high cutoffs. Best to avoid. |
 
 If you need PPs for actinoids, rare earths, etc, check out the links in https://pseudopotentials.quantum-espresso.org/
