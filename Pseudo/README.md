@@ -2,7 +2,11 @@
 
 The pseudopotential files in this folder are typically norm-conserving ones, chosen to allow the tutorials to be run quickly. They are not meant for production (publication) runs. Remember to test all pseudopotentials before use.
 
-In general it is advised to choose a pseudopotential from a validated library. In recent years several such libraries have become available: use them. Some have been installed at `/data-fast/greenano/Software/PSEUDO`. Here is an incomplete list of pseudopotential libraries. For quantum-ESPRESSO you must use the UPF format.
+For quantum-ESPRESSO you must use the UPF format. The format is described here. 
+https://pseudopotentials.quantum-espresso.org/home/unified-pseudopotential-format
+Note that the UPF file contains useful human-readable information, like the number of electrons, suggested cutoffs, etc.
+
+It is advisable to choose a pseudopotential from a validated library. In recent years several such libraries have become available: use them. Some have been installed at `/data-fast/greenano/Software/PSEUDO`. Here is an incomplete list of pseudopotential libraries. 
 
 | Acronym | Library | Link |
 | --- | --- | --- | 
@@ -14,6 +18,10 @@ In general it is advised to choose a pseudopotential from a validated library. I
 | FHI | FHI converted from Abinit (NC) | https://pseudopotentials.quantum-espresso.org/legacy_tables/fhi-pp-from-abinit-web-site | 
 | ONCV | Optimized Norm-Conserving Vanderbilt (NC) | See sg15 and dojo |
 | SG15 | Schlipf and Gygi ONCV type (NC) | http://www.quantum-simulation.org/potentials/sg15_oncv/ |
+
+> [!IMPORTANT]
+> USPP and PAW pseudos require you to specify `ecutrho` as well as `ecutwfc`. 
+> For norm-conserving PPs, the charge density cutoff is 4 times the wavefunction cutoff, and this is the default in the code. For USPP/PAW, a scaling factor of 8-12 applies. You must specify by hand an appropriate value. Usually a "dual" of 10 is fine, but one should also perform tests.
 
 You will come across several acronyms in the names of pseudopotential files, especially in the PSLibrary, which have their own naming convention in the form `[rel-][core-][XC-][valence-][type][_version]`. See https://pseudopotentials.quantum-espresso.org/home/naming-convention for details. Some acronyms are listed in this table: 
 
@@ -49,3 +57,5 @@ As always, the answer is: _it depends_. Here are some general comments on the va
 | HGH, FHI, ... | These are older libraries that are largely superceded by the modern libraries. Can be accurate but have high cutoffs. Best to avoid. |
 
 If you need PPs for actinoids, rare earths, etc, check out the links in https://pseudopotentials.quantum-espresso.org/
+
+
