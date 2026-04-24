@@ -11,13 +11,14 @@ It is advisable to choose a pseudopotential from a validated library. In recent 
 | Acronym | Library | Link |
 | --- | --- | --- | 
 | SSSP | Standard Solid-State Pseudopotentials (mixed) | https://www.materialscloud.org/discover/sssp/table/efficiency |
-| psl | PSlibrary (USPP, PAW) | https://pseudopotentials.quantum-espresso.org/legacy_tables |
-| DOJO | pseudo-dojo (NC, PAW) | https://www.pseudo-dojo.org |
 | GBRV | Garrity, Bennett, Rabe, Vanderbilt (USPP) | https://www.physics.rutgers.edu/gbrv/ | 
-| HGH | Hartwigesen-Goedecker-Hutter (NC) | https://pseudopotentials.quantum-espresso.org/legacy_tables/hartwigesen-goedecker-hutter-pp | 
-| FHI | FHI converted from Abinit (NC) | https://pseudopotentials.quantum-espresso.org/legacy_tables/fhi-pp-from-abinit-web-site | 
+| DOJO | pseudo-dojo (NC, PAW) | https://www.pseudo-dojo.org |
 | ONCV | Optimized Norm-Conserving Vanderbilt (NC) | See sg15 and dojo |
 | SG15 | Schlipf and Gygi ONCV type (NC) | http://www.quantum-simulation.org/potentials/sg15_oncv/ |
+| psl | PSlibrary (USPP, PAW) | https://pseudopotentials.quantum-espresso.org/legacy_tables |
+| HGH | Hartwigesen-Goedecker-Hutter (NC) | https://pseudopotentials.quantum-espresso.org/legacy_tables/hartwigesen-goedecker-hutter-pp | 
+| FHI | FHI converted from Abinit (NC) | https://pseudopotentials.quantum-espresso.org/legacy_tables/fhi-pp-from-abinit-web-site | 
+
 
 > [!IMPORTANT]
 > USPP and PAW pseudos require you to specify `ecutrho` as well as `ecutwfc`. 
