@@ -298,7 +298,7 @@ Up to now we have needed only to perform SCF calculations, since forces on atoms
   ```
 
 ### Variable-cell relaxation along c
-Being a quasi-1D system, it only makes sense to perform a variable-cell relaxation along one direction. Assuming the tube is aligned along the c-axis, we use `do_free='z'`, and allow all the atoms to freely move. The final tube diameter and C-C distances will determine the cell axis, i.e the repeating unit of the CNT.
+Being a quasi-1D system, it only makes sense to perform a variable-cell relaxation along one direction. Assuming the tube is aligned along the c-axis, we use `cell_dofree='z'`, and allow all the atoms to freely move. The final tube diameter and C-C distances will determine the cell axis, i.e the repeating unit of the CNT.
 
 ```
 % ./Script/run_CNT_vs-relax-c
@@ -341,7 +341,7 @@ Silicene is a 2D sheet with a bulkled honeycomb lattice. The geometry is determi
   ```
 
 ### Variable-cell relaxation along c
-Let's launch the vc-relax script for silicene:
+Let's launch the vc-relax script for silicene, in which we constrain the out-of-plane lattice constant to be fixed: 
 ```
   % cat silicene.vc-relax.in
   [...]
@@ -349,17 +349,29 @@ Let's launch the vc-relax script for silicene:
     press_conv_thr=0.001
     cell_dofree="2Dxy"
   /
-  % ./Script/run_alat_silicene2
+  % ./Script/run_silicene_vc-relax
 
 # cutoff(Ry) alat(bohr) energy(Ry)
 20              3.81543255              -15.7386685318 
-40              3.82318492              -15.7433489561
+40              3.82318492              -15.7433489561 **
 60              3.82404525              -15.7437132734 
 80              3.82408885              -15.7437198273
 100             3.82408457              -15.7437201937
 ```
 It is worth looking carefully at how the converged value of _alat_ is determined at each value of cutoff. The shell script extracts the data correctly but it is not obvious how it works.
 
+### Scan a, relax calculation
+Rapid convergence can be achieved by scanning _a_ and relaxing the buckling height at each step, until a minimum in the total energy is reached. Let's launch the appropriate script for silicene:
+```
+  % ./Script/run_silicene_scan-a
+
+3.83		-15.73845563	20Ry
+3.82		-15.74332244	40Ry **
+3.82		-15.74370552	60Ry
+3.82		-15.74371297	80Ry
+```
+![2D silicene](2D_silicene/2D_silicene.png?raw=true "Image")
+Convergence is achieved at 40Ry, with _a_=3.82A.
 
 ## 3D: Bulk GaN
 
