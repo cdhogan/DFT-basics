@@ -60,7 +60,9 @@ Exercise: Plot the torsional energy barrier, i.e. the total energy vs dihedral a
 > [!NOTE]
 > Symmetry reduces the number of coordinates that must be optimized (speeds up the calculation) but can also force a system to stay in a local minimum
 
-> [!TIP] How to confirm a molecule is in the global minimum? 
+
+> [!TIP] 
+> How to confirm a molecule is in the global minimum? 
 > First check it is in a true local minimum by performing a vibrational frequency analysis: any imaginary frequencies indicate an unstable equilibrium. Second, you might need to perform a wider conformational search or use other more advanced methods (basin hopping, metadynamics, etc). This can be done in QE with `ph.x` or more easily with a code like ORCA. 
 
 ## 3D: Bulk Si
@@ -121,7 +123,7 @@ In this tutorial we scan always with a step size of 0.01A, which ensures that th
   % cp Inputs/si.scf.in .
   % pw.x < si.scf.in > si.scf.out
   ```
-Vary alat around the minimum value found with vc-relax. The results (also generated with the ./Script/run_alat_Si_bulk script) give:
+Vary alat around the minimum value found with vc-relax. The results (also generated with the `./Script/run_alat_Si_bulk` script) give:
   ```
 # min   energy  cutoff  fit
 5.42            -16.96583990    10       5.41611
@@ -145,7 +147,8 @@ Why not use vc-relax all the time?
 - If the starting coordinates are far from the final ones, it may be necessary to run vc-relax several times.
 - Instead, by keeping the cell fixed, e.g. by scanning alat, the calculation is variational and the total energy can be safely used.
 
-HINT: Use vc-relax to find the approximate value, and use an energy scan around this point to find the exact value.
+> [!TIP]
+> Use vc-relax to find the approximate value, and use an energy scan around this point to find the exact value.
 
 ![3D Si bulk](3D_Si_bulk/3D_Si_bulk.png?raw=true "Image")
 
