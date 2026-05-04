@@ -1,0 +1,35 @@
+A DOJO-LDA-NC-SR-04-STD/Sb.upf
+Run2 	4.0027	15x15x1 C=15	80Ry
+Etot Sb-ene	-362.92033866
+Etot Sb-atom	-181.21152523
+Ecoh = 3.383 eV
+
+B DOJO-PBE-NC-SR-04-STD/Sb.upf
+Run1 4.1220	15x15x1 C=15    80Ry
+Etot Sb-ene	-363.80646972
+Etot Sb-atom	-181.71320759
+Ecoh = 2.585 eV
+
+C SSSP_1.3.0_PBE_eff/sb_pbe_v1.4.uspp.F.UPF D3BJ
+Run2  4.0657    15x15x1 C=15 60Ry	dual 10
+Etot Sb-ene	-369.92724641 
+Etot Sb-atom	-184.75443685
+Ecoh = 2.846 eV
+
+D GBRV-LDA-1.5/sb_lda_v1.4.uspp.F.UPF
+Run2 4.00542 15x15x1 	60Ry dual 10
+Etot Sb-ene  -369.10336931
+Etot Sb-atom -184.29583579
+Ecoh = 3.481 eV
+
+E SG15-1.2/Sb_ONCV_PBE-1.2.upf
+Run2 4.13028439 15x15x1	60Ry dual 10
+Etot Sb-ene -282.12626778
+Etot Sb-atom -140.86240489 
+Ecoh = 2.731 eV
+
+F GBRV-PBEsol-1.5/sb_pbesol_v1.4.uspp.F.UPF
+Run2	4.04095 15x15x1 60Ry dual 10
+Etot Sb-ene -369.17580794
+Etot Sb-atom -184.37360843
+Ecoh = 2.916 eV
