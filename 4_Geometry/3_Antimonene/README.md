@@ -13,14 +13,14 @@ Use quantum-ESPRESSO to compute the lattice constant and cohesive energy of beta
 
 ### Summary of results ###
 
-|Run|Functional|Type|Library|Cutoff|NLCC|Fullname|
-| --- | --- | --- | --- | --- | --- | --- |
-A|LDA-PW|NC|DOJO|80/320|Yes|DOJO-LDA-NC-SR-04-STD	|4.003 A|3.383 eV|
-D|LDA-PZ|USPP|GBRV|60/600|Yes|GBRV-LDA-1.5-USPP	|4.005 A|3.481 eV|
-B|PBE	|NC|DOJO|80/320|Yes|DOJO-PBE-NC-SR-04-STD	|4.122 A|2.585 eV|
-E|PBE	|NC|SG15|80/320|No|SG15-1.2-PBE-ONCV 	|4.130 A|2.731 eV|
-C|PBE-D3BJ|USPP|SSSP|60/600|Yes|SSSP_1.3.0_PBE_eff-USPP+D3BJ|4.066 A|2.846 eV|
-F|PBEsol|USPP|GBRV|60/600|Yes|GBRV-PBEsol-1.5-USPP|	4.041 A|2.916 eV|
+|Run|Functional|Type|Library|Cutoff|NLCC|Fullname|a(Å)|Ecoh(eV)|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+A|LDA-PW|NC|DOJO|80/320|Yes|DOJO-LDA-NC-SR-04-STD	|4.003|3.383|
+D|LDA-PZ|USPP|GBRV|60/600|Yes|GBRV-LDA-1.5-USPP	|4.005|3.481|
+B|PBE	|NC|DOJO|80/320|Yes|DOJO-PBE-NC-SR-04-STD	|4.122|2.585|
+E|PBE	|NC|SG15|80/320|No|SG15-1.2-PBE-ONCV 	|4.130|2.731|
+C|PBE-D3BJ|USPP|SSSP|60/600|Yes|SSSP_1.3.0_PBE_eff-USPP+D3BJ|4.066|2.846|
+F|PBEsol|USPP|GBRV|60/600|Yes|GBRV-PBEsol-1.5-USPP|	4.041|2.916|
 
 Note that the used cutoffs are conservative choices and have not been tested: 60Ry for USPP, 80Ry for NCPP.
 
