@@ -1,5 +1,8 @@
 ## Antimonene exercise ##
 
+![Antimonene](Ref/geom.png?raw=true "Antimonene")
+
+
 Use quantum-ESPRESSO to compute the lattice constant and cohesive energy of beta-antimonene, without any supplied input file or use of AI/materials cloud, and compare results with Wang et al (ACS Appl Mater Interfaces 7 (2015), p11490 doi: 10.1021/acsami.5b02441) . The student should modify e.g. an input file for graphene and perform adequate convergence tests. Try several modern pseudopotential libraries (DOJO, GBRV, SG15,SSSP) and exchange correlation functionals (LDA,PBE,PBEsol,PBE-D3). 
 
 Notes on pseudopotentials: ../../Pseudo
