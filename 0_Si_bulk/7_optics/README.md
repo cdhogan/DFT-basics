@@ -14,9 +14,9 @@ Calculation of the dielectric function involves three distinct steps:
 
 1. SCF calculation with `pw.x`. The ground state electronic charge density is computed with `pw.x` self-consistently, as before, on a sufficiently dense k-point grid. 
 2. NSCF calculation with `pw.x`. A non-self-consistent (NSCF) calculation is performed using `pw.x` over a much denser k-point grid and over a larger range of bands (to cover the energy range we are interested in). 
-3. Dielectric function calculation with `epsilon.x` or `pw2gw.x`. In practice the integral is replaced by a sum over (special) k-points.
+3. Dielectric function calculation with `pw2gw.x` or `epsilon.x`. In practice the integral is replaced by a sum over (special) k-points.
 
-In practice, the calculation requires careful convergence with bands and k-points. It is easy to end up running large and slow calculations that generate large amount of data. Thus it is _very_ important to organise the files neatly. Use separate directories for different numbers of k-points and bands. 
+Like DOS, calculation of optical spectra requires careful convergence with bands and k-points. It is easy to end up running large and slow calculations that generate large amount of data. Thus it is _very_ important to organise the files neatly. Use separate directories for different numbers of k-points and bands. 
 
 NB: currently only norm conserving pseudopotentials are supported, by either code (e.g. FHI, DOJO, GBRV).
 
@@ -32,6 +32,71 @@ In this tutorial we will examine the functionality of both codes and pay careful
       ```
       As this is a SCF run, we set `calculation = 'scf'` in the input file.
       We have chosen 5 bands as before, with 4 being filled.
+
+### Calculation using pw2gw.x
+
+  2. We will first use the `pw2gw.x` code because it is easier to converge spectra. The summations over k are performed over the irreducible Brillouin zone, allowing large k-point meshes can be used. The trace of the dielectric tensor is valid, which is what we want for bulk silicon.
+
+      Run the non-self-consistent (NSCF) calculation using the provided input `si.nscf-pw2gw.in` to generate a set of eigenvalues and eigenfunctions on specific k-points of the Brillouin zone. There are several important changes to the input file:
+
+      ```
+      &CONTROL
+      calculation = 'nscf'
+      outdir       = "./tmp_pw2gw"        <- we keep the SCF calculation separate (to be safe)
+      [...]
+      &SYSTEM
+      nbnd        = 10                       <- we need some empty states
+      [...]
+      &ELECTRONS
+       diago_full_acc=.true.                <- we want the empty states computed as accurately as the filled ones
+       diago_thr_init=1.D-10
+      [...] 
+      K_POINTS {automatic}
+      8 8 8 0 0 0                           <- large grid
+      ```
+      
+      We thus request several empty bands (6) in addition to the filled (4) ones. The number of bands will determine the range over which single particle transitions are included. In practice, we will have to converge this value. As a rule of thumb, it should be at least double the number of occupied states.
+
+
+      
+      ```
+      % cp -r tmp tmp_pw2gw                               <- copy the SCF charge density
+      % pw.x < si.nscf-pw2gw.in > si.nscf-pw2gw.out       <- use mpirun if possible
+      ```
+
+  3.  Now we compute the optical spectra with `pw2gw.x`. 
+
+```
+&inputpp
+  prefix       = "Si",
+  outdir       = "./tmp_pw2gw",
+    Emin=0.0
+    Emax=20.0
+    DeltaE=0.1
+/
+```
+
+There is no broadening used in `pw2gw.x`, only a step size. As a result, the raw spectra are very noisy, so one could convolute the spectra with e.g. gaussian. However, it is straightforward to smooth the spectra with gnuplot: from `gnuplot> help smooth` a good option is using acsplines (approximate cubic splines) to fit the data; the smoothing factor can be read from a third column or set manually (here 1000; try other values) like in the following.
+
+    ```
+    % cp -r tmp tmp_pw2gw
+    % pw.x < si.nscf-pw2gw.in > si.nscf-pw2gw.out
+    % pw2gw.x < si.pw2gw.in > si.pw2gw.out
+    % plot "epsTOT.dat" w l,"" u 1:2:(1000) smooth acsplines 
+    ```
+Again, the k-point convergence must be checked (there is no need to repeat the convergence on bands). Use the provided scripts as necessary.
+
+    ```
+    % ./Scripts/run_pw2gw_kpts
+    % ./Scripts/run_plots_pw2gw_kpts
+    ```
+ ![optics](Ref/plot_script_pw2gw_kpts.png?raw=true "optics")     
+
+  3. 
+
+If we compare the spectrum computed with DFT against experiment, we find pretty large discrepancies. Where do you think the errors lie, and which is most important?
+
+<img src="Ref/expt_Si.png" height="300"/>
 
 ### Calculation using epsilon.x
 
@@ -133,27 +198,7 @@ Clearly a shifted grid is much better choice in this case.
 
 ### Calculation using pw2gw.x
 
-6. Last we can repeat the analysis with the `pw2gw.x` code. The main difference here is that the summations over k are performed over the irreducible Brillouin zone, so larger k-point meshes can be used. In this case, however, only the trace of the dielectric tensor is valid.
 
-There is no broadening used in `pw2gw.x`, only a step size. As a result, the raw spectra are very noisy, so one could convolute the spectra with e.g. gaussian. However, it is straightforward to smooth the spectra with gnuplot: from `gnuplot> help smooth` a good option is using acsplines (approximate cubic splines) to fit the data; the smoothing factor can be read from a third column or set manually (here 1000; try other values) like in the following.
-
-    ```
-    % cp -r tmp tmp_pw2gw
-    % pw.x < si.nscf-pw2gw.in > si.nscf-pw2gw.out
-    % pw2gw.x < si.pw2gw.in > si.pw2gw.out
-    % plot "epsTOT.dat" w l,"" u 1:2:(1000) smooth acsplines 
-    ```
-Again, the k-point convergence must be checked (there is no need to repeat the convergence on bands). Use the provided scripts as necessary.
-
-    ```
-    % ./Scripts/run_pw2gw_kpts
-    % ./Scripts/run_plots_pw2gw_kpts
-    ```
- ![optics](Ref/plot_script_pw2gw_kpts.png?raw=true "optics")     
-
-If we compare the spectrum computed with DFT against experiment, we find pretty large discrepancies. Where do you think the errors lie, and which is most important?
-
-<img src="Ref/expt_Si.png" height="300"/>
 
 ### Analyse the optical spectrum
 
