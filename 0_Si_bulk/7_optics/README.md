@@ -115,6 +115,8 @@ In this tutorial we will examine the functionality of both codes and pay careful
       ```
       As well as generating the real part, and hence the dielectric _constant_, this code is thus an alternative way to apply a broadening to the original `epsTOT.dat` file (Lorentzian in this case). 
 
+      ![optics](Ref/plot_KK.png?raw=true "optics")
+
   6.  Optical spectra, like DOS, are very sensitive to the band range and k-grid density. Do you understand why? 
   
       Let's first carry out a convergence test on the number of bands. Repeat steps 2--4 for a range `nbnd = (5,8,12,16)`, saving the output files with different names each time, e.g.
