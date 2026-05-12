@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+SAVE=plot_script_pw2gw_bands
+
+cat > ${SAVE}.gnu <<EOF
+#!/usr/bin/gnuplot
+
+set term x11 enhanced
+
+set title "pw2gw.x with shifted 16x16x16 grid, acsplines smoothing"
+set xlabel "Energy (eV)"
+set ylabel "ɛ_2"
+set xrange [0:10]
+set yrange [0:100]
+set xtics 1
+set mxtics 5
+set samples 2000
+smooth=1000
+plot 	\
+     	"pw2gw_script_b5/epsTOT.dat" u 1:2:(smooth) t "nbnd=5" smooth acsplines w l dt 1 lc "magenta",\
+     	"pw2gw_script_b8/epsTOT.dat" u 1:2:(smooth) t "nbnd=8" smooth acsplines w l dt 1 lc "red",\
+     	"pw2gw_script_b12/epsTOT.dat" u 1:2:(smooth) t "nbnd=12" smooth acsplines w lp ps 0.5 lc "cyan",\
+     	"pw2gw_script_b16/epsTOT.dat" u 1:2:(smooth) t "nbnd=16" smooth acsplines w l dt 1 lc "black" lw 1,\
+     	"pw2gw_script_b16/epsTOT.dat" t "nbnd=16 no smoothing" w l dt 1 lc "black" lw 0,\
+	0 t "" w l lt 1 lc "black"
+
+pause -1
+set term pngcairo enhanced size 800,400
+set output "${SAVE}.png"
+replot
+EOF
+
+gnuplot ${SAVE}.gnu
+
+
+exit
+
+
+
+

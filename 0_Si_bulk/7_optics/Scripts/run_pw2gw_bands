@@ -9,12 +9,12 @@ echo "Started at: " `date`
 echo
 
 PREFIX="Si"
-ECUT=40
 CALC_DOS=false  # off
 #CALC_DOS=true  # on
 
 [ "$CALC_DOS" = "true" ] && echo "Running DOS."
 [ "$CALC_DOS" != "true" ] && echo "NOT running DOS."
+
 
 # Check for KK_driver.x
 if [ -x "../../Codes/KK_driver.x" ]; then
@@ -52,7 +52,7 @@ cat > $IN_SCF << EOF
   celldm(1) = 10.21,
   nat       = 2,
   ntyp      = 1,
-  ecutwfc   = $ECUT
+  ecutwfc   = 20
   nbnd      = 5
 /
 &ELECTRONS
@@ -69,11 +69,9 @@ $klist
 EOF
 
 #echo -e "\tStart: " `date`
-echo "Running SCF calculation"
-
 COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
 echo -e "\t\t$COMMAND < $IN_SCF > $OUT_SCF"
-$COMMAND < $IN_SCF > $OUT_SCF
+$COMMAND < $IN_SCF > $OUT_SCF  2>&1
 #echo -e "\tEnd: " `date`
 
 # Check the VBM/CBM
@@ -85,20 +83,23 @@ echo "NSCF calculation" >> $SAVE
 # Non-self-consistent run, regular k-grid
 #-------------------------------------------------#
 
-for grid in 8 16 32 48; do
+for nband in 5 8 12 16; do
+
+echo ""
+echo "Running for nband = $nband"
+
+grid=16
 
 # Use shifted grid for better convergence of optical spectra
 #klist="$grid $grid $grid 0 0 0"
 klist="$grid $grid $grid 1 1 1"
 
-echo "Running NSCF calculation for grid $klist"
-
-TMP_OPT="./pw2gw_script_k$grid"
+TMP_OPT="./pw2gw_script_b$nband"
 mkdir -p $TMP_OPT
 cp -r $TMP_DIR/$PREFIX.* $TMP_OPT/
 
 IN=si_script.nscf.pw2gw.in
-OUT=si_script.nscf.pw2gw.out_k${grid}
+OUT=si_script.nscf.pw2gw.out_b${nband}
 
 cat > $IN << EOF
 &CONTROL
@@ -114,8 +115,8 @@ cat > $IN << EOF
   celldm(1) = 10.21,
   nat       = 2,
   ntyp      = 1,
-  ecutwfc   = $ECUT
-  nbnd      = 12
+  ecutwfc   = 20
+  nbnd      = $nband
 /
 &ELECTRONS
   diago_full_acc=.true.
@@ -135,8 +136,8 @@ EOF
 
 #echo -e "\tStart: " `date`
 COMMAND="  $RUN_COMMAND $BIN_DIR/pw.x"
-echo -e "\t\t$COMMAND < $IN > $OUT"
-$COMMAND < $IN > $OUT
+#echo -e "\t\t$COMMAND < $IN > $OUT"
+$COMMAND < $IN > $OUT 2>&1
 #echo -e "\tEnd: " `date`
 
 # Check the VBM/CBM
@@ -147,7 +148,7 @@ mv $IN $OUT $TMP_OPT
 # pw2gw.x calculation, regular k-grid and Gaussian smearing
 #-------------------------------------------------#
 IN_EPS=si_script.pw2gw.in
-OUT_EPS=si_script.pw2gw.out_k${grid}
+OUT_EPS=si_script.pw2gw.out_b${nband}
 cat > $IN_EPS << EOF
 &inputpp
   prefix       = "$PREFIX",
@@ -158,11 +159,10 @@ cat > $IN_EPS << EOF
 /
 EOF
 
-echo "Running PW2GW"
 #echo -e "\tStart: " `date`
 COMMAND="  $RUN_COMMAND $BIN_DIR/pw2gw.x"
 echo -e "\t\t$COMMAND < $IN_EPS > $OUT_EPS"
-$COMMAND < $IN_EPS > $OUT_EPS
+$COMMAND < $IN_EPS > $OUT_EPS 2>&1
 #echo -e "\tEnd: " `date`
 
 mv *.dat $TMP_OPT
@@ -244,12 +244,11 @@ echo -e "\t\t$COMMAND < $IN > $OUT"
 echo 
 $COMMAND < $IN > $OUT
 #echo -e "\tEnd: " `date`
-
 awk '/EFermi/{print "DOS tetra, EFermi= "$9}' $FILDOS >> $SAVE
 
-fi
+fi   
 
-done
+done  
 
 
 echo "Run completed at: " `date`

@@ -126,7 +126,8 @@ In this tutorial we will examine the functionality of both codes and pay careful
       epsTOT.dat 0.1
       % mv spectrum.dat spectrum.dat_b8
       ```
-      PLOT
+
+      ![optics](Ref/plot_script_pw2gw_bands.png?raw=true "optics")
 
       There are two ways the spectra are influenced by the number of bands:
       
