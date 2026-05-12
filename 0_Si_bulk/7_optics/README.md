@@ -194,7 +194,7 @@ In this tutorial we will examine the functionality of both codes and pay careful
       % pw.x < si.nscf-epsilon.in > si.nscf-epsilon.out
       ```
   
-  4.  Now we compute the optical spectra with `epsilon.x`. 
+  2.  Now we compute the optical spectra with `epsilon.x`. 
       ```
       &inputpp
         calculation = "eps"
@@ -215,7 +215,7 @@ In this tutorial we will examine the functionality of both codes and pay careful
       gnuplot> plot "epsi_Si.dat" w l,"epsr_Si.dat" w l
       ```
 
-   5. Let's first carry out a convergence test on the number of bands. Repeat steps 2 and 3 for a range `nbnd = (5,8,12,16)`.
+   3. Let's first carry out a convergence test on the number of bands. Repeat steps 2 and 3 for a range `nbnd = (5,8,12,16)`.
       
       You can automate the process using the provided shell scripts, e.g.
       ```
@@ -248,19 +248,20 @@ In this tutorial we will examine the functionality of both codes and pay careful
 
       In any case, we take 12 bands to have well converged spectra. (However, check "eels_Si.dat" for a more sensitive convergence!).
 
-  6. Next we test the convergence with k-points.
+  4.  Next we test the convergence with k-points. Modify the k-grid by hand, or use the scripts provided. Since the number of k-points increases dramatically now (8<sup>3</sup>, 16<sup>3</sup>, etc), it is essential to run in parallel and to have adequate resources available...
 
       ```
       % ./Scripts/run_epsilon_kpts
       % ./Scripts/run_plots_epsilon_kpts
       ```
-![optics](Ref/plot_script_epsilon_kpts.png?raw=true "optics")
+      
+      ![optics](Ref/plot_script_epsilon_kpts.png?raw=true "optics")
 
       For the broadening (smearing) chosen (0.1eV), convergence for (32x32x32) grid is good, but not perfect, especially over 4eV. Indeed to have a perfectly smooth curve, one should use a random k-point sampling to avoid spurious peaks from the use of a regular grid.
 
       It is interesting to compare with the case of an unshifted grid, which has the same number of k-points (no symmetry)
 
-![optics](Ref/plot_script_epsilon_kpts_unshifted.png?raw=true "optics")
+      ![optics](Ref/plot_script_epsilon_kpts_unshifted.png?raw=true "optics")
 
       Clearly a shifted grid is much better choice in this case.
 
